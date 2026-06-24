@@ -164,11 +164,12 @@ grant execute on function public.get_free_text(int) to anon;
 --  Mønster: hver dag åpner kl. 09:00; forrige dags resultater + avstemnings-
 --  stenging skjer når neste dag åpner.
 -- ============================================================================
+--   Dag 1: torsdag 30. juli 2026 · Dag 2: fredag 31. juli · Dag 3: lørdag 1. august · Dag 4: søndag 2. august
 insert into public.case_config (day, question_type, release_at, closes_at, results_at) values
-  (1, 'multiple_choice', timestamptz '2026-07-01 09:00 Europe/Oslo', timestamptz '2026-07-02 09:00 Europe/Oslo', timestamptz '2026-07-02 09:00 Europe/Oslo'),
-  (2, 'free_text',       timestamptz '2026-07-02 09:00 Europe/Oslo', timestamptz '2026-07-03 09:00 Europe/Oslo', timestamptz '2026-07-03 09:00 Europe/Oslo'),
-  (3, 'mc_with_other',   timestamptz '2026-07-03 09:00 Europe/Oslo', timestamptz '2026-07-04 09:00 Europe/Oslo', timestamptz '2026-07-04 09:00 Europe/Oslo'),
-  (4, 'none',            timestamptz '2026-07-04 09:00 Europe/Oslo', null,                                       timestamptz '2026-07-04 09:00 Europe/Oslo')
+  (1, 'multiple_choice', timestamptz '2026-07-30 09:00 Europe/Oslo', timestamptz '2026-07-31 09:00 Europe/Oslo', timestamptz '2026-07-31 09:00 Europe/Oslo'),
+  (2, 'free_text',       timestamptz '2026-07-31 09:00 Europe/Oslo', timestamptz '2026-08-01 09:00 Europe/Oslo', timestamptz '2026-08-01 09:00 Europe/Oslo'),
+  (3, 'mc_with_other',   timestamptz '2026-08-01 09:00 Europe/Oslo', timestamptz '2026-08-02 09:00 Europe/Oslo', timestamptz '2026-08-02 09:00 Europe/Oslo'),
+  (4, 'none',            timestamptz '2026-08-02 09:00 Europe/Oslo', null,                                       timestamptz '2026-08-02 09:00 Europe/Oslo')
 on conflict (day) do update
   set question_type = excluded.question_type,
       release_at    = excluded.release_at,
