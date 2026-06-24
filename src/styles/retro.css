@@ -596,10 +596,10 @@ textarea.field {
 
 /* Mapper: retro "zoom" med et lite hopp */
 .window--folder {
-  animation: winFolderOpen 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.25) both;
+  animation: winFolderOpen 0.27s cubic-bezier(0.2, 0.8, 0.3, 1.25) both;
 }
 .window--folder.window--closing {
-  animation: winFolderClose 0.28s ease-in both;
+  animation: winFolderClose 0.25s ease-in both;
 }
 @keyframes winFolderOpen {
   from {
@@ -624,10 +624,10 @@ textarea.field {
 
 /* Instagram: glir opp som et "app-ark" fra bunnen */
 .window--instagram {
-  animation: winSheetUp 0.34s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: winSheetUp 0.31s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .window--instagram.window--closing {
-  animation: winSheetDown 0.3s ease-in both;
+  animation: winSheetDown 0.27s ease-in both;
 }
 @keyframes winSheetUp {
   from {
@@ -648,10 +648,10 @@ textarea.field {
 
 /* Politi: CRT-skjerm som slås på (kollapser til/fra en lysstripe) */
 .window--police {
-  animation: winCrtOn 0.42s ease-out both;
+  animation: winCrtOn 0.38s ease-out both;
 }
 .window--police.window--closing {
-  animation: winCrtOff 0.3s ease-in both;
+  animation: winCrtOff 0.27s ease-in both;
 }
 @keyframes winCrtOn {
   0% {
@@ -690,12 +690,23 @@ textarea.field {
   }
 }
 
+/* Redusert bevegelse: dropp transform/CRT-effekten, men behold en rolig fade. */
 @media (prefers-reduced-motion: reduce) {
   .window--folder,
   .window--instagram,
-  .window--police,
+  .window--police {
+    animation: winFade 0.18s ease both;
+  }
   .window--closing {
-    animation: none !important;
+    animation: winFade 0.18s ease reverse both;
+  }
+}
+@keyframes winFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 

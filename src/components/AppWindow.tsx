@@ -4,15 +4,8 @@ import type { ReactNode } from 'react'
 
 export type WindowVariant = 'folder' | 'instagram' | 'police'
 
-// Lengde på lukke-animasjonen (må matche CSS-en under .window--closing).
-const CLOSE_MS = 300
-
-function prefersReducedMotion() {
-  return (
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
-}
+// Lengde på lukke-animasjonen (må matche den lengste .window--closing-animasjonen).
+const CLOSE_MS = 270
 
 export default function AppWindow({
   title,
@@ -30,10 +23,6 @@ export default function AppWindow({
 
   function handleClose() {
     if (closing) return
-    if (prefersReducedMotion()) {
-      navigate('/')
-      return
-    }
     setClosing(true) // spiller lukke-animasjonen, så naviger
     window.setTimeout(() => navigate('/'), CLOSE_MS)
   }
