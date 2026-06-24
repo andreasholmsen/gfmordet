@@ -85,7 +85,10 @@ skjer når neste dag slippes.
 - `src/case/manifest.ts` — alt innhold (rediger her).
 - `src/App.tsx` — ruter (HashRouter): `/`, `/dag/:day`, `/instagram`, `/politi`.
 - `src/components/Desktop.tsx` — skrivebord med ikon-grid + låsestatus.
-- `src/components/AppWindow.tsx` — retro fullskjerm-vindu (tittellinje + lukk).
+- `src/components/AppWindow.tsx` — retro fullskjerm-vindu (tittellinje + lukk). `variant`-prop
+  ('folder' | 'instagram' | 'police') styrer åpne/lukke-animasjon + tema. Lukkeknappen spiller
+  exit-animasjon før navigasjon. POLITI-vinduet har eget mørkt terminal-tema (scoped `.window--police`).
+- `src/components/BootScreen.tsx` — terminal boot-animasjon ved sidelasting.
 - `src/components/DayFolder.tsx` + `DocView.tsx` — mappe + bilde/PDF/markdown-visere.
 - `src/components/InstagramApp.tsx` — falsk IG-feed.
 - `src/components/PoliceApp.tsx` + `VoteForm.tsx` + `ResultsView.tsx` + `NamePrompt.tsx` — POLITI-app.

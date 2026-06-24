@@ -1,24 +1,55 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
+
+export type WindowVariant = 'folder' | 'instagram' | 'police'
+
+// Lengde på lukke-animasjonen (må matche CSS-en under .window--closing).
+const CLOSE_MS = 300
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+}
 
 export default function AppWindow({
   title,
   icon,
+  variant = 'folder',
   children,
 }: {
   title: string
   icon: string
+  variant?: WindowVariant
   children: ReactNode
 }) {
   const navigate = useNavigate()
+  const [closing, setClosing] = useState(false)
+
+  function handleClose() {
+    if (closing) return
+    if (prefersReducedMotion()) {
+      navigate('/')
+      return
+    }
+    setClosing(true) // spiller lukke-animasjonen, så naviger
+    window.setTimeout(() => navigate('/'), CLOSE_MS)
+  }
+
   return (
-    <div className="window" role="dialog" aria-label={title}>
+    <div
+      className={`window window--${variant} ${closing ? 'window--closing' : ''}`}
+      role="dialog"
+      aria-label={title}
+    >
       <div className="titlebar">
         <span className="titlebar__icon" aria-hidden>
           {icon}
         </span>
         <span className="titlebar__title">{title}</span>
-        <button className="titlebar__close" aria-label="Lukk" onClick={() => navigate('/')}>
+        <button className="titlebar__close" aria-label="Lukk" onClick={handleClose}>
           ✕
         </button>
       </div>

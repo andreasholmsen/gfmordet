@@ -24,7 +24,7 @@ function PostImage({ post }: { post: InstagramPost }) {
 
 export default function InstagramApp() {
   return (
-    <AppWindow title="Instagram" icon="📷">
+    <AppWindow title="Instagram" icon="📷" variant="instagram">
       <div className="ig">
         <div className="ig__bar">Instagram</div>
         {CASE.instagram.map((post) => (

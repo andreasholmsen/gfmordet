@@ -23,7 +23,7 @@ export default function PoliceApp() {
 
   if (loading) {
     return (
-      <AppWindow title="POLITI" icon="🚓">
+      <AppWindow title="POLITI" icon="🚓" variant="police">
         <p className="notice">Kobler til … </p>
       </AppWindow>
     )
@@ -31,14 +31,14 @@ export default function PoliceApp() {
 
   if (!player) {
     return (
-      <AppWindow title="POLITI" icon="🚓">
+      <AppWindow title="POLITI" icon="🚓" variant="police">
         <NamePrompt onDone={setPlayer} />
       </AppWindow>
     )
   }
 
   return (
-    <AppWindow title="POLITI" icon="🚓">
+    <AppWindow title="POLITI" icon="🚓" variant="police">
       <div className="police">
         <p style={{ marginTop: 0, fontSize: '0.85rem' }}>
           Innlogget som <strong>{player.displayName}</strong>

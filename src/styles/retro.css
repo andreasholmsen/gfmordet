@@ -586,3 +586,240 @@ textarea.field {
     animation: none;
   }
 }
+
+/* ===========================================================================
+   Vindus-animasjoner — én stil per app (åpne + lukke)
+   =========================================================================== */
+.window {
+  transform-origin: center center;
+}
+
+/* Mapper: retro "zoom" med et lite hopp */
+.window--folder {
+  animation: winFolderOpen 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.25) both;
+}
+.window--folder.window--closing {
+  animation: winFolderClose 0.28s ease-in both;
+}
+@keyframes winFolderOpen {
+  from {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes winFolderClose {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+}
+
+/* Instagram: glir opp som et "app-ark" fra bunnen */
+.window--instagram {
+  animation: winSheetUp 0.34s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.window--instagram.window--closing {
+  animation: winSheetDown 0.3s ease-in both;
+}
+@keyframes winSheetUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes winSheetDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* Politi: CRT-skjerm som slås på (kollapser til/fra en lysstripe) */
+.window--police {
+  animation: winCrtOn 0.42s ease-out both;
+}
+.window--police.window--closing {
+  animation: winCrtOff 0.3s ease-in both;
+}
+@keyframes winCrtOn {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.004) scaleX(0.85);
+    filter: brightness(3);
+  }
+  45% {
+    opacity: 1;
+    transform: scaleY(0.02) scaleX(1);
+    filter: brightness(2.2);
+  }
+  70% {
+    transform: scaleY(1) scaleX(1);
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: scaleY(1) scaleX(1);
+    filter: brightness(1);
+  }
+}
+@keyframes winCrtOff {
+  0% {
+    opacity: 1;
+    transform: scaleY(1);
+    filter: brightness(1);
+  }
+  35% {
+    transform: scaleY(1) scaleX(1);
+    filter: brightness(2.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(0.004) scaleX(0.7);
+    filter: brightness(3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .window--folder,
+  .window--instagram,
+  .window--police,
+  .window--closing {
+    animation: none !important;
+  }
+}
+
+/* ===========================================================================
+   POLITI-vindu: eget mørkt "terminal"-tema (litt mer moderne, men klikkbart)
+   =========================================================================== */
+.window--police {
+  background: #0a0e0a;
+  color: #c8ffd4;
+}
+.window--police .titlebar {
+  background: linear-gradient(90deg, #0c2a12, #0f5a23);
+  border-bottom: 1px solid #5cff8a;
+}
+.window--police .titlebar__close {
+  background: #0e1b10;
+  color: #7dffa6;
+  box-shadow: none;
+  border: 1px solid #5cff8a;
+  border-radius: 3px;
+}
+.window--police .window__body {
+  font-family: 'Courier New', Courier, monospace;
+  color: #c8ffd4;
+}
+.window--police h2,
+.window--police h3 {
+  color: #5cff8a;
+  text-shadow: 0 0 6px rgba(92, 255, 138, 0.45);
+  font-family: 'Courier New', Courier, monospace;
+}
+.window--police .police__question {
+  color: #eaffef;
+}
+.window--police .police__question::before {
+  content: '> ';
+  color: #5cff8a;
+}
+.window--police hr {
+  border: none !important;
+  border-top: 1px dashed #2f7d46 !important;
+}
+
+/* Knapper / faner som "terminal-knapper" — avrundet, glød ved hover */
+.window--police .btn,
+.window--police .tab {
+  background: #0e1b10;
+  color: #7dffa6;
+  box-shadow: none;
+  border: 1px solid #2f7d46;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  transition: box-shadow 0.15s ease, background 0.15s ease;
+}
+.window--police .btn:hover,
+.window--police .tab:hover {
+  box-shadow: 0 0 8px rgba(92, 255, 138, 0.4);
+}
+.window--police .btn:active {
+  background: #12361d;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+}
+.window--police .btn--primary {
+  background: #12361d;
+  border-color: #5cff8a;
+  color: #eaffef;
+}
+.window--police .tab--active {
+  background: #12361d;
+  border-color: #5cff8a;
+  color: #eaffef;
+  box-shadow: 0 0 8px rgba(92, 255, 138, 0.35);
+}
+
+/* Svaralternativer */
+.window--police .choice {
+  background: #0e1b10;
+  color: #c8ffd4;
+  box-shadow: none;
+  border: 1px solid #2f7d46;
+  border-radius: 4px;
+}
+.window--police .choice--selected {
+  background: #10301a;
+  border-color: #5cff8a;
+  box-shadow: 0 0 10px rgba(92, 255, 138, 0.4);
+}
+.window--police .choice input {
+  accent-color: #5cff8a;
+}
+
+/* Felt */
+.window--police .field {
+  background: #05100a;
+  color: #d8ffe2;
+  box-shadow: none;
+  border: 1px solid #2f7d46;
+  border-radius: 4px;
+  caret-color: #5cff8a;
+}
+.window--police .field::placeholder {
+  color: #4f8a63;
+}
+
+/* Paneler og varsler */
+.window--police .panel {
+  background: #0e1b10;
+  box-shadow: none;
+  border: 1px solid #2f7d46;
+  border-radius: 6px;
+}
+.window--police .notice--ok {
+  color: #5cff8a;
+}
+.window--police .notice--error {
+  color: #ff7a7a;
+}
+
+/* Resultatbarer */
+.window--police .result-bar {
+  background: #05100a;
+  box-shadow: none;
+  border: 1px solid #2f7d46;
+}
+.window--police .result-bar__fill {
+  background: linear-gradient(90deg, #1f9c40, #5cff8a);
+}
