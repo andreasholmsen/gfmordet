@@ -1,5 +1,5 @@
 -- ============================================================================
---  Mordmysteriet — Supabase-skjema
+--  GF-mordet — Supabase-skjema
 --  Kjør dette i Supabase SQL Editor (eller via Supabase CLI).
 --
 --  Designprinsipp: ALL tidslogikk håndheves server-side. Klienten kan ikke

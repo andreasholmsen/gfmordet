@@ -2,7 +2,7 @@
 // Ingen innlogging — bare et navn + en tilfeldig id som brukes til å hindre
 // dobbel stemming per enhet. Best effort: to enheter = to identiteter.
 
-const KEY = 'mordmysteriet.player.v1'
+const KEY = 'gf-mordet.player.v1'
 
 export interface Player {
   playerId: string

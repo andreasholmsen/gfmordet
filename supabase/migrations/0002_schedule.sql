@@ -1,5 +1,5 @@
 -- ============================================================================
---  Mordmysteriet — migrasjon 0002: tidsplan for nedtelling i oppgavelinjen
+--  GF-mordet — migrasjon 0002: tidsplan for nedtelling i oppgavelinjen
 --
 --  Legger til én ny RPC, get_schedule(), som lar frontend vise en nedtelling
 --  («Dag 2 åpner om HH:MM:SS») i oppgavelinjen. Den returnerer også server_now

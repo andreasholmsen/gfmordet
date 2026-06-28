@@ -1,4 +1,4 @@
-# Mordmysteriet — prosjektnotater & handoff
+# GF-mordet — prosjektnotater & handoff
 
 Retro "gammel PC"-nettside for et 4-dagers murder mystery-case (~100 norske spillere).
 Spillerne får dokumenter dag for dag og svarer på et daglig spørsmål som leder mot
@@ -71,7 +71,7 @@ skjer når neste dag slippes.
 
 - **`src/case/manifest.ts`** = eneste kilde for tittel, intro, dokumenter per dag,
   Instagram-poster, spørsmål/alternativer og fasiten (dag 4). Pre-fylt med eksempelsak
-  "Mordet på Angela" — må byttes ut med ekte innhold.
+  "GF-mordet" — må byttes ut med ekte innhold.
 - Filer (bilder/PDF) legges i `public/case/dagN/` og `public/case/instagram/`, pekes på med
   `src` (relativt fra /public). Tekst kan også skrives `inline` i manifestet. Se
   `public/case/README.md`.

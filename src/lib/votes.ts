@@ -2,7 +2,7 @@
 // «du stemte som X % av etterforskerne» i resultatene — den autoritative
 // stemmen ligger i Supabase. Best effort: nullstilles om localStorage tømmes.
 
-const KEY = 'mordmysteriet.votes.v1'
+const KEY = 'gf-mordet.votes.v1'
 
 export interface MyVote {
   choice: string | null

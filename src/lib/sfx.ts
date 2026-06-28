@@ -90,4 +90,30 @@ export const sfx = {
     tone({ freq: 587, dur: 0.09, gain: 0.05, delay: 0.1 })
     tone({ freq: 880, dur: 0.22, gain: 0.05, delay: 0.2 })
   },
+
+  /** dempet fottrinn (intro-cinematic): lavt dunk + liten hæl-klikk */
+  footstep() {
+    tone({ freq: 96, dur: 0.1, type: 'square', gain: 0.05 })
+    tone({ freq: 150, dur: 0.04, type: 'triangle', gain: 0.025, delay: 0.02 })
+  },
+
+  /** dør som knirker opp: langsom nedadgående sag i trinn */
+  doorCreak() {
+    for (let i = 0; i < 6; i++) {
+      tone({ freq: 280 - i * 28, dur: 0.12, type: 'sawtooth', gain: 0.03, delay: i * 0.08 })
+    }
+  },
+
+  /** hjerteslag: to lave dunk («du-dunk») */
+  heartbeat() {
+    tone({ freq: 64, dur: 0.13, type: 'sine', gain: 0.07 })
+    tone({ freq: 56, dur: 0.16, type: 'sine', gain: 0.06, delay: 0.18 })
+  },
+
+  /** sjokk-sting når liket avsløres: dissonant cluster + lav buldring */
+  sting() {
+    tone({ freq: 110, dur: 0.6, type: 'sawtooth', gain: 0.05 })
+    tone({ freq: 932, dur: 0.5, type: 'sawtooth', gain: 0.03 })
+    tone({ freq: 988, dur: 0.5, type: 'sawtooth', gain: 0.03, delay: 0.02 })
+  },
 }

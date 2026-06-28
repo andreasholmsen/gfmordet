@@ -3,7 +3,7 @@ import { setMuted as setSfxMuted } from './sfx'
 
 // Klient-innstillinger lagret i nettleseren (localStorage). Foreløpig kun
 // lyd-demping, men strukturert slik at flere valg kan legges til senere.
-const KEY = 'mordmysteriet.settings.v1'
+const KEY = 'gf-mordet.settings.v1'
 
 interface Settings {
   muted: boolean

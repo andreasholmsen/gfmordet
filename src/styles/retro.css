@@ -165,6 +165,98 @@ textarea.field {
   padding: 1px 4px;
   word-break: break-word;
 }
+/* Instagram-logo-ikon */
+.ig-glyph {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+  position: relative;
+  display: inline-block;
+}
+.ig-glyph::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 17px;
+  height: 17px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+}
+.ig-glyph::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff;
+}
+/* LinkedIn-logo-ikon */
+.li-glyph {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #0a66c2;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+  padding-bottom: 2px;
+}
+/* «START HER» blinker til den åpnes første gang. */
+.desktop-icon--blink {
+  border-radius: 6px;
+  animation: iconBlink 1.05s ease-in-out infinite;
+}
+.desktop-icon--blink .desktop-icon__glyph {
+  animation: iconGlyphPulse 1.05s ease-in-out infinite;
+}
+.desktop-icon--blink .desktop-icon__label {
+  background: #ffe14d;
+  color: #000;
+  text-shadow: none;
+  font-weight: bold;
+  border-radius: 3px;
+}
+@keyframes iconBlink {
+  0%,
+  100% {
+    background: rgba(255, 225, 77, 0);
+    box-shadow: 0 0 0 rgba(255, 225, 77, 0);
+  }
+  50% {
+    background: rgba(255, 225, 77, 0.18);
+    box-shadow: 0 0 14px 2px rgba(255, 225, 77, 0.6);
+  }
+}
+@keyframes iconGlyphPulse {
+  50% {
+    transform: scale(1.16);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .desktop-icon--blink,
+  .desktop-icon--blink .desktop-icon__glyph {
+    animation: none;
+  }
+  /* fortsatt synlig fremhevet uten bevegelse */
+  .desktop-icon--blink {
+    background: rgba(255, 225, 77, 0.16);
+  }
+}
+
+.start-doc__actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
 .desktop-icon--locked {
   cursor: not-allowed;
 }
@@ -299,63 +391,189 @@ textarea.field {
 }
 
 /* ===========================================================================
-   Instagram-app
+   Instagram-app — moderne stil (likner dagens app)
    =========================================================================== */
+/* Bleed til vinduskanten og hvit bakgrunn som ekte IG. */
 .ig {
-  max-width: 480px;
-  margin: 0 auto;
+  margin: -16px -16px 0;
+  background: #fff;
+  color: #000;
+  font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100%;
 }
-.ig__bar {
-  font-family: 'Segoe Script', cursive;
-  font-size: 1.4rem;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--shadow);
-  margin-bottom: 12px;
+.ig-ic {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+/* Topplinje med logo + handlingsikoner, festet øverst. */
+.ig__topbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #fff;
+  border-bottom: 1px solid #dbdbdb;
+}
+.ig__logo {
+  font-family: 'Segoe Script', 'Brush Script MT', cursive;
+  font-size: 1.55rem;
+  line-height: 1;
+}
+.ig__topicons {
+  display: flex;
+  gap: 18px;
+}
+
+/* Stories-rad */
+.ig__stories {
+  display: flex;
+  gap: 14px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  background: #fff;
+  border-bottom: 1px solid #dbdbdb;
+  scrollbar-width: none;
+}
+.ig__stories::-webkit-scrollbar {
+  display: none;
+}
+.ig-story {
+  flex: 0 0 auto;
+  width: 66px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.ig-story__ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+  display: grid;
+  place-items: center;
+}
+.ig-story__inner {
+  background: #fff;
+  border-radius: 50%;
+  padding: 2px;
+  display: grid;
+  place-items: center;
+}
+.ig-story__name {
+  font-size: 0.72rem;
+  max-width: 66px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Avatar-initial */
+.ig-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #555, #222);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.ig-avatar--sm {
+  width: 30px;
+  height: 30px;
+  font-size: 0.8rem;
+  border: 2px solid #fff;
+}
+
+/* Feed */
+.ig__feed {
+  max-width: 470px;
+  margin: 0 auto;
 }
 .ig-post {
   background: #fff;
-  box-shadow: var(--bevel-out);
-  margin-bottom: 16px;
+  border-bottom: 1px solid #efefef;
 }
 .ig-post__head {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  font-weight: bold;
-  font-size: 0.85rem;
+  gap: 10px;
+  padding: 9px 12px;
 }
-.ig-post__avatar {
-  width: 28px;
-  height: 28px;
+.ig-post__avatar-ring {
   border-radius: 50%;
-  background: var(--titlebar);
-  color: #fff;
+  padding: 2px;
+  background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
   display: grid;
   place-items: center;
-  font-size: 0.8rem;
+}
+.ig-post__author {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.ig-post__more {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  color: #000;
 }
 .ig-post__img {
   width: 100%;
   display: block;
-  background: #eee;
+  background: #efefef;
   aspect-ratio: 1 / 1;
   object-fit: cover;
 }
 .ig-post__img--placeholder {
   display: grid;
   place-items: center;
-  color: var(--shadow);
+  color: #8e8e8e;
   font-size: 0.85rem;
   text-align: center;
   padding: 1rem;
 }
+.ig-post__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px 2px;
+}
+.ig-post__actions-left {
+  display: flex;
+  gap: 14px;
+}
+.ig-post__actions .ig-ic {
+  cursor: pointer;
+}
 .ig-post__meta {
-  padding: 8px 10px 12px;
+  padding: 2px 14px 12px;
   font-size: 0.85rem;
 }
 .ig-post__likes {
-  font-weight: bold;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+.ig-post__caption {
+  line-height: 1.4;
+}
+.ig-post__time {
+  margin-top: 6px;
+  font-size: 0.68rem;
+  letter-spacing: 0.2px;
+  color: #8e8e8e;
+  text-transform: uppercase;
 }
 
 /* ===========================================================================
@@ -601,6 +819,97 @@ textarea.field {
   }
   .boot__cursor,
   .boot__granted {
+    animation: none;
+  }
+}
+
+/* ===========================================================================
+   Åsted-cinematic (8-bit POV-intro etter booten)
+   =========================================================================== */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+.intro--out {
+  opacity: 0;
+}
+.intro__canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* lar svarte kanter danne kino-letterbox */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.intro__title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16%;
+  text-align: center;
+  pointer-events: none;
+  font-family: 'Courier New', Courier, monospace;
+  animation: introTitleIn 0.5s ease-out both;
+}
+.intro__title-main {
+  font-size: clamp(26px, 9vw, 64px);
+  font-weight: bold;
+  letter-spacing: clamp(2px, 1.4vw, 8px);
+  color: #f4f2ea;
+  text-shadow: 0 0 6px rgba(214, 32, 40, 0.9), 3px 3px 0 #6a0c10;
+}
+.intro__title-sub {
+  margin-top: 6px;
+  font-size: clamp(11px, 3.4vw, 18px);
+  letter-spacing: 2px;
+  color: #c9c5b8;
+  text-shadow: 1px 1px 0 #000;
+}
+.intro__hint {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+.intro__hint--pulse {
+  color: rgba(255, 255, 255, 0.85);
+  animation: introHintPulse 1.2s ease-in-out infinite;
+}
+@keyframes introHintPulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro__hint--pulse {
+    animation: none;
+  }
+}
+@keyframes introTitleIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro__title {
     animation: none;
   }
 }

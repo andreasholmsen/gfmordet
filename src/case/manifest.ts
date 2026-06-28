@@ -99,9 +99,9 @@ export interface CaseManifest {
 //  EKSEMPELINNHOLD — bytt ut med din egen sak.
 // ----------------------------------------------------------------------------
 export const CASE: CaseManifest = {
-  title: 'Mordet på Angela',
+  title: 'GF-mordet',
   intro:
-    'Angela Berg ble funnet død i sitt eget hjem. Politiet trenger din hjelp. ' +
+    'Angela Liu ble funnet død på festlokalet lørdag kveld på GF 2026. Politiet trenger din hjelp. ' +
     'Nye bevis slippes hver dag — studer mappene, følg sporene, og svar på dagens spørsmål i POLITI-appen.',
 
   days: [
@@ -116,9 +116,9 @@ export const CASE: CaseManifest = {
           kind: 'markdown',
           inline:
             '# Politirapport — sak 24-0617\n\n' +
-            '**Avdøde:** Angela Berg (34)\n\n' +
-            '**Funnsted:** Hjemmet i Storgata 14, kjøkkenet.\n\n' +
-            'Avdøde ble funnet av naboen kl. 08:20. Ingen tegn til innbrudd. ' +
+            '**Avdøde:** Angela Liu (34)\n\n' +
+            '**Funnsted:** Middagslokalet på GF etter bankettmiddag lørdag kveld\n\n' +
+            'Avdøde ble funnet av naboen kl. 23:20. Ingen andre var til stede. ' +
             'Fire personer var i nærheten kvelden før. Alle har avgitt forklaring (se egne dokumenter).',
         },
         {

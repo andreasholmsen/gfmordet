@@ -1,4 +1,4 @@
-# Mordmysteriet 🕵️
+# GF-mordet 🕵️
 
 En retro "gammel PC"-nettside for å distribuere et murder mystery-case til ~100 spillere
 over 4 dager. Mobil-først, hostet gratis på **GitHub Pages**, med stemming/gjetning lagret i
