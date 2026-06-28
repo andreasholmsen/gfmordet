@@ -336,20 +336,22 @@ export default function CrimeSceneIntro({ onDone }: { onDone: () => void }) {
       } else if (elapsed <= T.flash) {
         const d = corridor(1, bobX, bobY)
         openingDoor(d, 1)
+        // overeksponert blink ved dørterskelen. Ved redusert bevegelse dempes
+        // det til en mild dis (ingen blendende blink) — men scenen spilles.
         const a = ease((elapsed - T.open) / (T.flash - T.open))
-        g.fillStyle = `rgba(255,236,200,${a})`
+        g.fillStyle = `rgba(255,236,200,${reduce ? a * 0.25 : a})`
         g.fillRect(0, 0, VW, VH)
       } else {
         const push = (elapsed - T.reveal) / (T.push - T.reveal)
         room(push)
-        // ton inn fra det varme blinket
+        // ton inn fra det varme blinket (dempet ved redusert bevegelse)
         if (elapsed < T.reveal) {
           const a = 1 - ease((elapsed - T.flash) / (T.reveal - T.flash))
-          g.fillStyle = `rgba(255,236,200,${a})`
+          g.fillStyle = `rgba(255,236,200,${reduce ? a * 0.25 : a})`
           g.fillRect(0, 0, VW, VH)
         }
-        // rød sjokk-puls ved stingen
-        if (elapsed >= T.push) {
+        // rød sjokk-puls ved stingen — hoppes helt over ved redusert bevegelse
+        if (!reduce && elapsed >= T.push) {
           const p = (elapsed - T.push) / (T.sting - T.push)
           const a = Math.max(0, 0.5 * (1 - p))
           g.fillStyle = `rgba(150,10,16,${a})`
@@ -362,12 +364,10 @@ export default function CrimeSceneIntro({ onDone }: { onDone: () => void }) {
       for (let y = 0; y < VH; y += 2) g.fillRect(0, y, VW, 1)
     }
 
-    // ---- redusert bevegelse: ett stille, statisk slutt-bilde, venter på klikk
-    if (reduce) {
-      frame(END)
-      setShowTitle(true)
-      return
-    }
+    // Merk: tidligere hoppet vi rett til et statisk slutt-bilde ved redusert
+    // bevegelse. Men mobiler i strømsparingsmodus (iOS Low Power Mode) tvinger
+    // på prefers-reduced-motion, så cinematicen ble aldri vist. Nå spilles
+    // animasjonen for alle — de harde blinkene dempes/utelates over (se `frame`).
 
     // ---- animasjonsløkke ----------------------------------------------------
     const start = performance.now()
