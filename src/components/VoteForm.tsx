@@ -2,6 +2,9 @@ import { useState } from 'react'
 import type { DayContent } from '../case/manifest'
 import { submitVote } from '../lib/supabase'
 import type { Player } from '../lib/player'
+import { saveMyVote } from '../lib/votes'
+import { sfx } from '../lib/sfx'
+import { assetUrl } from '../lib/assets'
 
 export default function VoteForm({ day, player }: { day: DayContent; player: Player }) {
   const q = day.question!
@@ -27,16 +30,21 @@ export default function VoteForm({ day, player }: { day: DayContent; player: Pla
     e.preventDefault()
     setError(null)
     setStatus('sending')
+    const myChoice = q.type === 'free_text' ? null : choice
+    const myFreeText = showFreeText ? text.trim() : null
     try {
       await submitVote({
         day: day.day,
         playerId: player.playerId,
         name: player.displayName,
-        choice: q.type === 'free_text' ? null : choice,
-        freeText: showFreeText ? text.trim() : null,
+        choice: myChoice,
+        freeText: myFreeText,
       })
+      saveMyVote(day.day, { choice: myChoice, freeText: myFreeText })
+      sfx.success()
       setStatus('done')
     } catch (err) {
+      sfx.error()
       setStatus('idle')
       setError(err instanceof Error ? err.message : 'Noe gikk galt. Prøv igjen.')
     }
@@ -58,22 +66,30 @@ export default function VoteForm({ day, player }: { day: DayContent; player: Pla
     <form onSubmit={handleSubmit}>
       <p className="police__question">{q.prompt}</p>
 
-      {(q.type === 'multiple_choice' || q.type === 'mc_with_other') && (
-        <ul className="choice-list">
-          {q.options.map((opt) => (
-            <li key={opt.id}>
-              <label className={`choice ${choice === opt.id ? 'choice--selected' : ''}`}>
-                <input
-                  type="radio"
-                  name={`q-${day.day}`}
-                  value={opt.id}
-                  checked={choice === opt.id}
-                  onChange={() => setChoice(opt.id)}
-                />
-                {opt.label}
-              </label>
-            </li>
-          ))}
+      {(q.type === 'multiple_choice' || q.type === 'mc_with_other' || q.type === 'image_choice') && (
+        <ul className={`choice-list ${q.type === 'image_choice' ? 'choice-list--images' : ''}`}>
+          {q.options.map((opt) => {
+            const img = 'img' in opt ? opt.img : undefined
+            return (
+              <li key={opt.id}>
+                <label
+                  className={`choice ${img ? 'choice--image' : ''} ${
+                    choice === opt.id ? 'choice--selected' : ''
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name={`q-${day.day}`}
+                    value={opt.id}
+                    checked={choice === opt.id}
+                    onChange={() => setChoice(opt.id)}
+                  />
+                  {img && <img className="choice__img" src={assetUrl(img)} alt={opt.label} />}
+                  <span className="choice__label">{opt.label}</span>
+                </label>
+              </li>
+            )
+          })}
         </ul>
       )}
 

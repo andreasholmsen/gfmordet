@@ -20,6 +20,29 @@ export interface ResultRow {
   n: number
 }
 
+export interface Schedule {
+  /** release-tidspunkt (ms siden epoch) per dag */
+  releaseAt: Record<number, number>
+  /** serverens nå-tid minus klientens nå-tid (ms) — korrigerer for feil telefonklokke */
+  offsetMs: number
+}
+
+/** Tidsplan for nedtelling. Null i demo-modus eller hvis RPC-en ikke finnes
+ *  ennå (da skjuler oppgavelinjen bare nedtellingen — ingen feil). */
+export async function getSchedule(): Promise<Schedule | null> {
+  if (!supabase) return null
+  const { data, error } = await supabase.rpc('get_schedule')
+  if (error || !data || (data as unknown[]).length === 0) {
+    if (error) console.warn('get_schedule (kjør 0002_schedule.sql?)', error.message)
+    return null
+  }
+  const rows = data as { day: number; release_at: string; server_now: string }[]
+  const releaseAt: Record<number, number> = {}
+  for (const r of rows) releaseAt[r.day] = new Date(r.release_at).getTime()
+  const offsetMs = new Date(rows[0].server_now).getTime() - Date.now()
+  return { releaseAt, offsetMs }
+}
+
 /** Hvilke dager er åpne akkurat nå (serveren bestemmer ut fra now()). */
 export async function getUnlockedDays(): Promise<number[]> {
   if (!supabase) return [1, 2, 3, 4] // demo-modus: alt åpent

@@ -1,6 +1,10 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CASE } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
+import { sfx } from '../lib/sfx'
+import ContextMenu, { type MenuItem } from './ContextMenu'
+import Dialog from './Dialog'
 
 interface IconDef {
   label: string
@@ -14,7 +18,11 @@ function DesktopIcon({ icon }: { icon: IconDef }) {
   return (
     <button
       className={`desktop-icon ${icon.locked ? 'desktop-icon--locked' : ''}`}
-      onClick={() => !icon.locked && navigate(icon.to)}
+      onClick={() => {
+        if (icon.locked) return
+        sfx.click()
+        navigate(icon.to)
+      }}
       aria-disabled={icon.locked}
     >
       <span className="desktop-icon__glyph" aria-hidden>
@@ -25,8 +33,12 @@ function DesktopIcon({ icon }: { icon: IconDef }) {
   )
 }
 
+type DialogKind = 'about' | 'recycle' | null
+
 export default function Desktop() {
-  const { isUnlocked, loading, demo } = useUnlock()
+  const { isUnlocked, loading, demo, refresh } = useUnlock()
+  const [menu, setMenu] = useState<{ x: number; y: number } | null>(null)
+  const [dialog, setDialog] = useState<DialogKind>(null)
 
   const dayIcons: IconDef[] = CASE.days.map((d) => ({
     label: d.title,
@@ -39,9 +51,26 @@ export default function Desktop() {
     { label: 'Instagram', glyph: '📷', to: '/instagram' },
     { label: 'POLITI', glyph: '🚓', to: '/politi' },
   ]
+  if (CASE.suspects && CASE.suspects.length > 0) {
+    appIcons.push({ label: 'Mistenkte', glyph: '📌', to: '/mistenkte' })
+  }
+  appIcons.push({ label: 'Minesveiper', glyph: '💣', to: '/spill/minesveiper' })
+
+  const menuItems: MenuItem[] = [
+    { label: 'Oppdater', onClick: () => refresh() },
+    { label: 'Tøm papirkurv', onClick: () => setDialog('recycle'), separator: true },
+    { label: 'Om denne PC-en', onClick: () => setDialog('about'), separator: true },
+  ]
 
   return (
-    <div className="desktop">
+    <div
+      className="desktop"
+      onContextMenu={(e) => {
+        e.preventDefault()
+        sfx.click()
+        setMenu({ x: e.clientX, y: e.clientY })
+      }}
+    >
       <header className="desktop__header">
         <h1>{CASE.title}</h1>
         <p>{CASE.intro}</p>
@@ -61,6 +90,34 @@ export default function Desktop() {
           <DesktopIcon key={icon.to} icon={icon} />
         ))}
       </div>
+
+      {menu && (
+        <ContextMenu x={menu.x} y={menu.y} items={menuItems} onClose={() => setMenu(null)} />
+      )}
+
+      {dialog === 'about' && (
+        <Dialog title="Om denne PC-en" icon="🖥️" onClose={() => setDialog(null)}>
+          <p>
+            <strong>POLITIET // SAKSSYSTEM v3.7</strong>
+          </p>
+          <p>
+            Sikkert terminalmiljø for etterforskning. Bevismateriale slippes dag for dag. Alle
+            handlinger logges (på liksom 😉).
+          </p>
+          <p style={{ color: 'var(--shadow)' }}>
+            Bygget med kaffe og altfor lite søvn. Lykke til, etterforsker.
+          </p>
+        </Dialog>
+      )}
+
+      {dialog === 'recycle' && (
+        <Dialog title="Papirkurv" icon="🗑️" onClose={() => setDialog(null)}>
+          <p>Papirkurven er allerede tom.</p>
+          <p style={{ color: 'var(--shadow)' }}>
+            (Bevis kastes aldri i denne saken — alt kan bli viktig.)
+          </p>
+        </Dialog>
+      )}
     </div>
   )
 }

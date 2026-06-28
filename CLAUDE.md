@@ -30,6 +30,9 @@ egen retro-CSS. Hostet på GitHub Pages fra det private repoet `andreasholmsen/g
    - `VITE_SUPABASE_ANON_KEY` = `sb_publishable_IopLphzZsKoJCpL3VFtaOA_-d0WoXVr`
 3. **Re-kjør deploy:** Actions → "Deploy til GitHub Pages" → Run workflow (eller push).
    Da forsvinner demo-banneret og siden bruker ekte data.
+4. **(Valgfritt, for nedtelling i oppgavelinjen)** Kjør `supabase/migrations/0002_schedule.sql`
+   i SQL Editor. Den legger til RPC-en `get_schedule` som oppgavelinjen bruker til å vise
+   «Dag N åpner om HH:MM:SS». Trygt/additivt. Uten den skjules bare nedtellingen (ingen feil).
 
 ## Datoer / tidsplan (settes i Supabase `case_config`, IKKE i koden)
 
@@ -54,9 +57,11 @@ skjer når neste dag slippes.
   - Trygg å eksponere i frontend — RLS er på, og kun de fire RPC-ene er tilgjengelige.
   - **Aldri** legg `service_role`/secret-nøkkelen i frontend eller repoet.
 - **Sikkerhetsmodell:** RLS er på alle tabeller, og det finnes INGEN anon-policies for
-  direkte tabelltilgang. Alt går via fire `SECURITY DEFINER`-RPC-er som håndhever server-tid:
-  `get_unlocked_days`, `submit_vote`, `get_results`, `get_free_text`. Verifisert at direkte
-  `select` på `votes`/`case_config` med anon-nøkkel returnerer tomt.
+  direkte tabelltilgang. Alt går via `SECURITY DEFINER`-RPC-er som håndhever server-tid:
+  `get_unlocked_days`, `submit_vote`, `get_results`, `get_free_text` (0001) + valgfri
+  `get_schedule` (0002, kun release-/results-tidspunkt for nedtellingen — ingen juksevei,
+  selve låsen håndheves fortsatt av `now()`). Verifisert at direkte `select` på
+  `votes`/`case_config` med anon-nøkkel returnerer tomt.
 - **Tidslås:** all opplåsing/stemming/resultat-frigjøring bestemmes av `now()` server-side,
   så det kan ikke jukses ved å endre klokka på telefonen.
 - Gratis-tier pauser etter 7 dager uten aktivitet — ikke et problem under spillet, men sett
@@ -82,21 +87,33 @@ skjer når neste dag slippes.
 
 ## Filkart (de viktigste)
 
-- `src/case/manifest.ts` — alt innhold (rediger her).
-- `src/App.tsx` — ruter (HashRouter): `/`, `/dag/:day`, `/instagram`, `/politi`.
-- `src/components/Desktop.tsx` — skrivebord med ikon-grid + låsestatus.
+- `src/case/manifest.ts` — alt innhold (rediger her). Inkl. `suspects` (Mistenkte-tavla) og
+  spørsmålstypen `image_choice` (bildevalg).
+- `src/App.tsx` — ruter (HashRouter): `/`, `/dag/:day`, `/instagram`, `/politi`, `/mistenkte`,
+  `/spill/minesveiper`. Pakker appen i `SettingsProvider` + `UnlockProvider`, viser `Taskbar`.
+- `src/components/Desktop.tsx` — skrivebord med ikon-grid + låsestatus + høyreklikk-meny
+  (`ContextMenu`) og «Om denne PC-en»-dialog (`Dialog`).
+- `src/components/Taskbar.tsx` — vedvarende oppgavelinje: klokke, nedtelling til neste dag
+  (via `get_schedule`, skjult uten den), lyd av/på-knapp.
 - `src/components/AppWindow.tsx` — retro fullskjerm-vindu (tittellinje + lukk). `variant`-prop
-  ('folder' | 'instagram' | 'police') styrer åpne/lukke-animasjon + tema. Lukkeknappen spiller
-  exit-animasjon før navigasjon. POLITI-vinduet har eget mørkt terminal-tema (scoped `.window--police`).
-- `src/components/BootScreen.tsx` — terminal boot-animasjon ved sidelasting.
+  ('folder' | 'instagram' | 'police') styrer åpne/lukke-animasjon + tema. Spiller lyd ved
+  åpne/lukke. POLITI-vinduet har eget mørkt terminal-tema (scoped `.window--police`).
+- `src/components/BootScreen.tsx` — terminal boot-animasjon ved sidelasting (med lyd-blip).
 - `src/components/DayFolder.tsx` + `DocView.tsx` — mappe + bilde/PDF/markdown-visere.
+  `Markdown.tsx` ruter relative bilde-stier gjennom `assetUrl` (![..](case/..) virker inline).
 - `src/components/InstagramApp.tsx` — falsk IG-feed.
+- `src/components/SuspectBoard.tsx` — «Mistenkte»-korktavle (vises kun når `suspects` finnes).
+- `src/components/Minesveiper.tsx` — lite frittstående minesveiper-spill (påskeegg).
+- `src/components/Dialog.tsx` + `ContextMenu.tsx` — gjenbrukbar modal + høyreklikk-meny.
 - `src/components/PoliceApp.tsx` + `VoteForm.tsx` + `ResultsView.tsx` + `NamePrompt.tsx` — POLITI-app.
-- `src/lib/supabase.ts` — klient + RPC-wrappere (faller til demo-modus uten env).
+  `ResultsView` animerer barene og viser «du stemte som X %» (egen stemme lagres lokalt).
+- `src/lib/supabase.ts` — klient + RPC-wrappere (faller til demo-modus uten env), inkl. `getSchedule`.
 - `src/lib/UnlockContext.tsx` — henter åpne dager fra serveren.
-- `src/lib/player.ts` — localStorage-identitet (navn + uuid, én stemme per dag per enhet).
-- `src/styles/retro.css` — hele retro-temaet.
+- `src/lib/SettingsContext.tsx` — lyd-demping (localStorage). `src/lib/sfx.ts` — WebAudio-lyder.
+- `src/lib/player.ts` — localStorage-identitet. `src/lib/votes.ts` — egen stemme per dag (lokalt).
+- `src/styles/retro.css` — hele retro-temaet (inkl. oppgavelinje, tavle, spill, dialoger).
 - `supabase/migrations/0001_init.sql` — skjema, RLS, 4 RPC-er, seed-datoer.
+- `supabase/migrations/0002_schedule.sql` — valgfri `get_schedule`-RPC for nedtellingen.
 - `.github/workflows/deploy.yml` — Pages-deploy (trenger de to repo-secrets).
 
 ## Mulige videre oppgaver (ikke gjort ennå)

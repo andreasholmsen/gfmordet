@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { sfx } from '../lib/sfx'
 
 // Full-skjerms "terminal som booter politisystemet"-animasjon. Vises hver gang
 // siden lastes/oppdateres (App monteres på nytt), men IKKE ved intern navigasjon.
@@ -31,8 +32,14 @@ export default function BootScreen({ onDone }: { onDone: () => void }) {
   }
 
   useEffect(() => {
-    LINES.forEach((_, i) => {
-      timers.current.push(window.setTimeout(() => setShown(i + 1), STEP_MS * (i + 1)))
+    LINES.forEach((line, i) => {
+      timers.current.push(
+        window.setTimeout(() => {
+          setShown(i + 1)
+          if (line === 'TILGANG INNVILGET') sfx.granted()
+          else sfx.beep()
+        }, STEP_MS * (i + 1)),
+      )
     })
     const endAt = STEP_MS * LINES.length + HOLD_MS
     timers.current.push(window.setTimeout(() => setFading(true), endAt))

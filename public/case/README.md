@@ -11,5 +11,35 @@ Legg filene dine her, og pek på dem fra `src/case/manifest.ts` (uten `public/`-
 Tekstdokumenter kan enten skrives rett i manifestet (`inline: '...'`) eller legges
 som `.md`/`.html`-fil her og pekes på med `src`.
 
+## Bilder inni tekst (markdown)
+
+Du kan blande tekst og bilder i ett og samme dokument. Skriv vanlig markdown-bilde
+med en relativ sti (uten `public/`), så får det automatisk riktig adresse:
+
+```
+![Åstedsskisse](case/dag1/skisse.jpg)
+```
+
+## Mistenkte-tavla
+
+Fyll inn `suspects: [...]` i manifestet (id, navn, rolle, valgfritt `img`, `status`
+og markdown-`notes`). Da dukker en «Mistenkte»-app opp på skrivebordet. Bilder legges
+f.eks. i `case/mistenkte/per.jpg`. Uten `img` vises initialene.
+
+## Bildevalg-spørsmål (image_choice)
+
+Et flervalg der hvert alternativ kan ha et bilde:
+
+```
+question: {
+  type: 'image_choice',
+  prompt: 'Hvilket våpen ble brukt?',
+  options: [
+    { id: 'kniv', label: 'Kniv', img: 'case/dag3/kniv.jpg' },
+    { id: 'gift', label: 'Gift', img: 'case/dag3/gift.jpg' },
+  ],
+}
+```
+
 Tips: bruk gjerne litt kryptiske filnavn på senere dagers filer (f.eks.
 `case/dag3/8f2a-brev.jpg`) så ingen gjetter URL-en før dagen er åpnet.

@@ -15,6 +15,7 @@
   --titlebar-text: #ffffff;
   --text: #000000;
   --link: #0000ff;
+  --taskbar-h: 36px; /* høyde på oppgavelinjen nederst */
   --font: 'MS Sans Serif', 'Segoe UI', Tahoma, system-ui, sans-serif;
 
   /* Beveled border – "hevet" (knapper, vinduer) */
@@ -104,7 +105,7 @@ textarea.field {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: env(safe-area-inset-top) 0 0 0;
+  padding: env(safe-area-inset-top) 0 calc(var(--taskbar-h) + env(safe-area-inset-bottom)) 0;
 }
 
 .desktop__header {
@@ -179,7 +180,8 @@ textarea.field {
    =========================================================================== */
 .window {
   position: fixed;
-  inset: 0;
+  /* La oppgavelinjen være synlig nederst. */
+  inset: 0 0 calc(var(--taskbar-h) + env(safe-area-inset-bottom)) 0;
   display: flex;
   flex-direction: column;
   background: var(--surface);
@@ -413,6 +415,22 @@ textarea.field {
 .result-bar__fill {
   height: 100%;
   background: var(--titlebar);
+  transition: width 0.7s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.result-row--mine .result-bar__fill {
+  background: #1084d0;
+}
+.result-row--top .result-row__label {
+  font-weight: bold;
+}
+.result-row--mine .result-row__label {
+  color: #00006b;
+}
+.result-row__you {
+  font-style: italic;
+}
+.results__mine-note {
+  margin-bottom: 10px;
 }
 
 .notice {
@@ -833,4 +851,379 @@ textarea.field {
 }
 .window--police .result-bar__fill {
   background: linear-gradient(90deg, #1f9c40, #5cff8a);
+}
+
+/* ===========================================================================
+   Oppgavelinje (Win95-aktig, nederst)
+   =========================================================================== */
+.taskbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--taskbar-h) + env(safe-area-inset-bottom));
+  padding: 3px 6px calc(3px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  box-shadow: var(--bevel-out);
+  z-index: 50;
+}
+.taskbar__start {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 45%;
+  background: var(--surface);
+  box-shadow: var(--bevel-out);
+  border: none;
+  padding: 4px 10px;
+  font-weight: bold;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.taskbar__start:active {
+  box-shadow: var(--bevel-in);
+}
+.taskbar__status {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  padding: 4px 6px;
+  box-shadow: var(--bevel-in);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.taskbar__countdown {
+  font-weight: bold;
+}
+.taskbar__mute {
+  background: var(--surface);
+  box-shadow: var(--bevel-out);
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.taskbar__mute:active {
+  box-shadow: var(--bevel-in);
+}
+.taskbar__clock {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  box-shadow: var(--bevel-in);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===========================================================================
+   Høyreklikk-meny
+   =========================================================================== */
+.ctx-menu {
+  position: fixed;
+  z-index: 300;
+  list-style: none;
+  margin: 0;
+  padding: 2px;
+  min-width: 180px;
+  background: var(--surface);
+  box-shadow: var(--bevel-out);
+}
+.ctx-menu__item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.ctx-menu__item:hover,
+.ctx-menu__item:focus-visible {
+  background: var(--titlebar);
+  color: var(--titlebar-text);
+  outline: none;
+}
+.ctx-menu__sep {
+  border-top: 1px solid var(--shadow);
+  margin-top: 2px;
+  padding-top: 2px;
+}
+
+/* ===========================================================================
+   Dialog (modal)
+   =========================================================================== */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.35);
+}
+.dialog {
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  box-shadow: var(--bevel-out);
+  display: flex;
+  flex-direction: column;
+}
+.dialog__body {
+  padding: 16px;
+  font-size: 0.9rem;
+}
+.dialog__body p {
+  margin: 0 0 10px;
+}
+.dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 16px 16px;
+}
+
+/* ===========================================================================
+   Bildevalg (image_choice) + markdown-bilder
+   =========================================================================== */
+.markdown img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 10px 0;
+  box-shadow: var(--bevel-in);
+}
+.choice-list--images {
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+.choice--image {
+  flex-direction: column;
+  align-items: stretch;
+  text-align: center;
+  gap: 6px;
+}
+.choice--image .choice__img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  box-shadow: var(--bevel-in);
+}
+.choice--image input {
+  align-self: center;
+}
+
+/* ===========================================================================
+   Mistenkte-tavle (korktavle)
+   =========================================================================== */
+.suspect-board {
+  padding: 6px 2px;
+  background: #b07d4f;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+  background-size: 8px 8px;
+  min-height: 100%;
+}
+.suspect-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 18px;
+  padding: 8px;
+}
+.suspect {
+  position: relative;
+  background: #fffef7;
+  padding: 12px 12px 14px;
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.35);
+  transform: rotate(-1.2deg);
+}
+.suspect:nth-child(even) {
+  transform: rotate(1.5deg);
+}
+.suspect__pin {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff6b6b, #b00000);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+.suspect__photo {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #dcdcd0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  margin-bottom: 8px;
+  box-shadow: var(--bevel-in);
+}
+.suspect__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.4) contrast(1.05);
+}
+.suspect__initials {
+  font-size: 2.4rem;
+  font-weight: bold;
+  color: #6b6b5e;
+}
+.suspect__stamp {
+  position: absolute;
+  bottom: 8px;
+  right: -6px;
+  transform: rotate(-8deg);
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border: 2px solid currentColor;
+  border-radius: 3px;
+  opacity: 0.85;
+}
+.suspect__stamp--mistenkt {
+  color: #b00000;
+}
+.suspect__stamp--renvasket {
+  color: #1f7a1f;
+}
+.suspect__stamp--ukjent {
+  color: #555;
+}
+.suspect__name {
+  margin: 0;
+  font-size: 1rem;
+}
+.suspect__role {
+  margin: 2px 0 6px;
+  font-size: 0.8rem;
+  color: var(--shadow);
+}
+.suspect__notes {
+  font-size: 0.8rem;
+}
+.suspect__notes p {
+  margin: 0;
+}
+
+/* ===========================================================================
+   Minesveiper
+   =========================================================================== */
+.mine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.mine__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  max-width: 320px;
+  padding: 6px 8px;
+  box-shadow: var(--bevel-in);
+}
+.mine__count {
+  font-family: monospace;
+  font-weight: bold;
+  background: #000;
+  color: #f33;
+  padding: 2px 8px;
+}
+.mine__face {
+  font-size: 1.3rem;
+  background: var(--surface);
+  box-shadow: var(--bevel-out);
+  border: none;
+  width: 40px;
+  height: 36px;
+  cursor: pointer;
+}
+.mine__face:active {
+  box-shadow: var(--bevel-in);
+}
+.mine__flag-toggle {
+  background: var(--surface);
+  box-shadow: var(--bevel-out);
+  border: none;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.mine__flag-toggle.is-active {
+  box-shadow: var(--bevel-in);
+  font-weight: bold;
+}
+.mine__grid {
+  display: inline-flex;
+  flex-direction: column;
+  box-shadow: var(--bevel-in);
+  padding: 3px;
+  background: var(--surface);
+}
+.mine__row {
+  display: flex;
+}
+.mine__cell {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  box-shadow: var(--bevel-out);
+  border: none;
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0;
+}
+.mine__cell.is-revealed {
+  box-shadow: inset 0 0 0 1px var(--shadow);
+  background: var(--surface-light);
+  cursor: default;
+}
+.mine__cell.n1 {
+  color: #0000ff;
+}
+.mine__cell.n2 {
+  color: #007a00;
+}
+.mine__cell.n3 {
+  color: #d00000;
+}
+.mine__cell.n4 {
+  color: #000080;
+}
+.mine__cell.n5 {
+  color: #800000;
+}
+.mine__cell.n6 {
+  color: #008080;
+}
+.mine__cell.n7 {
+  color: #000;
+}
+.mine__cell.n8 {
+  color: #808080;
+}
+.mine__hint {
+  text-align: center;
+  color: var(--shadow);
+}
+
+/* Redusert bevegelse: ingen bar-/vindusanimasjon utover fade. */
+@media (prefers-reduced-motion: reduce) {
+  .result-bar__fill {
+    transition: none;
+  }
 }

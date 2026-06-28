@@ -49,6 +49,24 @@ export type Question =
       otherOptionId: string // hvilket alternativ som åpner fritekstfeltet
       otherPlaceholder?: string
     }
+  | {
+      // Som multiple_choice, men hvert alternativ kan ha et bilde (vises som
+      // klikkbare bildekort). Lagres likt som flervalg (choice = option.id).
+      type: 'image_choice'
+      prompt: string
+      options: { id: string; label: string; img?: string }[]
+    }
+
+/** En person i saken — vises på «Mistenkte»-tavla. */
+export interface Suspect {
+  id: string
+  name: string
+  role: string // 'Nabo', 'Eks-kjæreste', …
+  img?: string // 'case/mistenkte/per.jpg' (valgfritt — initialer vises ellers)
+  status?: 'mistenkt' | 'renvasket' | 'ukjent'
+  /** Korte etterforskningsnotater (markdown). */
+  notes?: string
+}
 
 export interface DayContent {
   day: 1 | 2 | 3 | 4
@@ -66,6 +84,8 @@ export interface CaseManifest {
   intro: string
   days: DayContent[]
   instagram: InstagramPost[]
+  /** Personene i saken (valgfritt) — vises på «Mistenkte»-tavla. */
+  suspects?: Suspect[]
   /** Dag 4: fasit og konklusjon. */
   solution: {
     killerId: string // bør matche en option-id fra dag 3
@@ -208,6 +228,34 @@ export const CASE: CaseManifest = {
       author: 'kari.lund',
       likes: 12,
       postedLabel: 'for 3 timer siden',
+    },
+  ],
+
+  suspects: [
+    {
+      id: 'kari',
+      name: 'Kari Lund',
+      role: 'Nabo',
+      status: 'mistenkt',
+      notes:
+        'Hevder hun la seg kl. 23.30 og ikke hørte noe. Bor vegg-i-vegg — burde ha hørt mer. ' +
+        'Hadde en uoppgjort konflikt med Angela om et felles gjerde.',
+    },
+    {
+      id: 'per',
+      name: 'Per Haug',
+      role: 'Eks-kjæreste',
+      status: 'mistenkt',
+      notes:
+        'Sier han snakket med Angela på telefon kl. 22. Telefonloggen er ikke sjekket ennå. ' +
+        'Arbeider i helsevesenet — tilgang til legemidler.',
+    },
+    {
+      id: 'thomas',
+      name: 'Thomas Berg',
+      role: 'Bror',
+      status: 'ukjent',
+      notes: 'Skal ha vært på hytta, men ingen kan bekrefte det. Arvet huset etter Angela.',
     },
   ],
 
