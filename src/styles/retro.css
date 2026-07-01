@@ -209,6 +209,18 @@ textarea.field {
   line-height: 1;
   padding-bottom: 2px;
 }
+/* Angelas mappe-ikon: pastellflis med blomst */
+.angela-glyph {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ffd6e8, #e6d6ff);
+  box-shadow: inset 0 0 0 2px #fff, 0 1px 3px rgba(0, 0, 0, 0.25);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  line-height: 1;
+}
 /* «START HER» blinker til den åpnes første gang. */
 .desktop-icon--blink {
   border-radius: 6px;
@@ -577,6 +589,159 @@ textarea.field {
 }
 
 /* ===========================================================================
+   LinkedIn-app (falsk plattform)
+   =========================================================================== */
+.li {
+  margin: -16px -16px 0;
+  background: #f4f2ee;
+  color: #000;
+  font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100%;
+}
+.li-ic {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.li__topbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  background: #fff;
+  border-bottom: 1px solid #dbdbdb;
+}
+.li__logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #0a66c2;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1;
+  padding-bottom: 2px;
+}
+.li__search {
+  flex: 1;
+  background: #edf3f8;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 0.85rem;
+  color: #666;
+}
+.li__feed {
+  max-width: 550px;
+  margin: 0 auto;
+  padding: 12px 8px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.li-post {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 12px 16px 6px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  text-decoration: none;
+  width: 100%;
+  display: block;
+}
+.li-post--link {
+  cursor: pointer;
+}
+.li-post--link:hover {
+  background: #f8fafd;
+}
+.li-post__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.li-avatar {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0a66c2, #004182);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.li-post__who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.li-post__author {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.li-post__title {
+  font-size: 0.75rem;
+  color: #666;
+}
+.li-post__time {
+  font-size: 0.72rem;
+  color: #8e8e8e;
+}
+.li-post__text {
+  margin: 10px 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+.li-post__img {
+  width: calc(100% + 32px);
+  margin: 0 -16px;
+  display: block;
+  background: #e6e6e6;
+  max-height: 420px;
+  object-fit: cover;
+}
+.li-post__img--placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+  color: #8e8e8e;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 1rem;
+}
+.li-post__stats {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 0.75rem;
+  color: #666;
+  border-bottom: 1px solid #e6e6e6;
+}
+.li-post__actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 4px 0;
+}
+.li-post__action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #666;
+}
+
+/* ===========================================================================
    POLITI-app
    =========================================================================== */
 .police h2 {
@@ -922,10 +1087,14 @@ textarea.field {
 }
 
 /* Mapper: retro "zoom" med et lite hopp */
-.window--folder {
+.window--folder,
+.window--angela,
+.window--excel {
   animation: winFolderOpen 0.27s cubic-bezier(0.2, 0.8, 0.3, 1.25) both;
 }
-.window--folder.window--closing {
+.window--folder.window--closing,
+.window--angela.window--closing,
+.window--excel.window--closing {
   animation: winFolderClose 0.25s ease-in both;
 }
 @keyframes winFolderOpen {
@@ -954,6 +1123,13 @@ textarea.field {
   animation: winSheetUp 0.31s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .window--instagram.window--closing {
+  animation: winSheetDown 0.27s ease-in both;
+}
+/* LinkedIn: samme "app-ark"-følelse som Instagram */
+.window--linkedin {
+  animation: winSheetUp 0.31s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.window--linkedin.window--closing {
   animation: winSheetDown 0.27s ease-in both;
 }
 @keyframes winSheetUp {
@@ -1021,6 +1197,9 @@ textarea.field {
 @media (prefers-reduced-motion: reduce) {
   .window--folder,
   .window--instagram,
+  .window--linkedin,
+  .window--angela,
+  .window--excel,
   .window--police {
     animation: winFade 0.18s ease both;
   }
@@ -1160,6 +1339,265 @@ textarea.field {
 }
 .window--police .result-bar__fill {
   background: linear-gradient(90deg, #1f9c40, #5cff8a);
+}
+
+/* ===========================================================================
+   Offerets filer — mykt, fargerikt pastelltema (motsats til det grå/mørke)
+   =========================================================================== */
+.window--angela {
+  box-shadow: var(--bevel-out), 0 0 0 2px #f4b6d6;
+}
+.window--angela .titlebar {
+  background: linear-gradient(135deg, #ffd6e8, #e6d6ff);
+  color: #5b3a5b;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.window--angela .titlebar__close {
+  background: #fff0f6;
+  color: #5b3a5b;
+}
+.window--angela .window__body {
+  background: linear-gradient(180deg, #fff5fa, #f3ecff);
+  color: #4a3a4a;
+}
+.window--angela .intro-note {
+  color: #7a5c74;
+  font-style: italic;
+}
+/* Runde, fargerike kort i stedet for de grå bevel-flisene */
+.window--angela .doc-tile {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(150, 90, 140, 0.18);
+  border: 1px solid #f4d3e6;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.window--angela .doc-tile:nth-child(3n + 1) {
+  background: linear-gradient(180deg, #fff, #fff0f6);
+}
+.window--angela .doc-tile:nth-child(3n + 2) {
+  background: linear-gradient(180deg, #fff, #f1ecff);
+}
+.window--angela .doc-tile:nth-child(3n) {
+  background: linear-gradient(180deg, #fff, #eafaf3);
+}
+.window--angela .doc-tile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 14px rgba(150, 90, 140, 0.28);
+}
+.window--angela .doc-tile:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(150, 90, 140, 0.18);
+}
+.window--angela .doc-tile__title {
+  color: #7a4f6e;
+  font-weight: 600;
+}
+/* Rund, pastellfarget tilbake-knapp */
+.window--angela .btn {
+  background: #ffe3f0;
+  border-radius: 999px;
+  box-shadow: 0 2px 4px rgba(150, 90, 140, 0.2);
+  color: #7a4f6e;
+  font-weight: 600;
+}
+.window--angela .btn:active {
+  box-shadow: 0 1px 2px rgba(150, 90, 140, 0.25);
+  padding: 10px 16px;
+  transform: translateY(1px);
+}
+
+/* ===========================================================================
+   Excel — stemmetall kamuflert som et regneark med innebygd stolpediagram
+   =========================================================================== */
+/* Excel-grønn tittellinje */
+.window--excel .titlebar {
+  background: linear-gradient(180deg, #217346, #1a5c38);
+  color: #fff;
+}
+.window--excel .window__body {
+  background: #f3f3f3;
+  color: #1a1a1a;
+  padding: 0;
+}
+.excel {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+/* «Filnavn-stripe» øverst */
+.excel__ribbon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  background: #fff;
+  border-bottom: 2px solid #217346;
+  font-size: 0.8rem;
+}
+.excel__file {
+  font-weight: 600;
+  color: #217346;
+}
+.excel__hint {
+  color: #888;
+  font-size: 0.72rem;
+}
+.excel__content {
+  flex: 1;
+  padding: 14px 12px;
+}
+/* Regneark-rutenett med kolonnebokstaver og radnummer */
+.excel-grid {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.8rem;
+  background: #fff;
+  table-layout: fixed;
+}
+.excel-grid th,
+.excel-grid td {
+  border: 1px solid #d0d7de;
+  padding: 5px 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.excel-grid thead th,
+.excel-grid__rownum {
+  background: #f0f0f0;
+  color: #888;
+  font-weight: 600;
+  text-align: center;
+}
+.excel-grid__corner,
+.excel-grid__rownum {
+  width: 30px;
+}
+.excel-grid__headrow td {
+  font-weight: 600;
+  background: #fafafa;
+}
+.excel-grid__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.excel-grid__totalrow td {
+  font-weight: 600;
+  background: #eef6f0;
+}
+.excel-grid__swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 6px;
+  vertical-align: baseline;
+}
+/* Innebygd diagram-objekt */
+.excel-chart {
+  margin-top: 16px;
+  background: #fff;
+  border: 1px solid #bbb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  padding: 12px 14px 14px;
+}
+.excel-chart__title {
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-bottom: 12px;
+  color: #333;
+}
+.excel-chart__plot {
+  display: grid;
+  gap: 7px;
+}
+.excel-bar {
+  display: grid;
+  grid-template-columns: minmax(56px, 92px) 1fr;
+  align-items: center;
+  gap: 8px;
+}
+.excel-bar__cat {
+  font-size: 0.74rem;
+  text-align: right;
+  color: #444;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Rutenett-bakgrunn i plottet, som Excel */
+.excel-bar__track {
+  position: relative;
+  height: 20px;
+  background: repeating-linear-gradient(
+    90deg,
+    #fff,
+    #fff 24px,
+    #ededed 24px,
+    #ededed 25px
+  );
+  border-left: 1px solid #bbb;
+  border-bottom: 1px solid #bbb;
+}
+.excel-bar__fill {
+  display: block;
+  height: 100%;
+  transition: width 0.7s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.excel-bar__val {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #333;
+}
+/* Ark-faner nederst */
+.excel__sheets {
+  display: flex;
+  gap: 2px;
+  padding: 5px 8px 0;
+  background: #f3f3f3;
+  border-top: 1px solid #d0d7de;
+  overflow-x: auto;
+}
+.excel__sheet {
+  flex: 0 0 auto;
+  background: #e6e6e6;
+  border: 1px solid #d0d7de;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  padding: 6px 14px;
+  font-size: 0.76rem;
+  cursor: pointer;
+  color: #555;
+}
+.excel__sheet--active {
+  background: #fff;
+  color: #217346;
+  font-weight: 600;
+  border-top: 2px solid #217346;
+}
+
+/* Excel-ikon på skrivebordet (grønn flis med hvit X) */
+.excel-glyph {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #21a366, #185c37);
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 2px #fff, 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+.excel-glyph__x {
+  color: #fff;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1;
 }
 
 /* ===========================================================================

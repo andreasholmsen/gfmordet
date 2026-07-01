@@ -31,6 +31,19 @@ export interface InstagramPost {
   postedLabel?: string // 'for 2 timer siden'
 }
 
+export interface LinkedInPost {
+  id: string
+  author: string // 'Angela Berg'
+  authorTitle: string // 'Markedssjef | Oslo' — undertittel-linjen
+  text: string // selve innlegget (ren tekst)
+  img?: string // 'case/linkedin/p1.jpg' (valgfritt)
+  likes?: number
+  comments?: number
+  postedLabel?: string // '2 d'
+  /** Ekstern URL — settes KUN på bunn-posten. Åpner i ny fane ved klikk. */
+  link?: string
+}
+
 export type Question =
   | {
       type: 'multiple_choice'
@@ -84,8 +97,12 @@ export interface CaseManifest {
   intro: string
   days: DayContent[]
   instagram: InstagramPost[]
+  linkedin: LinkedInPost[]
   /** Personene i saken (valgfritt) — vises på «Mistenkte»-tavla. */
   suspects?: Suspect[]
+  /** Angelas egne, personlige filer (valgfritt) — vises i en fargerik mappe.
+   *  Bruker samme CaseDoc-type som dagene (bilde/pdf/markdown/html). */
+  angelaFiles?: CaseDoc[]
   /** Dag 4: fasit og konklusjon. */
   solution: {
     killerId: string // bør matche en option-id fra dag 3
@@ -231,6 +248,60 @@ export const CASE: CaseManifest = {
     },
   ],
 
+  // LinkedIn-feed (falsk plattform). Bytt ut med ekte innhold; legg bilder i
+  // public/case/linkedin/. Bunn-posten har `link` og åpner en ekte profil ved klikk.
+  linkedin: [
+    {
+      id: 'li1',
+      author: 'Angela Berg',
+      authorTitle: 'Markedssjef · Berg & Partner',
+      text: 'Stolt over å annonsere at vi lanserer et nytt prosjekt til høsten. Mer info kommer snart! 🚀 #nyestart #karriere',
+      img: 'case/linkedin/p1.jpg',
+      likes: 214,
+      comments: 31,
+      postedLabel: '2 d',
+    },
+    {
+      id: 'li2',
+      author: 'Per Haug',
+      authorTitle: 'Sykepleier · Oslo universitetssykehus',
+      text: 'Lang nattevakt bak meg. Var på jobb hele fredag kveld — takk til det beste teamet man kan be om. 💙',
+      likes: 47,
+      comments: 8,
+      postedLabel: '3 d',
+    },
+    {
+      id: 'li3',
+      author: 'Kari Lund',
+      authorTitle: 'Eiendomsmegler · Privat',
+      text: 'Naboforhold handler om respekt for grenser. Noen ganger skulle jeg ønske folk forstod hvor mye et gjerde faktisk betyr. 🤷',
+      img: 'case/linkedin/p2.jpg',
+      likes: 19,
+      comments: 12,
+      postedLabel: '4 d',
+    },
+    {
+      id: 'li4',
+      author: 'Thomas Berg',
+      authorTitle: 'Selvstendig næringsdrivende',
+      text: 'Rolig helg på hytta uten dekning. Iblant må man bare koble av fra alt og alle. 🏔️',
+      likes: 33,
+      comments: 5,
+      postedLabel: '4 d',
+    },
+    {
+      // Bunn-posten: ser ut som en vanlig post, men klikk åpner ekte LinkedIn-profil.
+      id: 'li5',
+      author: 'Andreas Holmsen',
+      authorTitle: 'Spillmester · GF-mordet',
+      text: 'Takk til alle som spiller. Følg meg gjerne for flere mysterier. 👀',
+      likes: 128,
+      comments: 17,
+      postedLabel: '1 t',
+      link: 'https://www.linkedin.com/in/andreasnholmsen/',
+    },
+  ],
+
   suspects: [
     {
       id: 'kari',
@@ -256,6 +327,53 @@ export const CASE: CaseManifest = {
       role: 'Bror',
       status: 'ukjent',
       notes: 'Skal ha vært på hytta, men ingen kan bekrefte det. Arvet huset etter Angela.',
+    },
+  ],
+
+  // Angelas egne filer (fargerik mappe). Ren eksempeldata — bytt ut med ekte
+  // innhold. Tekst kan skrives inline; bilder legges i public/case/angela/.
+  angelaFiles: [
+    {
+      id: 'a-dagbok',
+      title: 'Dagbok',
+      kind: 'markdown',
+      inline:
+        '# Kjære dagbok 🌸\n\n' +
+        '**Onsdag.** I dag var en av de rare dagene. Per ringte igjen — jeg orker nesten ikke ' +
+        'svare lenger. Han sier han bare vil «snakke», men jeg vet ikke om jeg tror på det.\n\n' +
+        'Kari kom bortom med en kake. Snilt av henne, men jeg merker at det fortsatt er litt ' +
+        'stivt mellom oss etter hele gjerde-saken. 🙄\n\n' +
+        'Thomas har ikke ringt på flere uker. Håper alt er bra med ham på hytta.\n\n' +
+        '_Gleder meg til helgen med jentene._ 🍷',
+    },
+    {
+      id: 'a-brev',
+      title: 'Ulest brev',
+      kind: 'markdown',
+      inline:
+        '## Til Angela\n\n' +
+        'Du kan ikke bare late som ingenting har skjedd. Vi må snakke sammen — før det er for ' +
+        'sent. Du vet hva dette handler om.\n\n' +
+        'Ikke fortell det til noen.\n\n' +
+        '— *(ingen avsender)*',
+    },
+    {
+      id: 'a-handleliste',
+      title: 'Handleliste',
+      kind: 'markdown',
+      inline:
+        '### Huskeliste 📝\n\n' +
+        '- [ ] Rødvin (til fredag)\n' +
+        '- [ ] Blomster til stua\n' +
+        '- [x] Ringe banken\n' +
+        '- [ ] Bytte lås?? 🔐\n' +
+        '- [ ] Snakke med Kari om gjerdet\n',
+    },
+    {
+      id: 'a-foto',
+      title: 'Feriebilde',
+      kind: 'image',
+      src: 'case/angela/foto1.jpg',
     },
   ],
 

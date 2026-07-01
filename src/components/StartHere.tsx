@@ -12,27 +12,26 @@ import { markStartSeen } from '../lib/intro'
 // PLACEHOLDER — bytt ut med ekte intro-tekst. (Foreløpig gibberish.)
 const INTRO_DOC = `# Velkommen, etterforsker
 
-**SAK #2026-0731 — «GF-mordet»**
+**SAK #2026-1738 — «GF-mordet»**
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Politiet har bedt nettopp *deg* om å
+Årets verste mord, og årets verste sak. Politiet har bedt nettopp *deg* om å
 se på saken med friske øyne.
 
-> «Noen i denne kretsen lyver. Finn ut hvem.» — Førstebetjent K.
+> «Jeg har aldri opplevd noe liknende, det er helt forferdelig.» — Studentprest Sverre.
 
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate.
+Som etterforskerkonsulent hos Politiet er det din jobb å finne morderen. Med god tid, og samarbeid er det håp om å servere rettferdighet!
 
 ## Slik fungerer det
 
-1. Hver dag åpnes en ny mappe med bevis.
-2. Les dokumentene, studér Instagram-feeden og Mistenkte-tavla.
-3. Svar på dagens spørsmål i **POLITI**-appen.
+1. Ved å lese igjennom alt av bevis lærer du mer om hendelsen
+2. Begynn å analysere alt fra dag 1. Politiet finner kanskje mer informasjon senere som kan hjelpe enda mer.
+3. Hvis du noengang spør Andreas (en allvitende Gud) "er X morderen?" kommer han til å svare "ja" uavhengig av verdien til X. 
 
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error.
+I POLITI-appen finner du muligheten til å se dagens gjøremål og stemme på svaret ditt. Du er nemlig ikke den eneste detektiven som løser saken, og du kan enten samarbeide eller konkurrere mot de andre deltakerne.
 
-*Lykke til. Sannheten avsløres dag 4.*`
+Hva skjer hvis du svarer feil tenker du? Det er jo litt kleint da... 
+
+*Lykke til.*`
 
 export default function StartHere() {
   const [phase, setPhase] = useState<'intro' | 'doc'>('intro')

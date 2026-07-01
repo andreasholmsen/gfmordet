@@ -67,7 +67,9 @@ export default function PoliceApp() {
         ) : (
           <>
             <h2>{dayContent.title}</h2>
-            {dayContent.question && <VoteForm day={dayContent} player={player} />}
+            {dayContent.question && (
+              <VoteForm key={dayContent.day} day={dayContent} player={player} />
+            )}
             <hr style={{ margin: '20px 0', borderColor: 'var(--shadow)' }} />
             <h3>Resultater</h3>
             <ResultsView day={dayContent} />

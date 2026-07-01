@@ -27,6 +27,20 @@ const LinkedInGlyph = () => (
   </span>
 )
 
+// Angelas mappe — pastellfarget flis med blomst (skiller seg fra de grå dagmappene).
+const AngelaGlyph = () => (
+  <span className="angela-glyph" aria-hidden>
+    🌸
+  </span>
+)
+
+// Excel-logo som CSS-ikon (grønn flis med hvit «X»).
+const ExcelGlyph = () => (
+  <span className="excel-glyph" aria-hidden>
+    <span className="excel-glyph__x">X</span>
+  </span>
+)
+
 function DesktopIcon({ icon }: { icon: IconDef }) {
   const navigate = useNavigate()
   return (
@@ -81,16 +95,21 @@ export default function Desktop() {
   const appIcons: IconDef[] = [
     { label: 'Instagram', glyph: '📷', node: <IgGlyph />, to: '/instagram' },
     { label: 'POLITI', glyph: '🚓', to: '/politi' },
+    // TODO: skjules senere — viser live stemmetall (kamuflert som Excel).
+    { label: 'Excel', glyph: '📊', node: <ExcelGlyph />, to: '/resultater' },
   ]
   if (CASE.suspects && CASE.suspects.length > 0) {
     appIcons.push({ label: 'Mistenkte', glyph: '📌', to: '/mistenkte' })
+  }
+  if (CASE.angelaFiles && CASE.angelaFiles.length > 0) {
+    appIcons.push({ label: 'Offerets filer', glyph: '🌸', node: <AngelaGlyph />, to: '/angela' })
   }
   appIcons.push({ label: 'Minesveiper', glyph: '💣', to: '/spill/minesveiper' })
   appIcons.push({
     label: 'LinkedIn',
     glyph: '💼',
     node: <LinkedInGlyph />,
-    href: 'https://www.linkedin.com/in/andreasnholmsen/',
+    to: '/linkedin',
   })
 
   const menuItems: MenuItem[] = [

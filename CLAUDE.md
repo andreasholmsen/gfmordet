@@ -77,6 +77,9 @@ skjer når neste dag slippes.
   `public/case/README.md`.
 - `option.id` i manifestet (f.eks. `kari`, `per`, `annet`) lagres som `choice` i votes og
   brukes til å vise resultatlabels. `solution.killerId` bør matche en dag 3-option.
+- **Skriveguide:** `docs/skriveguide.md` — hvordan porsjonere dokumenter, plante falske spor
+  og få saken til å føles som utforsking. Kjør `npm run check:content` for å flagge for lange
+  dokumenter (legg til `-- --strict` for at advarsler også skal gi feilkode).
 
 ## Kjøre lokalt / bygge
 

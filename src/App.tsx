@@ -7,8 +7,11 @@ import StartHere from './components/StartHere'
 import Desktop from './components/Desktop'
 import DayFolder from './components/DayFolder'
 import InstagramApp from './components/InstagramApp'
+import LinkedinApp from './components/LinkedinApp'
 import PoliceApp from './components/PoliceApp'
 import SuspectBoard from './components/SuspectBoard'
+import AngelaFiles from './components/AngelaFiles'
+import ResultsApp from './components/ResultsApp'
 import Minesveiper from './components/Minesveiper'
 import Taskbar from './components/Taskbar'
 
@@ -29,8 +32,11 @@ export default function App() {
             <Route path="/start" element={<StartHere />} />
             <Route path="/dag/:day" element={<DayFolder />} />
             <Route path="/instagram" element={<InstagramApp />} />
+            <Route path="/linkedin" element={<LinkedinApp />} />
             <Route path="/politi" element={<PoliceApp />} />
             <Route path="/mistenkte" element={<SuspectBoard />} />
+            <Route path="/angela" element={<AngelaFiles />} />
+            <Route path="/resultater" element={<ResultsApp />} />
             <Route path="/spill/minesveiper" element={<Minesveiper />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

@@ -87,6 +87,22 @@ export async function getResults(day: number): Promise<ResultRow[]> {
   }))
 }
 
+/** LIVE aggregerte resultater for en dag — UTEN tidslås (via get_live_results,
+ *  se 0003_live_results.sql). Kun antall per valg, aldri navn. Tomt i demo-modus
+ *  eller hvis RPC-en ikke er kjørt ennå (da faller RESULTATER-appen til demo-data). */
+export async function getLiveResults(day: number): Promise<ResultRow[]> {
+  if (!supabase) return []
+  const { data, error } = await supabase.rpc('get_live_results', { p_day: day })
+  if (error) {
+    console.warn('get_live_results (kjør 0003_live_results.sql?)', error.message)
+    return []
+  }
+  return (data as { choice: string; n: number }[]).map((r) => ({
+    choice: r.choice,
+    n: Number(r.n),
+  }))
+}
+
 /** Anonymiserte fritekst-svar for en dag (uten navn) — tomt før results_at. */
 export async function getFreeText(day: number): Promise<string[]> {
   if (!supabase) return []

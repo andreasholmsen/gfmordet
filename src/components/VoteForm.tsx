@@ -2,15 +2,19 @@ import { useState } from 'react'
 import type { DayContent } from '../case/manifest'
 import { submitVote } from '../lib/supabase'
 import type { Player } from '../lib/player'
-import { saveMyVote } from '../lib/votes'
+import { getMyVote, saveMyVote } from '../lib/votes'
 import { sfx } from '../lib/sfx'
 import { assetUrl } from '../lib/assets'
 
 export default function VoteForm({ day, player }: { day: DayContent; player: Player }) {
   const q = day.question!
-  const [choice, setChoice] = useState<string | null>(null)
-  const [text, setText] = useState('')
-  const [status, setStatus] = useState<'idle' | 'sending' | 'done'>('idle')
+  // Gjenopprett en tidligere stemme fra denne enheten, så valget vises igjen
+  // når appen åpnes på nytt (ingen tvil om man har stemt). Kjøres kun ved mount
+  // — PoliceApp gir VoteForm en key per dag, så den remountes ved fanebytte.
+  const saved = getMyVote(day.day)
+  const [choice, setChoice] = useState<string | null>(saved?.choice ?? null)
+  const [text, setText] = useState(saved?.freeText ?? '')
+  const [status, setStatus] = useState<'idle' | 'sending' | 'done'>(saved ? 'done' : 'idle')
   const [error, setError] = useState<string | null>(null)
 
   const showFreeText =
@@ -51,9 +55,24 @@ export default function VoteForm({ day, player }: { day: DayContent; player: Pla
   }
 
   if (status === 'done') {
+    // Vis hva som ble stemt, så det er tydelig at man har svart.
+    const answerLabel = (() => {
+      if (q.type === 'free_text') return text
+      const opt = 'options' in q ? q.options.find((o) => o.id === choice) : undefined
+      const base = opt?.label ?? choice ?? ''
+      if (q.type === 'mc_with_other' && choice === q.otherOptionId && text) {
+        return `${base}: ${text}`
+      }
+      return base
+    })()
     return (
       <div className="panel">
         <p className="notice notice--ok">Stemmen din er registrert! ✓</p>
+        {answerLabel && (
+          <p>
+            Du svarte: <strong>{answerLabel}</strong>
+          </p>
+        )}
         <p>Du kan endre svaret ditt så lenge avstemningen er åpen.</p>
         <button className="btn" onClick={() => setStatus('idle')}>
           Endre svar

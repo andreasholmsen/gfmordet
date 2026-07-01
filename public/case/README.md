@@ -1,5 +1,9 @@
 # Hvor du legger bevismateriale
 
+> 📖 **Skal du skrive selve saken?** Se `docs/skriveguide.md` for hvordan du porsjonerer
+> dokumenter, planter falske spor og holder alt kort. Kjør `npm run check:content` for å
+> flagge dokumenter som blir for lange.
+
 Legg filene dine her, og pek på dem fra `src/case/manifest.ts` (uten `public/`-prefiks):
 
 | Type           | Legg filen i        | I manifestet                                                    |
@@ -7,6 +11,8 @@ Legg filene dine her, og pek på dem fra `src/case/manifest.ts` (uten `public/`-
 | Bilde          | `case/dag1/foto.jpg`| `{ kind: 'image', src: 'case/dag1/foto.jpg' }`                  |
 | PDF            | `case/dag2/rapp.pdf`| `{ kind: 'pdf', src: 'case/dag2/rapp.pdf' }`                    |
 | Instagram-bilde| `case/instagram/p1.jpg` | `{ img: 'case/instagram/p1.jpg' }` (i `instagram`-lista)   |
+| LinkedIn-bilde | `case/linkedin/p1.jpg`  | `{ img: 'case/linkedin/p1.jpg' }` (i `linkedin`-lista, valgfritt) |
+| Angelas fil    | `case/angela/foto1.jpg` | `{ kind: 'image', src: 'case/angela/foto1.jpg' }` (i `angelaFiles`) |
 
 Tekstdokumenter kan enten skrives rett i manifestet (`inline: '...'`) eller legges
 som `.md`/`.html`-fil her og pekes på med `src`.
