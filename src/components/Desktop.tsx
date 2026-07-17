@@ -6,6 +6,7 @@ import { sfx } from '../lib/sfx'
 import { markStartSeen, startSeen } from '../lib/intro'
 import ContextMenu, { type MenuItem } from './ContextMenu'
 import Dialog from './Dialog'
+import { triggerLarry } from './LarryEasterEgg'
 
 interface IconDef {
   label: string
@@ -38,6 +39,14 @@ const AngelaGlyph = () => (
 const ExcelGlyph = () => (
   <span className="excel-glyph" aria-hidden>
     <span className="excel-glyph__x">X</span>
+  </span>
+)
+
+// WeChat-logo som CSS-ikon (grønn flis med hvite pratebobler).
+const WeChatGlyph = () => (
+  <span className="wechat-glyph" aria-hidden>
+    <span className="wechat-glyph__bubble wechat-glyph__bubble--back" />
+    <span className="wechat-glyph__bubble wechat-glyph__bubble--front" />
   </span>
 )
 
@@ -97,6 +106,7 @@ export default function Desktop() {
     { label: 'POLITI', glyph: '🚓', to: '/politi' },
     // TODO: skjules senere — viser live stemmetall (kamuflert som Excel).
     { label: 'Excel', glyph: '📊', node: <ExcelGlyph />, to: '/resultater' },
+    { label: 'WeChat', glyph: '💬', node: <WeChatGlyph />, to: '/wechat' },
   ]
   if (CASE.suspects && CASE.suspects.length > 0) {
     appIcons.push({ label: 'Mistenkte', glyph: '📌', to: '/mistenkte' })
@@ -114,7 +124,13 @@ export default function Desktop() {
 
   const menuItems: MenuItem[] = [
     { label: 'Oppdater', onClick: () => refresh() },
-    { label: 'Tøm papirkurv', onClick: () => setDialog('recycle'), separator: true },
+    {
+      label: 'Tøm papirkurv',
+      onClick: () => setDialog('recycle'),
+      separator: true,
+      // Skjult test-snarvei: hold inne i 3 sek for å tvinge fram Larry-glitchen.
+      onHold: () => triggerLarry(),
+    },
     { label: 'Om denne PC-en', onClick: () => setDialog('about'), separator: true },
   ]
 
@@ -127,9 +143,8 @@ export default function Desktop() {
         setMenu({ x: e.clientX, y: e.clientY })
       }}
     >
-      <header className="desktop__header">
+      <header className="desktop__title">
         <h1>{CASE.title}</h1>
-        <p>{CASE.intro}</p>
       </header>
 
       {demo && (
@@ -145,6 +160,11 @@ export default function Desktop() {
         {[startIcon, ...dayIcons, ...appIcons].map((icon) => (
           <DesktopIcon key={icon.to ?? icon.href} icon={icon} />
         ))}
+      </div>
+
+      {/* Introteksten ligger skjult UNDER appene — man må scrolle ned for å finne den. */}
+      <div className="desktop__intro">
+        <p>{CASE.intro}</p>
       </div>
 
       {menu && (

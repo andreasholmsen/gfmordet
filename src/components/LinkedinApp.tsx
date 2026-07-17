@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { CASE, type LinkedInPost } from '../case/manifest'
 import { assetUrl } from '../lib/assets'
 import { sfx } from '../lib/sfx'
+import { useUnlock } from '../lib/UnlockContext'
 import AppWindow from './AppWindow'
 
 // Enkle SVG-ikoner i LinkedIn-stil (reaksjonsraden under hvert innlegg).
@@ -81,6 +82,10 @@ function PostBody({ post }: { post: LinkedInPost }) {
 }
 
 export default function LinkedinApp() {
+  const { isUnlocked } = useUnlock()
+  // Poster uten `day` vises alltid; poster med `day` vises først når dagen er åpen.
+  const posts = CASE.linkedin.filter((post) => post.day == null || isUnlocked(post.day))
+
   return (
     <AppWindow title="LinkedIn" icon="💼" variant="linkedin">
       <div className="li">
@@ -92,7 +97,7 @@ export default function LinkedinApp() {
         </header>
 
         <div className="li__feed">
-          {CASE.linkedin.map((post) =>
+          {posts.map((post) =>
             post.link ? (
               // Bunn-posten ser ut som de andre, men åpner en ekte profil ved klikk.
               // Ekte <a> (ikke window.open) — unngår Firefox' COOP-blokk mot LinkedIn.

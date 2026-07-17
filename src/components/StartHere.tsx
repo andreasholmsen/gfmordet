@@ -14,20 +14,22 @@ const INTRO_DOC = `# Velkommen, etterforsker
 
 **SAK #2026-1738 — «GF-mordet»**
 
-Årets verste mord, og årets verste sak. Politiet har bedt nettopp *deg* om å
+Århundrets mest forferdelig mord, og politiet har bedt nettopp *deg* om å
 se på saken med friske øyne.
 
-> «Jeg har aldri opplevd noe liknende, det er helt forferdelig.» — Studentprest Sverre.
+> «Jeg har aldri opplevd noe liknende, det er helt forferdelig.» — *Studentprest Sverre*.
 
-Som etterforskerkonsulent hos Politiet er det din jobb å finne morderen. Med god tid, og samarbeid er det håp om å servere rettferdighet!
+Som etterforskerkonsulent hos Politiet er det din jobb å finne morderen.
+
+![Sørmarka](case/intro/sormarka.jpg)
 
 ## Slik fungerer det
 
-1. Ved å lese igjennom alt av bevis lærer du mer om hendelsen
-2. Begynn å analysere alt fra dag 1. Politiet finner kanskje mer informasjon senere som kan hjelpe enda mer.
-3. Hvis du noengang spør Andreas (en allvitende Gud) "er X morderen?" kommer han til å svare "ja" uavhengig av verdien til X. 
+1. Les gjennom alt av bevis
+2. Svar på dagens spørsmål i POLITI-appen
+3. **Hvis du noengang spør Andreas (en allvitende Gud) "er X morderen?" kommer han til å svare "ja" uavhengig av verdien til X.**
 
-I POLITI-appen finner du muligheten til å se dagens gjøremål og stemme på svaret ditt. Du er nemlig ikke den eneste detektiven som løser saken, og du kan enten samarbeide eller konkurrere mot de andre deltakerne.
+Sjekk POLITI-appen neste for å se på dagens spørsmål! Du vil få muligheten til å velge et navn og stemme. Du er nemlig ikke den eneste detektiven på saken!
 
 Hva skjer hvis du svarer feil tenker du? Det er jo litt kleint da... 
 

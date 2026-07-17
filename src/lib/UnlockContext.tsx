@@ -1,5 +1,11 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { getUnlockedDays, hasSupabase } from './supabase'
+import { CASE } from '../case/manifest'
+
+// I dev (`npm run dev`) låses ALLE dager opp, så det er lett å redigere innhold
+// og se hvordan alt ser ut. Produksjonsbygget beholder ekte tidslås fra serveren.
+const DEV_UNLOCK_ALL = import.meta.env.DEV
+const ALL_DAYS = CASE.days.map((d) => d.day)
 
 interface UnlockState {
   unlockedDays: number[]
@@ -16,6 +22,11 @@ export function UnlockProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   function refresh() {
+    if (DEV_UNLOCK_ALL) {
+      setUnlockedDays(ALL_DAYS)
+      setLoading(false)
+      return
+    }
     setLoading(true)
     getUnlockedDays()
       .then(setUnlockedDays)

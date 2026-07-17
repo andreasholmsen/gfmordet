@@ -10,6 +10,7 @@ const LINES = [
   'laster vitneutsagn … OK',
   'kobler til spaningsdatabasen … OK',
   'analyserer fingeravtrykk … OK',
+  'sentrerer <div> … FAILED',
   'verifiserer etterforsker … OK',
   'TILGANG INNVILGET',
 ]
@@ -37,6 +38,7 @@ export default function BootScreen({ onDone }: { onDone: () => void }) {
         window.setTimeout(() => {
           setShown(i + 1)
           if (line === 'TILGANG INNVILGET') sfx.granted()
+          else if (line.endsWith(' FAILED')) sfx.error()
           else sfx.beep()
         }, STEP_MS * (i + 1)),
       )
@@ -61,6 +63,7 @@ export default function BootScreen({ onDone }: { onDone: () => void }) {
           const isLast = i === shown - 1
           const granted = line === 'TILGANG INNVILGET'
           const hasOk = line.endsWith(' OK')
+          const hasFail = line.endsWith(' FAILED')
           return (
             <div className="boot__line" key={i}>
               {granted ? (
@@ -69,6 +72,11 @@ export default function BootScreen({ onDone }: { onDone: () => void }) {
                 <>
                   {line.slice(0, -3)}
                   <span className="boot__ok"> OK</span>
+                </>
+              ) : hasFail ? (
+                <>
+                  {line.slice(0, -7)}
+                  <span className="boot__fail"> FAILED</span>
                 </>
               ) : (
                 line

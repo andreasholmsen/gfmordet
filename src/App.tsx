@@ -8,12 +8,14 @@ import Desktop from './components/Desktop'
 import DayFolder from './components/DayFolder'
 import InstagramApp from './components/InstagramApp'
 import LinkedinApp from './components/LinkedinApp'
+import WeChatApp from './components/WeChatApp'
 import PoliceApp from './components/PoliceApp'
 import SuspectBoard from './components/SuspectBoard'
 import AngelaFiles from './components/AngelaFiles'
 import ResultsApp from './components/ResultsApp'
 import Minesveiper from './components/Minesveiper'
 import Taskbar from './components/Taskbar'
+import LarryEasterEgg from './components/LarryEasterEgg'
 
 export default function App() {
   // Boot-animasjonen vises kun ved full sidelasting/refresh (App monteres da på
@@ -33,6 +35,7 @@ export default function App() {
             <Route path="/dag/:day" element={<DayFolder />} />
             <Route path="/instagram" element={<InstagramApp />} />
             <Route path="/linkedin" element={<LinkedinApp />} />
+            <Route path="/wechat" element={<WeChatApp />} />
             <Route path="/politi" element={<PoliceApp />} />
             <Route path="/mistenkte" element={<SuspectBoard />} />
             <Route path="/angela" element={<AngelaFiles />} />
@@ -42,6 +45,7 @@ export default function App() {
           </Routes>
         </div>
         {!booting && <Taskbar />}
+        <LarryEasterEgg />
       </UnlockProvider>
     </SettingsProvider>
   )

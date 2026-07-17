@@ -108,25 +108,42 @@ textarea.field {
   padding: env(safe-area-inset-top) 0 calc(var(--taskbar-h) + env(safe-area-inset-bottom)) 0;
 }
 
-.desktop__header {
+/* Tittelen blir øverst på skrivebordet. */
+.desktop__title {
+  width: 100%;
   color: #fff;
   text-align: center;
   padding: 18px 16px 4px;
   text-shadow: 1px 1px 0 #000;
 }
-.desktop__header h1 {
+.desktop__title h1 {
   margin: 0;
   font-size: 1.4rem;
 }
-.desktop__header p {
-  margin: 6px auto 0;
+/* Introteksten ligger UNDER app-rutenettet — skjult tekst man scroller ned til.
+   Wrapperen tvinges full bredde og sentrerer avsnittet, ellers «krymper» den
+   som flex-barn og teksten havner til venstre på brede skjermer. */
+.desktop__intro {
+  width: 100%;
+  color: #fff;
+  text-align: center;
+  padding: 40px 16px calc(40px + env(safe-area-inset-bottom));
+  text-shadow: 1px 1px 0 #000;
+}
+.desktop__intro p {
+  /* Sentrert blokk + sentrert tekst, naturlig linjebryting. */
   max-width: 32rem;
+  margin-inline: auto;
   font-size: 0.9rem;
+  line-height: 1.5;
   opacity: 0.95;
+  overflow-wrap: break-word;
 }
 
 .icon-grid {
-  flex: 1;
+  /* Fyll første skjerm slik at introteksten havner under folden. */
+  flex: 0 0 auto;
+  min-height: calc(100dvh - var(--taskbar-h) - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
   gap: 8px 4px;
@@ -405,9 +422,14 @@ textarea.field {
 /* ===========================================================================
    Instagram-app — moderne stil (likner dagens app)
    =========================================================================== */
-/* Bleed til vinduskanten og hvit bakgrunn som ekte IG. */
+/* Bleed til vinduskanten og hvit bakgrunn som ekte IG. Vindus-body har ingen
+   padding for denne varianten, så den festede topplinja ligger helt inntil
+   tittellinja (ingen luft over/under). */
+.window--instagram .window__body {
+  padding: 0;
+}
 .ig {
-  margin: -16px -16px 0;
+  margin: 0;
   background: #fff;
   color: #000;
   font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -509,6 +531,7 @@ textarea.field {
 .ig__feed {
   max-width: 470px;
   margin: 0 auto;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
 }
 .ig-post {
   background: #fff;
@@ -591,8 +614,11 @@ textarea.field {
 /* ===========================================================================
    LinkedIn-app (falsk plattform)
    =========================================================================== */
+.window--linkedin .window__body {
+  padding: 0;
+}
 .li {
-  margin: -16px -16px 0;
+  margin: 0;
   background: #f4f2ee;
   color: #000;
   font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -638,7 +664,7 @@ textarea.field {
 .li__feed {
   max-width: 550px;
   margin: 0 auto;
-  padding: 12px 8px 24px;
+  padding: 12px 8px calc(24px + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -906,6 +932,10 @@ textarea.field {
   color: #c6ff00;
   font-weight: bold;
 }
+.boot__fail {
+  color: #ff4444;
+  font-weight: bold;
+}
 .boot__granted {
   display: inline-block;
   background: #33ff66;
@@ -1125,11 +1155,13 @@ textarea.field {
 .window--instagram.window--closing {
   animation: winSheetDown 0.27s ease-in both;
 }
-/* LinkedIn: samme "app-ark"-følelse som Instagram */
-.window--linkedin {
+/* LinkedIn + WeChat: samme "app-ark"-følelse som Instagram */
+.window--linkedin,
+.window--wechat {
   animation: winSheetUp 0.31s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
-.window--linkedin.window--closing {
+.window--linkedin.window--closing,
+.window--wechat.window--closing {
   animation: winSheetDown 0.27s ease-in both;
 }
 @keyframes winSheetUp {
@@ -1200,6 +1232,7 @@ textarea.field {
   .window--linkedin,
   .window--angela,
   .window--excel,
+  .window--wechat,
   .window--police {
     animation: winFade 0.18s ease both;
   }
@@ -1601,6 +1634,232 @@ textarea.field {
 }
 
 /* ===========================================================================
+   WeChat — intern spøk: «identitetsverifisering» (grønt WeChat-tema)
+   =========================================================================== */
+.window--wechat .titlebar {
+  background: linear-gradient(180deg, #07c160, #06a350);
+  color: #fff;
+}
+.window--wechat .window__body {
+  background: #ededed;
+  color: #111;
+  padding: 0;
+}
+.wechat {
+  min-height: 100%;
+  font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.wechat__brand {
+  width: 100%;
+  text-align: center;
+  padding: 12px;
+  background: #07c160;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.wechat__brand-zh {
+  opacity: 0.85;
+  font-weight: 400;
+}
+.wechat__verify {
+  width: 100%;
+  max-width: 420px;
+  padding: 30px 20px calc(30px + env(safe-area-inset-bottom));
+  text-align: center;
+}
+.wechat__lock {
+  font-size: 46px;
+  line-height: 1;
+}
+.wechat__title {
+  margin: 14px 0 6px;
+  font-size: 1.45rem;
+  color: #111;
+}
+.wechat__subtitle {
+  margin: 0 0 26px;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.wechat__subtitle-no {
+  color: #999;
+  font-size: 0.8rem;
+}
+.wechat__prompt {
+  margin: 0 0 12px;
+  font-size: 0.72rem;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #9a9a9a;
+}
+.wechat__methods {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+.wechat__method {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  background: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.wechat__method:hover {
+  background: #f5fef9;
+}
+.wechat__method:active {
+  transform: translateY(1px);
+}
+.wechat__method-glyph {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+.wechat__method-text {
+  display: flex;
+  flex-direction: column;
+}
+.wechat__method-zh {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+}
+.wechat__method-sub {
+  font-size: 0.78rem;
+  color: #888;
+}
+.wechat__method-arrow {
+  margin-left: auto;
+  color: #07c160;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+/* Verifiserings-flyt (kamera / bank / resultat) */
+.wechat__flow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+}
+.wechat__flow-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+/* Kamera-ramme + live preview / tatt bilde */
+.wechat__camera {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  max-height: 60vh;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.wechat__video-live,
+.wechat__shot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.wechat__video-live--mirror {
+  transform: scaleX(-1);
+}
+/* «Opplastet» meme + video-resultat */
+.wechat__meme,
+.wechat__video {
+  width: 100%;
+  border-radius: 12px;
+  display: block;
+  background: #000;
+}
+.wechat__done-note {
+  margin: 0;
+  color: #07c160;
+  font-weight: 600;
+}
+.wechat__missing {
+  padding: 28px 14px;
+  border-radius: 12px;
+  background: #fff;
+  color: #999;
+  font-size: 0.85rem;
+}
+/* Bank-skjema */
+.wechat__bank {
+  text-align: left;
+}
+.wechat__label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.78rem;
+  color: #666;
+}
+.wechat__field {
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+.wechat__bank-row {
+  display: flex;
+  gap: 10px;
+}
+.wechat__bank-row .wechat__label {
+  flex: 1;
+}
+/* Tilbake-lenke nederst i en flyt */
+.wechat__back {
+  background: none;
+  border: none;
+  color: #07c160;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 6px;
+  align-self: center;
+}
+
+/* WeChat-ikon på skrivebordet: grønn flis med to hvite pratebobler */
+.wechat-glyph {
+  display: inline-block;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #3ecf6e, #07c160);
+  box-shadow: inset 0 0 0 2px #fff, 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+.wechat-glyph__bubble {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+}
+.wechat-glyph__bubble--back {
+  width: 17px;
+  height: 13px;
+  left: 7px;
+  top: 9px;
+}
+.wechat-glyph__bubble--front {
+  width: 14px;
+  height: 11px;
+  right: 6px;
+  bottom: 8px;
+  box-shadow: 0 0 0 2px #07c160;
+}
+
+/* ===========================================================================
    Oppgavelinje (Win95-aktig, nederst)
    =========================================================================== */
 .taskbar {
@@ -1743,7 +2002,7 @@ textarea.field {
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 10px 0;
+  margin: 10px auto;
   box-shadow: var(--bevel-in);
 }
 .choice-list--images {
@@ -1972,5 +2231,145 @@ textarea.field {
 @media (prefers-reduced-motion: reduce) {
   .result-bar__fill {
     transition: none;
+  }
+}
+
+/* ===========================================================================
+   Larry — skjult «hacket»-glitch-overlegg (easter egg)
+   =========================================================================== */
+.larry {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #000;
+}
+.larry--in {
+  animation: larryBgFlicker 0.12s steps(2) infinite;
+}
+.larry--out {
+  animation: larryBgOut 0.45s ease forwards;
+}
+.larry__img {
+  max-width: 92%;
+  max-height: 82%;
+  object-fit: contain;
+}
+.larry--in .larry__img {
+  animation: larryIn 0.65s steps(6) both;
+}
+.larry--show .larry__img {
+  animation: larryJitter 0.18s steps(2) infinite;
+}
+.larry--out .larry__img {
+  animation: larryOut 0.45s ease-in forwards;
+}
+/* Scanline-/CRT-overlegg */
+.larry__scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0) 0 2px,
+      rgba(0, 0, 0, 0.35) 2px 3px
+    ),
+    linear-gradient(rgba(0, 255, 120, 0.05), rgba(255, 0, 90, 0.05));
+  mix-blend-mode: overlay;
+  animation: larryScan 0.4s steps(4) infinite;
+}
+
+@keyframes larryBgFlicker {
+  0%,
+  100% {
+    background: #000;
+  }
+  50% {
+    background: #0a0010;
+  }
+}
+@keyframes larryBgOut {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes larryIn {
+  0% {
+    clip-path: inset(45% 0 45% 0);
+    transform: translateX(-14px) scaleY(1.5);
+    filter: hue-rotate(90deg) saturate(3);
+    opacity: 0.2;
+  }
+  20% {
+    clip-path: inset(8% 0 62% 0);
+    transform: translateX(16px);
+    opacity: 1;
+  }
+  40% {
+    clip-path: inset(62% 0 8% 0);
+    transform: translateX(-12px);
+    filter: invert(1);
+  }
+  60% {
+    clip-path: inset(20% 0 30% 0);
+    transform: translateX(10px);
+  }
+  80% {
+    clip-path: inset(0 0 0 0);
+    transform: translateX(-5px);
+    filter: none;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes larryJitter {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    filter: drop-shadow(2px 0 0 rgba(255, 0, 60, 0.6)) drop-shadow(-2px 0 0 rgba(0, 200, 255, 0.6));
+  }
+  50% {
+    transform: translate(1px, -1px);
+    filter: drop-shadow(-2px 0 0 rgba(255, 0, 60, 0.6)) drop-shadow(2px 0 0 rgba(0, 200, 255, 0.6));
+  }
+}
+@keyframes larryOut {
+  0% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+  30% {
+    clip-path: inset(30% 0 30% 0);
+    transform: translateX(22px) skewX(20deg);
+    filter: hue-rotate(180deg);
+  }
+  60% {
+    clip-path: inset(48% 0 48% 0);
+    transform: translateX(-32px);
+  }
+  100% {
+    opacity: 0;
+    clip-path: inset(50% 0 50% 0);
+    transform: scaleY(0);
+  }
+}
+@keyframes larryScan {
+  to {
+    background-position: 0 6px, 0 0;
+  }
+}
+/* Respekter redusert bevegelse: vis Larry rolig, uten glitch-krampene. */
+@media (prefers-reduced-motion: reduce) {
+  .larry,
+  .larry__img,
+  .larry__scan {
+    animation: none !important;
   }
 }

@@ -3,7 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import { sfx } from '../lib/sfx'
 
-export type WindowVariant = 'folder' | 'instagram' | 'police' | 'linkedin' | 'angela' | 'excel'
+export type WindowVariant =
+  | 'folder'
+  | 'instagram'
+  | 'police'
+  | 'linkedin'
+  | 'angela'
+  | 'excel'
+  | 'wechat'
 
 // Lengde på lukke-animasjonen (må matche den lengste .window--closing-animasjonen).
 const CLOSE_MS = 270

@@ -40,6 +40,8 @@ export interface LinkedInPost {
   likes?: number
   comments?: number
   postedLabel?: string // '2 d'
+  /** Hvis satt: posten vises først når denne dagen er åpen (ellers alltid synlig). */
+  day?: number
   /** Ekstern URL — settes KUN på bunn-posten. Åpner i ny fane ved klikk. */
   link?: string
 }
@@ -118,9 +120,7 @@ export interface CaseManifest {
 export const CASE: CaseManifest = {
   title: 'GF-mordet',
   intro:
-    'Angela Liu ble funnet død på festlokalet lørdag kveld på GF 2026. Politiet trenger din hjelp. ' +
-    'Nye bevis slippes hver dag — studer mappene, følg sporene, og svar på dagens spørsmål i POLITI-appen.',
-
+    'SWQganVzdCBsaWtlIHRvIGludGVyamVjdCBmb3IgYSBtb21lbnQuIFdoYXQgeW91cmUgcmVmZXJpbmcgdG8gYXMgTGludXgsIGlzIGluIGZhY3QsIEdOVS9MaW51eCwgb3IgYXMgSXZlIHJlY2VudGx5IHRha2VuIHRvIGNhbGxpbmcgaXQsIEdOVSBwbHVzIExpbnV4LiBMaW51eCBpcyBub3QgYW4gb3BlcmF0aW5nIHN5c3RlbSB1bnRvIGl0c2VsZiwgYnV0IHJhdGhlciBhbm90aGVyIGZyZWUgY29tcG9uZW50IG9mIGEgZnVsbHkgZnVuY3Rpb25pbmcgR05VIHN5c3RlbSBtYWRlIHVzZWZ1bCBieSB0aGUgR05VIGNvcmVsaWJzLCBzaGVsbCB1dGlsaXRpZXMgYW5kIHZpdGFsIHN5c3RlbSBjb21wb25lbnRzIGNvbXByaXNpbmcgYSBmdWxsIE9TIGFzIGRlZmluZWQgYnkgUE9TSVgu',
   days: [
     {
       day: 1,
@@ -232,20 +232,52 @@ export const CASE: CaseManifest = {
   instagram: [
     {
       id: 'ig1',
-      img: 'case/instagram/p1.jpg',
-      caption: 'Siste kveld med jentene 🍷 #fredag',
-      author: 'angela.berg',
-      likes: 87,
-      postedLabel: 'for 1 dag siden',
+      img: 'case/instagram/jegvetikkehvadetteerengang.jpg',
+      caption: 'Zwei kebab mit brot',
+      author: 'hevind.sharo',
+      likes: 404,
+      postedLabel: 'for 34 uker siden',
     },
     {
       id: 'ig2',
-      img: 'case/instagram/p2.jpg',
-      caption: 'Noen som vet hvem dette er? 👀',
-      author: 'kari.lund',
-      likes: 12,
-      postedLabel: 'for 3 timer siden',
+      img: 'case/instagram/biljard.jpg',
+      caption: 'Running and romping about',
+      author: 'andreasholmsen',
+      likes: 112,
+      postedLabel: 'for 93 dager siden',
     },
+    {
+      id: 'ig2',
+      img: 'case/instagram/jofridkontakt.png',
+      author: 'studentprestjofrid',
+      caption: '🌸Bli kjent med studentpresten Jofrid🌸\n\nJofrid er studentprest for Danmark, Tyskland, Nederland, Luxembourg, Østerrriket, Sverige, Sveits, Italia, Frankrike og Belgia🌎\n\nHun er her for studentene, enten du ønsker støtte eller en samtale om stort og smått i studenthverdagen🤩\n\nFølg henne gjerne på Instagram og ta kontakt dersom du trenger noen å prate med🥰',
+      likes: 91725,
+      postedLabel: 'for 42 dager siden',
+    },
+    {
+    id: 'ig3',
+    img: 'case/instagram/pyrra.jpg',
+    caption: 'Pyrra was not ready for the Norwegian takeover⛷️',
+    author: 'henriette.moe',
+    likes: 80182,
+    postedLabel: 'for 21 uker siden',
+  },
+    {
+    id: 'ig5',
+    img: 'case/instagram/ansamadrid.png',
+    author: 'ansamadrid',
+    caption: '💜Det nye styret er klart!💜\n\nBli kjent med den nye gjengen med å høre deres beste tips om favorittbyen, og ei litta fun fact🔥\n\nGled dere til året som kommer; Det blir bra!🤩',
+    likes: 0,
+    postedLabel: 'for 304 dager siden',
+  },
+  {
+    id: 'ig4',
+    img: 'case/instagram/oljebyen.jpg',
+    caption: 'Tur til Oljebyen🚌🚌🚌🚌',
+    author: 'oskarorvik',
+    likes: 919,
+    postedLabel: 'for 101 uker siden',
+  },
   ],
 
   // LinkedIn-feed (falsk plattform). Bytt ut med ekte innhold; legg bilder i
@@ -253,48 +285,60 @@ export const CASE: CaseManifest = {
   linkedin: [
     {
       id: 'li1',
-      author: 'Angela Berg',
-      authorTitle: 'Markedssjef · Berg & Partner',
-      text: 'Stolt over å annonsere at vi lanserer et nytt prosjekt til høsten. Mer info kommer snart! 🚀 #nyestart #karriere',
-      img: 'case/linkedin/p1.jpg',
+      author: 'Angela Liu',
+      authorTitle: 'Prosjektleder · ANSA',
+      text: 'Stolt over å annonsere at vi lanserer et nytt prosjekt. Mer info kommer snart! 🚀 #nyestart #karriere #stolt',
+      img: 'case/linkedin/engineers.jpg',
       likes: 214,
       comments: 31,
-      postedLabel: '2 d',
+      postedLabel: '1 d',
     },
     {
       id: 'li2',
-      author: 'Per Haug',
-      authorTitle: 'Sykepleier · Oslo universitetssykehus',
-      text: 'Lang nattevakt bak meg. Var på jobb hele fredag kveld — takk til det beste teamet man kan be om. 💙',
-      likes: 47,
-      comments: 8,
+      author: 'Brage Flønæs Johnsen',
+      authorTitle: '4th year master student at INSA Toulouse',
+      text: 'Jeg vil gjerne meddele at jeg har startet i sommerjobb hos Anko AS i Sandnes! #PMS',
+      likes: 24,
+      comments: 9,
       postedLabel: '3 d',
     },
     {
       id: 'li3',
-      author: 'Kari Lund',
-      authorTitle: 'Eiendomsmegler · Privat',
-      text: 'Naboforhold handler om respekt for grenser. Noen ganger skulle jeg ønske folk forstod hvor mye et gjerde faktisk betyr. 🤷',
-      img: 'case/linkedin/p2.jpg',
-      likes: 19,
-      comments: 12,
-      postedLabel: '4 d',
+      author: 'Studentprest Sverre',
+      authorTitle: 'Studentprest · Vinylvrenger',
+      text: 'Sa noen enda en Pubquiz?? 🤷',
+      img: 'case/linkedin/studentprest.jpg',
+      likes: 87623,
+      comments: 1192,
+      postedLabel: '12 d',
     },
     {
       id: 'li4',
-      author: 'Thomas Berg',
-      authorTitle: 'Selvstendig næringsdrivende',
-      text: 'Rolig helg på hytta uten dekning. Iblant må man bare koble av fra alt og alle. 🏔️',
+      author: 'Maud Alfstad Bjørum',
+      authorTitle: 'President at ANSA',
+      text: 'Økt studentmobilitet er en viktig del av et tettere samarbeid med de nordiske landene! Heldigvis er vi ikke alene om å mene det💫 \n \nFlott kveld hos Foreningen Norden_Norge🌻 Tusen takk for invitasjonen!',
       likes: 33,
       comments: 5,
-      postedLabel: '4 d',
+      postedLabel: '1 mo',
+    },
+    {
+      // Vises FØRST når dag 3 er åpen (day: 3). Bytt ut med ekte dag 3-hint.
+      id: 'li-d3',
+      author: '(navn)',
+      authorTitle: '(tittel)',
+      text: 'PLACEHOLDER — dag 3-innlegg. Skriv det ekte hintet her.',
+      likes: 0,
+      comments: 0,
+      postedLabel: '1 d',
+      day: 3,
     },
     {
       // Bunn-posten: ser ut som en vanlig post, men klikk åpner ekte LinkedIn-profil.
       id: 'li5',
       author: 'Andreas Holmsen',
-      authorTitle: 'Spillmester · GF-mordet',
-      text: 'Takk til alle som spiller. Følg meg gjerne for flere mysterier. 👀',
+      authorTitle: 'Vorsorganisator · Claudekriger',
+      text: 'Følg med videre for flere inshallah commits. 👀',
+      img: 'case/linkedin/villdj.jpg',
       likes: 128,
       comments: 17,
       postedLabel: '1 t',
@@ -303,8 +347,8 @@ export const CASE: CaseManifest = {
   ],
 
   suspects: [
-    {
-      id: 'kari',
+    /*{ 
+      id: 'person1',
       name: 'Kari Lund',
       role: 'Nabo',
       status: 'mistenkt',
@@ -313,7 +357,7 @@ export const CASE: CaseManifest = {
         'Hadde en uoppgjort konflikt med Angela om et felles gjerde.',
     },
     {
-      id: 'per',
+      id: 'person2',
       name: 'Per Haug',
       role: 'Eks-kjæreste',
       status: 'mistenkt',
@@ -322,12 +366,12 @@ export const CASE: CaseManifest = {
         'Arbeider i helsevesenet — tilgang til legemidler.',
     },
     {
-      id: 'thomas',
+      id: 'person3',
       name: 'Thomas Berg',
       role: 'Bror',
       status: 'ukjent',
       notes: 'Skal ha vært på hytta, men ingen kan bekrefte det. Arvet huset etter Angela.',
-    },
+    }, */
   ],
 
   // Angelas egne filer (fargerik mappe). Ren eksempeldata — bytt ut med ekte

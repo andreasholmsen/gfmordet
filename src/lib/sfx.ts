@@ -116,4 +116,12 @@ export const sfx = {
     tone({ freq: 932, dur: 0.5, type: 'sawtooth', gain: 0.03 })
     tone({ freq: 988, dur: 0.5, type: 'sawtooth', gain: 0.03, delay: 0.02 })
   },
+
+  /** «hacket»-glitch: rask rekke dissonante digitale toner */
+  glitch() {
+    const freqs = [880, 120, 1500, 300, 2000, 90, 1200, 240]
+    freqs.forEach((f, i) =>
+      tone({ freq: f, dur: 0.05, type: 'sawtooth', gain: 0.045, delay: i * 0.045 }),
+    )
+  },
 }
