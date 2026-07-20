@@ -9,6 +9,7 @@ import DayFolder from './components/DayFolder'
 import InstagramApp from './components/InstagramApp'
 import LinkedinApp from './components/LinkedinApp'
 import WeChatApp from './components/WeChatApp'
+import SpotifyApp from './components/SpotifyApp'
 import PoliceApp from './components/PoliceApp'
 import SuspectBoard from './components/SuspectBoard'
 import AngelaFiles from './components/AngelaFiles'
@@ -36,6 +37,7 @@ export default function App() {
             <Route path="/instagram" element={<InstagramApp />} />
             <Route path="/linkedin" element={<LinkedinApp />} />
             <Route path="/wechat" element={<WeChatApp />} />
+            <Route path="/spotify" element={<SpotifyApp />} />
             <Route path="/politi" element={<PoliceApp />} />
             <Route path="/mistenkte" element={<SuspectBoard />} />
             <Route path="/angela" element={<AngelaFiles />} />

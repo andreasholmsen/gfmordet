@@ -50,6 +50,20 @@ const WeChatGlyph = () => (
   </span>
 )
 
+// Spotify-logo som SVG-ikon (grønn sirkel med tre buer).
+const SpotifyGlyph = () => (
+  <span className="spotify-glyph" aria-hidden>
+    <svg viewBox="0 0 24 24" width="30" height="30">
+      <circle cx="12" cy="12" r="12" fill="#1db954" />
+      <g fill="none" stroke="#0b1b10" strokeWidth="1.8" strokeLinecap="round">
+        <path d="M6 9.5c4-1.2 8-.8 11 1" />
+        <path d="M6.8 13c3.2-.9 6.4-.5 8.8 1" />
+        <path d="M7.6 16.2c2.5-.7 4.9-.4 6.8.8" />
+      </g>
+    </svg>
+  </span>
+)
+
 function DesktopIcon({ icon }: { icon: IconDef }) {
   const navigate = useNavigate()
   return (
@@ -113,6 +127,9 @@ export default function Desktop() {
   }
   if (CASE.angelaFiles && CASE.angelaFiles.length > 0) {
     appIcons.push({ label: 'Offerets filer', glyph: '🌸', node: <AngelaGlyph />, to: '/angela' })
+  }
+  if (CASE.spotify && CASE.spotify.length > 0) {
+    appIcons.push({ label: 'Spotify', glyph: '🎵', node: <SpotifyGlyph />, to: '/spotify' })
   }
   appIcons.push({ label: 'Minesveiper', glyph: '💣', to: '/spill/minesveiper' })
   appIcons.push({

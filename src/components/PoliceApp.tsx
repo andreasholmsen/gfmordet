@@ -6,7 +6,7 @@ import AppWindow from './AppWindow'
 import NamePrompt from './NamePrompt'
 import VoteForm from './VoteForm'
 import ResultsView from './ResultsView'
-import Markdown from './Markdown'
+import KillerReveal from './KillerReveal'
 
 export default function PoliceApp() {
   const { unlockedDays, isUnlocked, loading } = useUnlock()
@@ -63,7 +63,7 @@ export default function PoliceApp() {
         ) : !isUnlocked(dayContent.day) ? (
           <p className="notice">{dayContent.title} er ikke åpnet ennå.</p>
         ) : dayContent.day === 4 ? (
-          <Day4Reveal />
+          <KillerReveal day3={CASE.days.find((d) => d.day === 3)} />
         ) : (
           <>
             <h2>{dayContent.title}</h2>
@@ -80,23 +80,3 @@ export default function PoliceApp() {
   )
 }
 
-function Day4Reveal() {
-  return (
-    <div>
-      <h2>🔍 {CASE.solution.headline}</h2>
-      <Markdown source={CASE.solution.body} />
-      <hr style={{ margin: '20px 0', borderColor: 'var(--shadow)' }} />
-      <h3>Slik gjettet dere</h3>
-      {CASE.days
-        .filter((d) => d.question)
-        .map((d) => (
-          <div key={d.day} style={{ marginBottom: 18 }}>
-            <p style={{ fontWeight: 'bold', marginBottom: 6 }}>
-              {d.title}: {d.question!.prompt}
-            </p>
-            <ResultsView day={d} />
-          </div>
-        ))}
-    </div>
-  )
-}

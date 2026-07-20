@@ -408,6 +408,9 @@ textarea.field {
 }
 .markdown {
   background: #fff;
+  /* Alltid hvit bakgrunn → tving mørk tekst, ellers arver den lyse temafarger
+     (f.eks. POLITI-grønt) og blir uleselig. */
+  color: #1a1a1a;
   box-shadow: var(--bevel-in);
   padding: 18px;
   line-height: 1.5;
@@ -1155,13 +1158,15 @@ textarea.field {
 .window--instagram.window--closing {
   animation: winSheetDown 0.27s ease-in both;
 }
-/* LinkedIn + WeChat: samme "app-ark"-følelse som Instagram */
+/* LinkedIn + WeChat + Spotify: samme "app-ark"-følelse som Instagram */
 .window--linkedin,
-.window--wechat {
+.window--wechat,
+.window--spotify {
   animation: winSheetUp 0.31s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .window--linkedin.window--closing,
-.window--wechat.window--closing {
+.window--wechat.window--closing,
+.window--spotify.window--closing {
   animation: winSheetDown 0.27s ease-in both;
 }
 @keyframes winSheetUp {
@@ -1233,6 +1238,7 @@ textarea.field {
   .window--angela,
   .window--excel,
   .window--wechat,
+  .window--spotify,
   .window--police {
     animation: winFade 0.18s ease both;
   }
@@ -1860,6 +1866,106 @@ textarea.field {
 }
 
 /* ===========================================================================
+   Spotify — enkel musikkspiller (mørkt tema, grønn aksent)
+   =========================================================================== */
+.window--spotify .titlebar {
+  background: linear-gradient(180deg, #1db954, #1a9147);
+  color: #fff;
+}
+.window--spotify .window__body {
+  background: linear-gradient(180deg, #2a2a2a, #121212 60%);
+  color: #fff;
+}
+.sp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+  font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100%;
+  justify-content: center;
+}
+.sp__art {
+  width: min(70vw, 240px);
+  aspect-ratio: 1;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1db954, #155f34);
+  display: grid;
+  place-items: center;
+  font-size: 4rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.sp__meta {
+  text-align: center;
+  max-width: 100%;
+}
+.sp__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  overflow-wrap: break-word;
+}
+.sp__artist {
+  color: #b3b3b3;
+  font-size: 0.85rem;
+  margin-top: 3px;
+  overflow-wrap: break-word;
+}
+.sp__bar {
+  width: min(80vw, 300px);
+  height: 4px;
+  border-radius: 2px;
+  background: #4d4d4d;
+  overflow: hidden;
+}
+.sp__bar-fill {
+  height: 100%;
+  background: #1db954;
+  transition: width 0.25s linear;
+}
+.sp__controls {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.sp__btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+  padding: 6px;
+  line-height: 1;
+}
+.sp__btn:active {
+  transform: scale(0.92);
+}
+.sp__btn--play {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #1db954;
+  color: #000;
+  display: grid;
+  place-items: center;
+  font-size: 1.7rem;
+}
+/* Spotify-ikon på skrivebordet */
+.spotify-glyph {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+.spotify-glyph svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ===========================================================================
    Oppgavelinje (Win95-aktig, nederst)
    =========================================================================== */
 .taskbar {
@@ -2103,6 +2209,202 @@ textarea.field {
 }
 .suspect__stamp--ukjent {
   color: #555;
+}
+.suspect__stamp--skyldig {
+  color: #e11414;
+  font-size: 0.85rem;
+  border-width: 3px;
+  letter-spacing: 2px;
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* ===========================================================================
+   Dag 4: KillerReveal — forseglet sak → dekryptering → line-up → dom
+   =========================================================================== */
+.reveal {
+  color: #d7ffe0;
+}
+/* Forseglet mappe */
+.reveal__sealed {
+  text-align: center;
+  padding: 24px 12px 12px;
+}
+.reveal__seal {
+  display: inline-block;
+  border: 2px dashed #e11414;
+  color: #ff6b6b;
+  font-weight: bold;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  transform: rotate(-4deg);
+  margin-bottom: 18px;
+}
+.reveal__sealed-title {
+  font-size: 1.6rem;
+  margin: 0 0 6px;
+  letter-spacing: 3px;
+}
+.reveal__sealed-sub {
+  color: #9fdfb0;
+  margin: 0 0 22px;
+}
+.reveal__open {
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+}
+/* Dekryptering (terminal) */
+.reveal__decrypt {
+  font-family: 'Courier New', Courier, monospace;
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1rem;
+}
+.reveal__decrypt-line {
+  animation: revealFadeIn 0.25s ease both;
+}
+.reveal__decrypt-line:last-of-type {
+  color: #9dff9d;
+  font-weight: bold;
+}
+.reveal__cursor {
+  display: inline-block;
+  width: 9px;
+  height: 1.1em;
+  background: #33ff66;
+  animation: bootBlink 0.8s steps(1) infinite;
+}
+/* Line-up */
+.reveal__lineup-title {
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin: 4px 0 16px;
+}
+.reveal--verdict .reveal__lineup-title {
+  color: #ff6b6b;
+  font-size: 1.3rem;
+}
+.reveal__lineup {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
+.reveal__lineup .suspect {
+  width: 150px;
+  transform: none;
+  transition: filter 0.4s ease, opacity 0.4s ease;
+}
+/* Uskyldige (allerede stemplet) dempes litt */
+.reveal__lineup .suspect:has(.suspect__stamp--renvasket) {
+  filter: grayscale(0.5) brightness(0.8);
+}
+/* Morder-slot: dramatisk spotlight når dommen faller */
+.reveal__killer-slot {
+  border-radius: 6px;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+.reveal__killer-slot--lit {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 3px #e11414, 0 0 40px 10px rgba(225, 20, 20, 0.55);
+}
+.reveal-card--killer {
+  background: #fff;
+}
+/* Stempel som «slår ned» */
+.reveal-stamp {
+  animation: stampSlam 0.4s cubic-bezier(0.3, 1.6, 0.4, 1) both;
+}
+/* Dossier */
+.reveal__verdict-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.reveal__mugshot {
+  position: relative;
+  flex: 0 0 auto;
+  width: 92px;
+  height: 92px;
+  background: #dcdcd0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  box-shadow: var(--bevel-in);
+}
+.reveal__mugshot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.4) contrast(1.05);
+}
+.reveal__headline {
+  margin: 0;
+  font-size: 1.35rem;
+}
+.reveal__personal {
+  border-left: 4px solid currentColor;
+  padding: 10px 12px;
+  margin: 16px 0;
+  font-size: 1.05rem;
+}
+.reveal__personal--right {
+  color: #5cff8a;
+  background: rgba(31, 156, 64, 0.12);
+}
+.reveal__personal--wrong {
+  color: #ff8a8a;
+  background: rgba(180, 30, 30, 0.12);
+}
+.reveal__wink {
+  margin-top: 22px;
+  text-align: center;
+  font-style: italic;
+  color: #9fdfb0;
+}
+.reveal__skip {
+  display: block;
+  margin: 20px auto 0;
+  background: none;
+  border: none;
+  color: #7fbf90;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+@keyframes revealFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes stampSlam {
+  0% {
+    opacity: 0;
+    transform: rotate(-8deg) scale(2.4);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-8deg) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal__killer-slot--lit {
+    transform: none;
+  }
+  .reveal-stamp,
+  .reveal__decrypt-line {
+    animation: none;
+  }
 }
 .suspect__name {
   margin: 0;

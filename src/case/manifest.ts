@@ -46,6 +46,14 @@ export interface LinkedInPost {
   link?: string
 }
 
+export interface SpotifyTrack {
+  /** Sti til lydfil i /public, f.eks. 'case/spotify/sang1.mp3'. */
+  src: string
+  /** Vises i spilleren. Utledes fra filnavnet hvis utelatt. */
+  title?: string
+  artist?: string
+}
+
 export type Question =
   | {
       type: 'multiple_choice'
@@ -105,12 +113,16 @@ export interface CaseManifest {
   /** Angelas egne, personlige filer (valgfritt) — vises i en fargerik mappe.
    *  Bruker samme CaseDoc-type som dagene (bilde/pdf/markdown/html). */
   angelaFiles?: CaseDoc[]
+  /** Sanger til Spotify-appen (valgfritt). Legg lydfiler i public/case/spotify/. */
+  spotify?: SpotifyTrack[]
   /** Dag 4: fasit og konklusjon. */
   solution: {
     killerId: string // bør matche en option-id fra dag 3
     headline: string
     /** Markdown. Den store avsløringen. */
     body: string
+    /** Liten leken sluttreplikk i avsløringen (valgfritt). */
+    wink?: string
   }
 }
 
@@ -346,9 +358,11 @@ export const CASE: CaseManifest = {
     },
   ],
 
+  // MERK: `id` her må matche dag 3-alternativene og `solution.killerId` for at
+  // dag 4-avsløringen (line-up + SKYLDIG-stempel) skal fungere.
   suspects: [
-    /*{ 
-      id: 'person1',
+    {
+      id: 'kari',
       name: 'Kari Lund',
       role: 'Nabo',
       status: 'mistenkt',
@@ -357,7 +371,7 @@ export const CASE: CaseManifest = {
         'Hadde en uoppgjort konflikt med Angela om et felles gjerde.',
     },
     {
-      id: 'person2',
+      id: 'per',
       name: 'Per Haug',
       role: 'Eks-kjæreste',
       status: 'mistenkt',
@@ -366,12 +380,12 @@ export const CASE: CaseManifest = {
         'Arbeider i helsevesenet — tilgang til legemidler.',
     },
     {
-      id: 'person3',
+      id: 'thomas',
       name: 'Thomas Berg',
       role: 'Bror',
       status: 'ukjent',
       notes: 'Skal ha vært på hytta, men ingen kan bekrefte det. Arvet huset etter Angela.',
-    }, */
+    },
   ],
 
   // Angelas egne filer (fargerik mappe). Ren eksempeldata — bytt ut med ekte
@@ -421,6 +435,14 @@ export const CASE: CaseManifest = {
     },
   ],
 
+  // Sanger til Spotify-appen. Legg .mp3-filene i public/case/spotify/ og pek på
+  // dem her. `title`/`artist` er valgfritt (utledes ellers fra filnavnet).
+  spotify: [
+    { src: 'case/spotify/sang1.mp3', title: 'Spor 1', artist: 'Ukjent artist' },
+    { src: 'case/spotify/sang2.mp3', title: 'Spor 2', artist: 'Ukjent artist' },
+    { src: 'case/spotify/sang3.mp3', title: 'Spor 3', artist: 'Ukjent artist' },
+  ],
+
   solution: {
     killerId: 'per',
     headline: 'Morderen var Per Haug',
@@ -430,5 +452,6 @@ export const CASE: CaseManifest = {
       'Det ukjente stoffet i blodet stammet fra et legemiddel kun Per hadde tilgang til.\n\n' +
       'Angela ble forgiftet, ikke et naturlig dødsfall. Brevet var Pers forsøk på å skremme henne til taushet.\n\n' +
       '**Takk for at du etterforsket med oss!** Se hvordan gjetningene fordelte seg nedenfor.',
+    wink: 'P.S. Andreas visste svaret hele tiden. Han sier alltid «ja». 😉',
   },
 }
