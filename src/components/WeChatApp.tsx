@@ -76,9 +76,15 @@ function CameraFlow({
           return
         }
         streamRef.current = stream
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream
-          void videoRef.current.play()
+        const v = videoRef.current
+        if (v) {
+          v.srcObject = stream
+          // iOS Safari krever ekte `muted` + inline for å spille av live-strøm.
+          // React sin `muted`-prop settes ikke pålitelig som DOM-property, så vi
+          // setter den imperativt her — ellers blir forhåndsvisningen svart.
+          v.muted = true
+          v.playsInline = true
+          void v.play().catch(() => {})
         }
       })
       .catch(() => !cancelled && setError('Fikk ikke tilgang til kameraet.'))
@@ -121,6 +127,7 @@ function CameraFlow({
             <video
               ref={videoRef}
               className={`wechat__video-live ${facingMode === 'user' ? 'wechat__video-live--mirror' : ''}`}
+              autoPlay
               playsInline
               muted
             />
