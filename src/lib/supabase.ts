@@ -219,3 +219,131 @@ export async function getFreeText(day: number): Promise<string[]> {
   }
   return (data as { free_text: string }[]).map((r) => r.free_text).filter(Boolean)
 }
+
+// ---------------------------------------------------------------------------
+//  Instagram-stories (spiller-opplastede bilder) — se 0005_stories.sql.
+//  Bildene ligger i en PRIVAT bucket; vi henter metadata via RPC og lager
+//  korte signerte URL-er for visning. Bilder komprimeres på enheten før
+//  opplasting (se lib/image.ts). Alt er no-op/tomt i demo-modus.
+// ---------------------------------------------------------------------------
+const STORY_BUCKET = 'stories'
+const SIGNED_URL_TTL = 3600 // sekunder — holder en visnings-økt
+
+export interface Story {
+  id: string
+  url: string
+  author: string
+  createdAt: number // ms siden epoch
+  path: string
+  mine: boolean
+}
+
+function randomId(): string {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID()
+  return 'xxxxxxxxxxxx4xxxyxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
+  })
+}
+
+interface StoryRow {
+  id: string
+  image_path: string
+  created_at: string
+  author_name: string
+  mine: boolean
+}
+
+/** Slå opp signerte URL-er for rader og bygg Story-lista (dropper de som feiler). */
+async function toStories(rows: StoryRow[]): Promise<Story[]> {
+  if (!supabase || rows.length === 0) return []
+  const paths = rows.map((r) => r.image_path)
+  const { data, error } = await supabase.storage.from(STORY_BUCKET).createSignedUrls(paths, SIGNED_URL_TTL)
+  if (error || !data) {
+    console.error('createSignedUrls', error)
+    return []
+  }
+  const urlByPath = new Map(data.map((d) => [d.path, d.signedUrl]))
+  const stories: Story[] = []
+  for (const r of rows) {
+    const url = urlByPath.get(r.image_path)
+    if (!url) continue
+    stories.push({
+      id: r.id,
+      url,
+      author: r.author_name,
+      createdAt: new Date(r.created_at).getTime(),
+      path: r.image_path,
+      mine: r.mine,
+    })
+  }
+  return stories
+}
+
+/** Last opp et bilde som story. Komprimeres på enheten. Kaster med norsk
+ *  melding ved feil (f.eks. cooldown). Rydder opp opplastet fil hvis RPC-en
+ *  avviser (så vi ikke etterlater foreldreløse objekter i bucketen). */
+export async function uploadStory(file: File): Promise<void> {
+  if (!supabase) return
+  const { compressImage } = await import('./image')
+  const blob = await compressImage(file)
+
+  const { data: sess } = await supabase.auth.getSession()
+  const uid = sess.session?.user.id
+  if (!uid) throw new Error('Du må være innlogget for å legge ut en story.')
+
+  const path = `${uid}/${randomId()}.jpg`
+  const up = await supabase.storage.from(STORY_BUCKET).upload(path, blob, {
+    contentType: 'image/jpeg',
+    upsert: false,
+  })
+  if (up.error) throw new Error('Kunne ikke laste opp bildet. Prøv igjen.')
+
+  const { error } = await supabase.rpc('add_story', { p_image_path: path })
+  if (error) {
+    // Rydd opp den nettopp opplastede fila før vi rapporterer feilen.
+    await supabase.storage.from(STORY_BUCKET).remove([path]).catch(() => {})
+    throw new Error(error.message)
+  }
+}
+
+/** Aktive stories (siste 24t) med signerte URL-er. Tomt i demo-modus. */
+export async function getActiveStories(): Promise<Story[]> {
+  if (!supabase) return []
+  const { data, error } = await supabase.rpc('get_active_stories')
+  if (error) {
+    console.warn('get_active_stories (kjør 0005_stories.sql?)', error.message)
+    return []
+  }
+  return toStories(data as StoryRow[])
+}
+
+/** Alle stories (minnealbum) — tomt før spillet er over (håndhevet server-side). */
+export async function getAllStories(): Promise<Story[]> {
+  if (!supabase) return []
+  const { data, error } = await supabase.rpc('get_all_stories')
+  if (error) {
+    console.warn('get_all_stories (kjør 0005_stories.sql?)', error.message)
+    return []
+  }
+  return toStories(data as StoryRow[])
+}
+
+/** Tidspunktet (ms) da JEG sist la ut en story — for cooldown-nedtelling. */
+export async function getMyLastStoryAt(): Promise<number | null> {
+  if (!supabase) return null
+  const { data, error } = await supabase.rpc('get_my_last_story_at')
+  if (error || !data) return null
+  return new Date(data as string).getTime()
+}
+
+/** Slett en egen story (både metadata-raden og selve fila). */
+export async function deleteMyStory(id: string, path: string): Promise<void> {
+  if (!supabase) return
+  const { error } = await supabase.rpc('delete_my_story', { p_id: id })
+  if (error) throw new Error(error.message)
+  await supabase.storage.from(STORY_BUCKET).remove([path]).catch(() => {})
+}
+
+/** Cooldown mellom stories (ms) — må matche `interval '4 hours'` i 0005. */
+export const STORY_COOLDOWN_MS = 4 * 60 * 60 * 1000

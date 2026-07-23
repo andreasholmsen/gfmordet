@@ -20,6 +20,9 @@ function MemeMedia({ src, alt }: { src: string; alt: string }) {
   const [failed, setFailed] = useState(false)
   if (failed) return <div className="wechat__missing">(Legg fila på {src})</div>
   if (isVideo(src)) {
+    // Ingen kontroller — memet skal bare spille av automatisk med lyd. Videoen
+    // vises rett etter et tapp («Last opp»/«Bekreft»), så nettleseren tillater
+    // autoplay med lyd (bruker-gesten er allerede gitt).
     return (
       <video
         className="wechat__video"
@@ -27,7 +30,6 @@ function MemeMedia({ src, alt }: { src: string; alt: string }) {
         autoPlay
         playsInline
         loop
-        controls
         onError={() => setFailed(true)}
       />
     )
@@ -175,11 +177,31 @@ function CameraFlow({
 }
 
 // --- Bankdetaljer: plausibelt kortskjema → «ferdig» = alarm.mp4 -------------
+// Hvor lenge man må holde «Bekreft» for å hoppe over datainntastingen (dev).
+const SKIP_HOLD_MS = 10000
+
 function BankFlow({ onBack }: { onBack: () => void }) {
   const [card, setCard] = useState('')
   const [expiry, setExpiry] = useState('')
   const [cvv, setCvv] = useState('')
   const [done, setDone] = useState(false)
+
+  // Dev-snarvei: hold «Bekreft» inne i 10 sek for å hoppe forbi validering.
+  const holdTimer = useRef<number | undefined>(undefined)
+  const heldRef = useRef(false)
+  function startHold() {
+    heldRef.current = false
+    holdTimer.current = window.setTimeout(() => {
+      heldRef.current = true
+      sfx.click()
+      setDone(true) // hopp forbi datainntasting
+    }, SKIP_HOLD_MS)
+  }
+  function cancelHold() {
+    if (holdTimer.current) window.clearTimeout(holdTimer.current)
+    holdTimer.current = undefined
+  }
+  useEffect(() => cancelHold, [])
 
   const digits = card.replace(/\D/g, '')
   const cardOk = digits.length === 16
@@ -222,6 +244,10 @@ function BankFlow({ onBack }: { onBack: () => void }) {
       className="wechat__flow wechat__bank"
       onSubmit={(e) => {
         e.preventDefault()
+        if (heldRef.current) {
+          heldRef.current = false // hold-snarveien håndterte det allerede
+          return
+        }
         if (!canSubmit) return
         sfx.click()
         setDone(true)
@@ -269,7 +295,23 @@ function BankFlow({ onBack }: { onBack: () => void }) {
         </label>
       </div>
 
-      <button className="btn btn--primary" type="submit" disabled={!canSubmit}>
+      <button
+        className="btn btn--primary"
+        type="submit"
+        aria-disabled={!canSubmit}
+        // Ikke `disabled` — da ville hold-snarveien ikke fått pointer-events.
+        // Ugyldige klikk stoppes i onSubmit; knappen dimmes bare visuelt.
+        style={{
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          touchAction: 'manipulation',
+          opacity: canSubmit ? undefined : 0.55,
+        }}
+        onPointerDown={startHold}
+        onPointerUp={cancelHold}
+        onPointerLeave={cancelHold}
+        onPointerCancel={cancelHold}
+      >
         确认 · Bekreft
       </button>
       <button className="wechat__back" type="button" onClick={onBack}>

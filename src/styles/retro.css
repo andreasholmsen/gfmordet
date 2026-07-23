@@ -538,6 +538,195 @@ textarea.field {
   border: 2px solid #fff;
 }
 
+/* ===========================================================================
+   Live stories (spiller-opplastede bilder)
+   =========================================================================== */
+.stories {
+  background: #fff;
+  border-bottom: 1px solid #dbdbdb;
+}
+.stories__row {
+  display: flex;
+  gap: 14px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.stories__row::-webkit-scrollbar {
+  display: none;
+}
+/* «+ Din story»-flis (knapp) */
+.stories__add {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+}
+.stories__add:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+.stories__add-ring {
+  background: #efefef !important;
+  border: 2px dashed #b0b0b0;
+}
+.stories__add-plus {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.8rem;
+  color: #777;
+  line-height: 1;
+}
+/* Eget story-bilde som bakgrunn i avatar-sirkelen */
+.stories__thumb {
+  background-size: cover;
+  background-position: center;
+  color: transparent; /* skjul initialen når bildet er lastet */
+}
+.ig-story__ring--mine {
+  background: linear-gradient(45deg, #2a9d8f, #457b9d) !important;
+}
+.stories__error {
+  margin: 0 14px 10px;
+}
+
+/* Story-viewer (fullskjerm) */
+.story-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.story-viewer__bars {
+  position: absolute;
+  top: calc(8px + env(safe-area-inset-top));
+  left: 10px;
+  right: 10px;
+  display: flex;
+  gap: 4px;
+}
+.story-viewer__bar {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.3);
+}
+.story-viewer__bar--on {
+  background: #fff;
+}
+.story-viewer__head {
+  position: absolute;
+  top: calc(20px + env(safe-area-inset-top));
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  z-index: 2;
+}
+.story-viewer__author {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.story-viewer__time {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+.story-viewer__close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.story-viewer__img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.story-viewer__zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.story-viewer__zone--prev {
+  left: 0;
+}
+.story-viewer__zone--next {
+  right: 0;
+  width: 60%;
+}
+.story-viewer__delete {
+  position: absolute;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* Minnealbum (post-game gallery) */
+.story-album {
+  min-height: 100%;
+  background: #fff;
+  color: #000;
+  padding: 16px 14px calc(16px + env(safe-area-inset-bottom));
+  font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+.story-album__title {
+  margin: 0 0 12px;
+}
+.story-album__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 4px;
+  margin-top: 10px;
+}
+.story-album__cell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #000 center / cover no-repeat;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.story-album__cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 3px 5px;
+  font-size: 0.65rem;
+  color: #fff;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Feed */
 .ig__feed {
   max-width: 470px;
@@ -899,7 +1088,9 @@ textarea.field {
    =========================================================================== */
 @media (min-width: 760px) {
   .window {
-    inset: 24px;
+    /* 24px luft rundt, men bunnen må klarere oppgavelinjen (ellers havner
+       f.eks. Excel-arkfanene bak den). */
+    inset: 24px 24px calc(24px + var(--taskbar-h) + env(safe-area-inset-bottom)) 24px;
     box-shadow: var(--bevel-out);
     border: 1px solid #000;
   }
@@ -1466,14 +1657,18 @@ textarea.field {
   background: #f3f3f3;
   color: #1a1a1a;
   padding: 0;
+  /* La .excel__content scrolle internt, så ark-fanene kan pinnes nederst. */
+  overflow: hidden;
 }
 .excel {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  height: 100%;
+  min-height: 0;
 }
 /* «Filnavn-stripe» øverst */
 .excel__ribbon {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1492,6 +1687,9 @@ textarea.field {
 }
 .excel__content {
   flex: 1;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 14px 12px;
 }
 /* Regneark-rutenett med kolonnebokstaver og radnummer */
@@ -1602,8 +1800,9 @@ textarea.field {
   font-weight: 600;
   color: #333;
 }
-/* Ark-faner nederst */
+/* Ark-faner nederst — pinnet, alltid synlig uansett innholdshøyde. */
 .excel__sheets {
+  flex: 0 0 auto;
   display: flex;
   gap: 2px;
   padding: 5px 8px 0;

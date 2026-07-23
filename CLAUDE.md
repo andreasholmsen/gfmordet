@@ -56,6 +56,23 @@ enheter (via `get_my_votes`).
 - **Kjør migrasjon `0004_auth.sql`** i SQL Editor (etter 0001). NB: den tømmer eksisterende
   test-stemmer (gammel `player_id` har ingen auth-bruker) — trygt før spillet starter.
 
+## Instagram-stories (spiller-opplastede bilder)
+
+Spillere kan laste opp ett bilde hver 4. time i Instagram-appen (`StoriesBar`). Bildet vises
+i 24 timer i live-visningen; etter spillet (dag 4 `results_at`) samles **alle** bilder i et
+felles «Minnealbum» (desktop-ikon 📸 → `/album`). Bilder **komprimeres på enheten**
+(`src/lib/image.ts`, maks 1080px JPEG) før opplasting.
+
+- **Privat lagring:** bucket `stories` (privat). Vises via korte signerte URL-er — kun
+  innloggede spillere ser dem, ingen offentlig lenke. Poster-navn (fullt navn) vises på hver
+  story. Kun-bilde (ingen bildetekst).
+- **Kjør migrasjon `0005_stories.sql`** (etter 0001+0004): lager bucket + `storage.objects`-
+  policyer, tabellen `stories`, og RPC-ene `add_story` (4t-cooldown server-side),
+  `get_active_stories` (siste 24t), `get_all_stories` (kun etter spillet), `get_my_last_story_at`,
+  `delete_my_story`. Cooldown/levetid er SQL-intervaller i fila (lett å justere).
+- Hvis SQL-bucketoppretting feiler: lag bucketen `stories` manuelt i dashbordet (privat), kjør
+  resten. Admin kan slette upassende bilder i dashbordet (service_role omgår RLS).
+
 ## Datoer / tidsplan (settes i Supabase `case_config`, IKKE i koden)
 
 Hver dag åpner kl. **09:00 Europe/Oslo**. Forrige dags resultater + avstemnings-stenging
@@ -128,7 +145,11 @@ skjer når neste dag slippes.
 - `src/components/BootScreen.tsx` — terminal boot-animasjon ved sidelasting (med lyd-blip).
 - `src/components/DayFolder.tsx` + `DocView.tsx` — mappe + bilde/PDF/markdown-visere.
   `Markdown.tsx` ruter relative bilde-stier gjennom `assetUrl` (![..](case/..) virker inline).
-- `src/components/InstagramApp.tsx` — falsk IG-feed.
+- `src/components/InstagramApp.tsx` — falsk IG-feed (statiske `CASE.instagram`-poster) +
+  live `StoriesBar` øverst.
+- `src/components/StoriesBar.tsx` + `StoryViewer.tsx` + `StoryAlbum.tsx` — spiller-stories:
+  opplaster m/cooldown, fullskjerm-visning, og post-game minnealbum (`/album`).
+- `src/lib/image.ts` — komprimerer bilder på enheten før opplasting.
 - `src/components/SuspectBoard.tsx` — «Mistenkte»-korktavle (vises kun når `suspects` finnes).
 - `src/components/Minesveiper.tsx` — lite frittstående minesveiper-spill (påskeegg).
 - `src/components/Dialog.tsx` + `ContextMenu.tsx` — gjenbrukbar modal + høyreklikk-meny.

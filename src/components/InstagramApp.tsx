@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { CASE, type InstagramPost } from '../case/manifest'
 import { assetUrl } from '../lib/assets'
 import AppWindow from './AppWindow'
+import StoriesBar from './StoriesBar'
 
 // Enkle, krappe SVG-ikoner i samme stil som dagens Instagram-app.
 const HeartIcon = () => (
@@ -44,9 +45,6 @@ function PostImage({ post }: { post: InstagramPost }) {
 }
 
 export default function InstagramApp() {
-  // Unike forfattere blir til «stories» øverst.
-  const authors = Array.from(new Set(CASE.instagram.map((p) => p.author)))
-
   return (
     <AppWindow title="Instagram" icon="📷" variant="instagram">
       <div className="ig">
@@ -58,18 +56,8 @@ export default function InstagramApp() {
           </span>
         </header>
 
-        <div className="ig__stories">
-          {authors.map((author) => (
-            <div className="ig-story" key={author}>
-              <span className="ig-story__ring">
-                <span className="ig-story__inner">
-                  <span className="ig-avatar">{initial(author)}</span>
-                </span>
-              </span>
-              <span className="ig-story__name">{author}</span>
-            </div>
-          ))}
-        </div>
+        {/* Ekte, live stories fra spillerne (opplasting + visning). */}
+        <StoriesBar />
 
         <div className="ig__feed">
           {CASE.instagram.map((post) => (

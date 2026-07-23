@@ -158,6 +158,7 @@ export default function Desktop() {
     node: <LinkedInGlyph />,
     to: '/linkedin',
   })
+  appIcons.push({ label: 'Minnealbum', glyph: '📸', to: '/album' })
   // Låst opp etter at Larry er sett minst én gang — klikk spiller ham av igjen.
   if (foundLarry) {
     appIcons.push({ label: 'larry', glyph: '👽', node: <LarryGlyph />, onClick: () => triggerLarry() })

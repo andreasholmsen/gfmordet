@@ -9,6 +9,7 @@ import StartHere from './components/StartHere'
 import Desktop from './components/Desktop'
 import DayFolder from './components/DayFolder'
 import InstagramApp from './components/InstagramApp'
+import StoryAlbum from './components/StoryAlbum'
 import LinkedinApp from './components/LinkedinApp'
 import WeChatApp from './components/WeChatApp'
 import SpotifyApp from './components/SpotifyApp'
@@ -64,6 +65,7 @@ function Gate() {
           <Route path="/start" element={<StartHere />} />
           <Route path="/dag/:day" element={<DayFolder />} />
           <Route path="/instagram" element={<InstagramApp />} />
+          <Route path="/album" element={<StoryAlbum />} />
           <Route path="/linkedin" element={<LinkedinApp />} />
           <Route path="/wechat" element={<WeChatApp />} />
           <Route path="/spotify" element={<SpotifyApp />} />
