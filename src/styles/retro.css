@@ -2131,6 +2131,11 @@ textarea.field {
   min-width: 180px;
   background: var(--surface);
   box-shadow: var(--bevel-out);
+  /* Long-press (f.eks. «Tøm papirkurv» 3 sek → Larry) skal ikke starte
+     tekstmarkering / iOS-callout som dytter menyen. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 .ctx-menu__item {
   display: block;
@@ -2141,6 +2146,7 @@ textarea.field {
   padding: 8px 12px;
   font-size: 0.85rem;
   cursor: pointer;
+  touch-action: manipulation;
 }
 .ctx-menu__item:hover,
 .ctx-menu__item:focus-visible {
