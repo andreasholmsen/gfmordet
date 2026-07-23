@@ -1,12 +1,13 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CASE } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
 import { sfx } from '../lib/sfx'
+import { assetUrl } from '../lib/assets'
 import { markStartSeen, startSeen } from '../lib/intro'
 import ContextMenu, { type MenuItem } from './ContextMenu'
 import Dialog from './Dialog'
-import { triggerLarry } from './LarryEasterEgg'
+import { triggerLarry, larryFound } from './LarryEasterEgg'
 
 interface IconDef {
   label: string
@@ -14,9 +15,15 @@ interface IconDef {
   node?: ReactNode // egendefinert ikon (overstyrer glyph)
   to?: string // intern rute
   href?: string // ekstern lenke (åpnes i ny fane)
+  onClick?: () => void // egendefinert handling (i stedet for navigasjon)
   locked?: boolean
   blink?: boolean
 }
+
+// Larry-ikon: selve gif-en i miniatyr (låses opp når man har sett easter egget).
+const LarryGlyph = () => (
+  <img className="larry-glyph" src={assetUrl('case/memes/larry.gif')} alt="" aria-hidden />
+)
 
 // Instagram-logo som CSS-ikon (gradient + kameralinse).
 const IgGlyph = () => <span className="ig-glyph" aria-hidden />
@@ -74,6 +81,10 @@ function DesktopIcon({ icon }: { icon: IconDef }) {
       onClick={() => {
         if (icon.locked) return
         sfx.click()
+        if (icon.onClick) {
+          icon.onClick()
+          return
+        }
         if (icon.href) {
           window.open(icon.href, '_blank', 'noopener,noreferrer')
           return
@@ -97,6 +108,15 @@ export default function Desktop() {
   const { isUnlocked, demo, refresh } = useUnlock()
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null)
   const [dialog, setDialog] = useState<DialogKind>(null)
+
+  // Larry-ikonet vises når easter egget er funnet. Lytt på 'larry:found' så
+  // ikonet dukker opp umiddelbart hvis han trigges mens man står på skrivebordet.
+  const [foundLarry, setFoundLarry] = useState(larryFound())
+  useEffect(() => {
+    const on = () => setFoundLarry(true)
+    window.addEventListener('larry:found', on)
+    return () => window.removeEventListener('larry:found', on)
+  }, [])
 
   // «START HER» blinker til den har vært åpnet minst én gang.
   const startIcon: IconDef = {
@@ -138,6 +158,10 @@ export default function Desktop() {
     node: <LinkedInGlyph />,
     to: '/linkedin',
   })
+  // Låst opp etter at Larry er sett minst én gang — klikk spiller ham av igjen.
+  if (foundLarry) {
+    appIcons.push({ label: 'larry', glyph: '👽', node: <LarryGlyph />, onClick: () => triggerLarry() })
+  }
 
   const menuItems: MenuItem[] = [
     { label: 'Oppdater', onClick: () => refresh() },
@@ -175,7 +199,7 @@ export default function Desktop() {
 
       <div className="icon-grid">
         {[startIcon, ...dayIcons, ...appIcons].map((icon) => (
-          <DesktopIcon key={icon.to ?? icon.href} icon={icon} />
+          <DesktopIcon key={icon.to ?? icon.href ?? icon.label} icon={icon} />
         ))}
       </div>
 
