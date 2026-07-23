@@ -283,7 +283,7 @@ async function toStories(rows: StoryRow[]): Promise<Story[]> {
 /** Last opp et bilde som story. Komprimeres på enheten. Kaster med norsk
  *  melding ved feil (f.eks. cooldown). Rydder opp opplastet fil hvis RPC-en
  *  avviser (så vi ikke etterlater foreldreløse objekter i bucketen). */
-export async function uploadStory(file: File): Promise<void> {
+export async function uploadStory(file: Blob): Promise<void> {
   if (!supabase) return
   const { compressImage } = await import('./image')
   const blob = await compressImage(file)

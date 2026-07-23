@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   hasSupabase,
   getActiveStories,
   getMyLastStoryAt,
-  uploadStory,
   STORY_COOLDOWN_MS,
   type Story,
 } from '../lib/supabase'
 import { sfx } from '../lib/sfx'
 import StoryViewer from './StoryViewer'
+import StoryComposer from './StoryComposer'
 
 const initial = (name: string) => name.trim().charAt(0).toUpperCase()
 
@@ -25,10 +25,8 @@ export default function StoriesBar() {
   const [stories, setStories] = useState<Story[]>([])
   const [lastAt, setLastAt] = useState<number | null>(null)
   const [now, setNow] = useState(() => Date.now())
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [composing, setComposing] = useState(false)
   const [viewer, setViewer] = useState<number | null>(null)
-  const fileRef = useRef<HTMLInputElement>(null)
 
   function refresh() {
     getActiveStories().then(setStories)
@@ -48,25 +46,6 @@ export default function StoriesBar() {
     return () => window.clearInterval(id)
   }, [cooldownLeft])
 
-  async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    e.target.value = '' // tillat samme fil på nytt senere
-    if (!file) return
-    setError(null)
-    setBusy(true)
-    try {
-      await uploadStory(file)
-      sfx.success()
-      setNow(Date.now())
-      refresh()
-    } catch (err) {
-      sfx.error()
-      setError(err instanceof Error ? err.message : 'Kunne ikke laste opp bildet.')
-    } finally {
-      setBusy(false)
-    }
-  }
-
   // Uten backend gir stories ingen mening — vis ingenting (den scriptede feeden
   // under fungerer fortsatt).
   if (!hasSupabase) return null
@@ -80,22 +59,22 @@ export default function StoriesBar() {
         <button
           className="ig-story stories__add"
           onClick={() => {
-            if (busy || onCooldown) return
+            if (onCooldown) return
             sfx.click()
-            fileRef.current?.click()
+            setComposing(true)
           }}
-          disabled={busy || onCooldown}
+          disabled={onCooldown}
           aria-label="Legg ut en story"
         >
           <span className="ig-story__ring stories__add-ring">
             <span className="ig-story__inner">
               <span className="stories__add-plus" aria-hidden>
-                {busy ? '…' : '+'}
+                +
               </span>
             </span>
           </span>
           <span className="ig-story__name">
-            {busy ? 'Laster opp' : onCooldown ? `Ny om ${cooldownLabel(cooldownLeft)}` : 'Din story'}
+            {onCooldown ? `Ny om ${cooldownLabel(cooldownLeft)}` : 'Din story'}
           </span>
         </button>
 
@@ -113,16 +92,15 @@ export default function StoriesBar() {
         ))}
       </div>
 
-      {error && <p className="notice notice--error stories__error">{error}</p>}
-
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        hidden
-        onChange={onPick}
-      />
+      {composing && (
+        <StoryComposer
+          onClose={() => setComposing(false)}
+          onUploaded={() => {
+            setNow(Date.now())
+            refresh()
+          }}
+        />
+      )}
 
       {viewer !== null && stories[viewer] && (
         <StoryViewer

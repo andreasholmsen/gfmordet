@@ -44,9 +44,10 @@ async function loadBitmap(file: Blob): Promise<{ width: number; height: number; 
   }
 }
 
-/** Komprimer + skaler ned et bilde. Returnerer en JPEG-Blob. */
+/** Komprimer + skaler ned et bilde (File fra galleri ELLER Blob fra kamera-canvas).
+ *  Returnerer en JPEG-Blob. */
 export async function compressImage(
-  file: File,
+  file: Blob,
   { maxDim = 1080, quality = 0.8 }: CompressOptions = {},
 ): Promise<Blob> {
   const src = await loadBitmap(file)
