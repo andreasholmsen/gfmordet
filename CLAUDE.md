@@ -34,6 +34,28 @@ egen retro-CSS. Hostet på GitHub Pages fra det private repoet `andreasholmsen/g
    i SQL Editor. Den legger til RPC-en `get_schedule` som oppgavelinjen bruker til å vise
    «Dag N åpner om HH:MM:SS». Trygt/additivt. Uten den skjules bare nedtellingen (ingen feil).
 
+## Innlogging (brukernavn + passord) — Supabase Auth
+
+Spillere logger inn med **kun brukernavn + passord** (ingen e-post/Google). Passord hashes
+av Supabase (bcrypt) — vi lagrer aldri passord selv. Full innloggingsvegg etter boot:
+skrivebordet vises kun for innloggede. Fungerer statisk på GitHub Pages (JWT i localStorage,
+ingen redirect/backend). Stemmer knyttes til `auth.uid()` og følger spilleren på tvers av
+enheter (via `get_my_votes`).
+
+- **Slik virker brukernavn-only:** `src/lib/supabase.ts` lager en deterministisk syntetisk
+  e-post `<brukernavn>@gfmordet.local` som Auth-identifikator. Adressen er ikke hemmelig og
+  mottar aldri e-post. Brukernavn er ufølsomt for store/små bokstaver + mellomrom.
+- **Registrering samler «Fullt navn»** (lagres i `user_metadata.full_name`, brukes som
+  `display_name` → vises i «Innlogget som» og lagres som `player_name` på stemmer). Innlogging
+  krever kun brukernavn + passord.
+- **MÅ GJØRES i Supabase-dashboardet:** Auth → «Confirm email» **AV** (ellers prøver Supabase
+  å sende bekreftelse til `.local`-adressen og registrering feiler). «Allow new users to
+  sign up» på.
+- **Glemt passord:** nullstilles manuelt i Supabase-dashboardet (ingen e-post-infra — bevisst
+  valg for et 4-dagers vennespill).
+- **Kjør migrasjon `0004_auth.sql`** i SQL Editor (etter 0001). NB: den tømmer eksisterende
+  test-stemmer (gammel `player_id` har ingen auth-bruker) — trygt før spillet starter.
+
 ## Datoer / tidsplan (settes i Supabase `case_config`, IKKE i koden)
 
 Hver dag åpner kl. **09:00 Europe/Oslo**. Forrige dags resultater + avstemnings-stenging
@@ -54,13 +76,14 @@ skjer når neste dag slippes.
 
 - **Project URL:** `https://blmkltyyqqsljbfpdlqn.supabase.co`
 - **Publishable (anon) key:** `sb_publishable_IopLphzZsKoJCpL3VFtaOA_-d0WoXVr`
-  - Trygg å eksponere i frontend — RLS er på, og kun de fire RPC-ene er tilgjengelige.
+  - Trygg å eksponere i frontend — RLS er på, og kun de definerte RPC-ene er tilgjengelige.
   - **Aldri** legg `service_role`/secret-nøkkelen i frontend eller repoet.
 - **Sikkerhetsmodell:** RLS er på alle tabeller, og det finnes INGEN anon-policies for
   direkte tabelltilgang. Alt går via `SECURITY DEFINER`-RPC-er som håndhever server-tid:
-  `get_unlocked_days`, `submit_vote`, `get_results`, `get_free_text` (0001) + valgfri
-  `get_schedule` (0002, kun release-/results-tidspunkt for nedtellingen — ingen juksevei,
-  selve låsen håndheves fortsatt av `now()`). Verifisert at direkte `select` på
+  lesing `get_unlocked_days`/`get_results`/`get_free_text` (0001) + valgfrie `get_schedule`
+  (0002) og `get_live_results` (0003); skriving `submit_vote` og egen-lesing `get_my_votes`
+  (0004) krever innlogging (`authenticated`, identitet fra `auth.uid()` — ingen forfalskning).
+  Selve tidslåsen håndheves fortsatt av `now()`. Verifisert at direkte `select` på
   `votes`/`case_config` med anon-nøkkel returnerer tomt.
 - **Tidslås:** all opplåsing/stemming/resultat-frigjøring bestemmes av `now()` server-side,
   så det kan ikke jukses ved å endre klokka på telefonen.
@@ -93,7 +116,8 @@ skjer når neste dag slippes.
 - `src/case/manifest.ts` — alt innhold (rediger her). Inkl. `suspects` (Mistenkte-tavla) og
   spørsmålstypen `image_choice` (bildevalg).
 - `src/App.tsx` — ruter (HashRouter): `/`, `/dag/:day`, `/instagram`, `/politi`, `/mistenkte`,
-  `/spill/minesveiper`. Pakker appen i `SettingsProvider` + `UnlockProvider`, viser `Taskbar`.
+  `/spill/minesveiper`. Pakker appen i `SettingsProvider` + `AuthProvider` + `UnlockProvider`.
+  `Gate` viser innloggingsskjerm når man ikke er innlogget, ellers ruter + `Taskbar`.
 - `src/components/Desktop.tsx` — skrivebord med ikon-grid + låsestatus + høyreklikk-meny
   (`ContextMenu`) og «Om denne PC-en»-dialog (`Dialog`).
 - `src/components/Taskbar.tsx` — vedvarende oppgavelinje: klokke, nedtelling til neste dag
@@ -108,15 +132,22 @@ skjer når neste dag slippes.
 - `src/components/SuspectBoard.tsx` — «Mistenkte»-korktavle (vises kun når `suspects` finnes).
 - `src/components/Minesveiper.tsx` — lite frittstående minesveiper-spill (påskeegg).
 - `src/components/Dialog.tsx` + `ContextMenu.tsx` — gjenbrukbar modal + høyreklikk-meny.
-- `src/components/PoliceApp.tsx` + `VoteForm.tsx` + `ResultsView.tsx` + `NamePrompt.tsx` — POLITI-app.
-  `ResultsView` animerer barene og viser «du stemte som X %» (egen stemme lagres lokalt).
-- `src/lib/supabase.ts` — klient + RPC-wrappere (faller til demo-modus uten env), inkl. `getSchedule`.
+- `src/components/PoliceApp.tsx` + `VoteForm.tsx` + `ResultsView.tsx` — POLITI-app. Identitet
+  hentes fra `useAuth()`. `ResultsView` animerer barene og viser «du stemte som X %».
+- `src/components/AuthScreen.tsx` — logg inn / registrer (brukernavn + passord), retro-stilt.
+- `src/lib/AuthContext.tsx` — Supabase Auth-sesjon + `useAuth()` (`signIn/signUp/signOut`,
+  `user`). Hydrerer egne stemmer ved innlogging. Demo-modus: fabrikkert bruker.
+- `src/lib/supabase.ts` — klient (persistert sesjon) + auth-wrappere (`signInWithUsername`
+  m.fl., brukernavn→syntetisk e-post) + RPC-wrappere (demo-modus uten env), inkl. `getMyVotes`.
 - `src/lib/UnlockContext.tsx` — henter åpne dager fra serveren.
 - `src/lib/SettingsContext.tsx` — lyd-demping (localStorage). `src/lib/sfx.ts` — WebAudio-lyder.
-- `src/lib/player.ts` — localStorage-identitet. `src/lib/votes.ts` — egen stemme per dag (lokalt).
-- `src/styles/retro.css` — hele retro-temaet (inkl. oppgavelinje, tavle, spill, dialoger).
-- `supabase/migrations/0001_init.sql` — skjema, RLS, 4 RPC-er, seed-datoer.
+- `src/lib/votes.ts` — spillerens egne stemmer: in-memory cache hydrert fra `get_my_votes`
+  (autoritativ, kryssenhet) + localStorage-speil. `getMyVote` er synkron for render.
+- `src/styles/retro.css` — hele retro-temaet (inkl. oppgavelinje, innlogging, tavle, spill).
+- `supabase/migrations/0001_init.sql` — skjema, RLS, RPC-er, seed-datoer.
 - `supabase/migrations/0002_schedule.sql` — valgfri `get_schedule`-RPC for nedtellingen.
+- `supabase/migrations/0004_auth.sql` — innlogging: `votes.user_id`, `submit_vote` skrevet om
+  til autentisert (`auth.uid()`), ny `get_my_votes`, grants til `authenticated`.
 - `.github/workflows/deploy.yml` — Pages-deploy (trenger de to repo-secrets).
 
 ## Mulige videre oppgaver (ikke gjort ennå)

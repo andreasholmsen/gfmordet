@@ -1,16 +1,15 @@
 import { useMemo, useState } from 'react'
 import { CASE } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
-import { getPlayer, type Player } from '../lib/player'
+import { useAuth } from '../lib/AuthContext'
 import AppWindow from './AppWindow'
-import NamePrompt from './NamePrompt'
 import VoteForm from './VoteForm'
 import ResultsView from './ResultsView'
 import KillerReveal from './KillerReveal'
 
 export default function PoliceApp() {
   const { unlockedDays, isUnlocked, loading } = useUnlock()
-  const [player, setPlayer] = useState<Player | null>(getPlayer())
+  const { user } = useAuth()
 
   // Synlige faner = åpne dager. Standardfane = siste åpne dag.
   const visibleDays = useMemo(
@@ -29,10 +28,11 @@ export default function PoliceApp() {
     )
   }
 
-  if (!player) {
+  if (!user) {
+    // Skal ikke skje bak innloggingsveggen, men vær defensiv.
     return (
       <AppWindow title="POLITI" icon="🚓" variant="police">
-        <NamePrompt onDone={setPlayer} />
+        <p className="notice">Du må være innlogget for å bruke POLITI-appen.</p>
       </AppWindow>
     )
   }
@@ -41,7 +41,7 @@ export default function PoliceApp() {
     <AppWindow title="POLITI" icon="🚓" variant="police">
       <div className="police">
         <p style={{ marginTop: 0, fontSize: '0.85rem' }}>
-          Innlogget som <strong>{player.displayName}</strong>
+          Innlogget som <strong>{user.displayName}</strong>
         </p>
 
         {visibleDays.length > 1 && (
@@ -68,7 +68,7 @@ export default function PoliceApp() {
           <>
             <h2>{dayContent.title}</h2>
             {dayContent.question && (
-              <VoteForm key={dayContent.day} day={dayContent} player={player} />
+              <VoteForm key={dayContent.day} day={dayContent} />
             )}
             <hr style={{ margin: '20px 0', borderColor: 'var(--shadow)' }} />
             <h3>Resultater</h3>

@@ -2,7 +2,9 @@ import { useCallback, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { UnlockProvider } from './lib/UnlockContext'
 import { SettingsProvider } from './lib/SettingsContext'
+import { AuthProvider, useAuth } from './lib/AuthContext'
 import BootScreen from './components/BootScreen'
+import AuthScreen from './components/AuthScreen'
 import StartHere from './components/StartHere'
 import Desktop from './components/Desktop'
 import DayFolder from './components/DayFolder'
@@ -27,28 +29,54 @@ export default function App() {
 
   return (
     <SettingsProvider>
-      <UnlockProvider>
-        {booting && <BootScreen onDone={finishBoot} />}
-        <div className="app-shell">
-          <Routes>
-            <Route path="/" element={<Desktop />} />
-            <Route path="/start" element={<StartHere />} />
-            <Route path="/dag/:day" element={<DayFolder />} />
-            <Route path="/instagram" element={<InstagramApp />} />
-            <Route path="/linkedin" element={<LinkedinApp />} />
-            <Route path="/wechat" element={<WeChatApp />} />
-            <Route path="/spotify" element={<SpotifyApp />} />
-            <Route path="/politi" element={<PoliceApp />} />
-            <Route path="/mistenkte" element={<SuspectBoard />} />
-            <Route path="/angela" element={<AngelaFiles />} />
-            <Route path="/resultater" element={<ResultsApp />} />
-            <Route path="/spill/minesveiper" element={<Minesveiper />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </div>
-        {!booting && <Taskbar />}
-        <LarryEasterEgg />
-      </UnlockProvider>
+      <AuthProvider>
+        <UnlockProvider>
+          {booting && <BootScreen onDone={finishBoot} />}
+          {!booting && <Gate />}
+        </UnlockProvider>
+      </AuthProvider>
     </SettingsProvider>
+  )
+}
+
+// Innloggingsvegg: etter boot vises skrivebordet kun for innloggede spillere.
+// Ikke innlogget → logg inn/registrer-skjerm (ingen taskbar/ruter).
+function Gate() {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="app-shell">
+        <p className="notice" style={{ margin: 24 }}>
+          Kobler til …
+        </p>
+      </div>
+    )
+  }
+
+  if (!user) return <AuthScreen />
+
+  return (
+    <>
+      <div className="app-shell">
+        <Routes>
+          <Route path="/" element={<Desktop />} />
+          <Route path="/start" element={<StartHere />} />
+          <Route path="/dag/:day" element={<DayFolder />} />
+          <Route path="/instagram" element={<InstagramApp />} />
+          <Route path="/linkedin" element={<LinkedinApp />} />
+          <Route path="/wechat" element={<WeChatApp />} />
+          <Route path="/spotify" element={<SpotifyApp />} />
+          <Route path="/politi" element={<PoliceApp />} />
+          <Route path="/mistenkte" element={<SuspectBoard />} />
+          <Route path="/angela" element={<AngelaFiles />} />
+          <Route path="/resultater" element={<ResultsApp />} />
+          <Route path="/spill/minesveiper" element={<Minesveiper />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+      <Taskbar />
+      <LarryEasterEgg />
+    </>
   )
 }

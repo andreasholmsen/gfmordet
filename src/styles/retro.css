@@ -2032,6 +2032,84 @@ textarea.field {
   box-shadow: var(--bevel-in);
   font-variant-numeric: tabular-nums;
 }
+.taskbar__user {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 40%;
+  background: var(--surface);
+  box-shadow: var(--bevel-out);
+  border: none;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.taskbar__user:active {
+  box-shadow: var(--bevel-in);
+}
+.taskbar__logout {
+  color: var(--shadow-dark);
+  opacity: 0.8;
+}
+/* På smale skjermer: vis kun ikon + navn, skjul «· Logg ut»-teksten. */
+@media (max-width: 420px) {
+  .taskbar__logout {
+    display: none;
+  }
+}
+
+/* ===========================================================================
+   Innloggingsskjerm (full vegg etter boot)
+   =========================================================================== */
+.auth {
+  min-height: 100%;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: var(--bg-desktop);
+}
+.auth__card {
+  width: 100%;
+  max-width: 380px;
+  padding: 20px;
+}
+.auth__title {
+  margin: 0 0 6px;
+  font-size: 1.25rem;
+}
+.auth__lead {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+}
+.auth__tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.auth__tabs .tab {
+  flex: 1;
+}
+.auth__label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+.auth__label .field {
+  margin-top: 4px;
+  font-weight: normal;
+}
+.auth__hint {
+  margin: 16px 0 0;
+  font-size: 0.72rem;
+  color: var(--shadow-dark);
+  opacity: 0.75;
+}
 
 /* ===========================================================================
    Høyreklikk-meny

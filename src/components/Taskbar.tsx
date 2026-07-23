@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { CASE } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
 import { useSettings } from '../lib/SettingsContext'
+import { useAuth } from '../lib/AuthContext'
 import { getSchedule, type Schedule } from '../lib/supabase'
 import { sfx } from '../lib/sfx'
 
@@ -23,6 +24,7 @@ export default function Taskbar() {
   const navigate = useNavigate()
   const { unlockedDays, refresh, demo } = useUnlock()
   const { muted, toggleMuted } = useSettings()
+  const { user, signOut } = useAuth()
   const [schedule, setSchedule] = useState<Schedule | null>(null)
   const [now, setNow] = useState(() => Date.now())
 
@@ -104,6 +106,20 @@ export default function Taskbar() {
       >
         {muted ? '🔇' : '🔊'}
       </button>
+
+      {user && (
+        <button
+          className="taskbar__user"
+          onClick={() => {
+            sfx.click()
+            void signOut()
+          }}
+          title="Logg ut"
+        >
+          <span aria-hidden>👤</span> {user.displayName}
+          <span className="taskbar__logout"> · Logg ut</span>
+        </button>
+      )}
 
       <span className="taskbar__clock" aria-hidden>
         {clockLabel}

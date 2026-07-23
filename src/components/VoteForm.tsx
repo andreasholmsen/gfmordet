@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import type { DayContent } from '../case/manifest'
 import { submitVote } from '../lib/supabase'
-import type { Player } from '../lib/player'
 import { getMyVote, saveMyVote } from '../lib/votes'
 import { sfx } from '../lib/sfx'
 import { assetUrl } from '../lib/assets'
 
-export default function VoteForm({ day, player }: { day: DayContent; player: Player }) {
+export default function VoteForm({ day }: { day: DayContent }) {
   const q = day.question!
   // Gjenopprett en tidligere stemme fra denne enheten, så valget vises igjen
   // når appen åpnes på nytt (ingen tvil om man har stemt). Kjøres kun ved mount
@@ -39,8 +38,6 @@ export default function VoteForm({ day, player }: { day: DayContent; player: Pla
     try {
       await submitVote({
         day: day.day,
-        playerId: player.playerId,
-        name: player.displayName,
         choice: myChoice,
         freeText: myFreeText,
       })

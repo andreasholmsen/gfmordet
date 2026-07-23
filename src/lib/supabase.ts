@@ -8,8 +8,95 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 export const hasSupabase = Boolean(url && anonKey)
 
 export const supabase: SupabaseClient | null = hasSupabase
-  ? createClient(url, anonKey, { auth: { persistSession: false } })
+  ? createClient(url, anonKey, {
+      auth: {
+        // Innlogging: JWT lagres i localStorage og fornyes automatisk, så
+        // spilleren forblir innlogget mellom besøk. detectSessionInUrl er av
+        // fordi vi kun bruker passord-auth (ingen redirect/magic link) — trygt
+        // med HashRouter på GitHub Pages.
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: false,
+      },
+    })
   : null
+
+// ---------------------------------------------------------------------------
+//  Innlogging (brukernavn + passord).
+//
+//  Supabase Auth er e-post-basert, men vi vil KUN eksponere brukernavn utad.
+//  Vi lager derfor en deterministisk, syntetisk e-post av brukernavnet og
+//  bruker den som Auth-identifikator. Passordet håndteres/hashes av Supabase.
+//  «Confirm email» må være AV i dashboardet (ingen e-post sendes til .local).
+// ---------------------------------------------------------------------------
+
+/** Domenet for de syntetiske e-postene. Adressen er ikke hemmelig og mottar
+ *  aldri e-post — den er bare en unik nøkkel utledet av brukernavnet. */
+const AUTH_EMAIL_DOMAIN = 'gfmordet.local'
+
+/** Normaliser brukernavn → stabil nøkkel. Brukernavn er dermed ufølsomt for
+ *  store/små bokstaver og mellomrom («Per Ove» og «per ove» = samme konto). */
+export function normalizeUsername(username: string): string {
+  return username
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9._-]/g, '')
+}
+
+function usernameToEmail(username: string): string {
+  return `${normalizeUsername(username)}@${AUTH_EMAIL_DOMAIN}`
+}
+
+/** Oversett Supabase-auth-feil til norske, spillervennlige meldinger. */
+function norskAuthFeil(message: string): string {
+  const m = message.toLowerCase()
+  if (m.includes('invalid login credentials')) return 'Feil brukernavn eller passord.'
+  if (m.includes('already registered') || m.includes('already exists'))
+    return 'Brukernavnet er opptatt. Velg et annet.'
+  if (m.includes('password')) return 'Passordet må ha minst 6 tegn.'
+  if (m.includes('rate limit') || m.includes('too many'))
+    return 'For mange forsøk. Vent litt og prøv igjen.'
+  return 'Noe gikk galt. Prøv igjen.'
+}
+
+/** Registrer ny bruker. Fullt navn lagres i user_metadata (full_name) og brukes
+ *  som visningsnavn + navn på stemmer (server-side). Kaster ved feil. */
+export async function signUpWithUsername(
+  username: string,
+  password: string,
+  fullName: string,
+): Promise<void> {
+  if (!supabase) return // demo-modus: AuthContext later som man er innlogget
+  const name = fullName.trim()
+  const { error } = await supabase.auth.signUp({
+    email: usernameToEmail(username),
+    password,
+    options: {
+      data: {
+        username: normalizeUsername(username),
+        full_name: name,
+        display_name: name,
+      },
+    },
+  })
+  if (error) throw new Error(norskAuthFeil(error.message))
+}
+
+/** Logg inn med brukernavn + passord. Kaster med norsk melding ved feil. */
+export async function signInWithUsername(username: string, password: string): Promise<void> {
+  if (!supabase) return
+  const { error } = await supabase.auth.signInWithPassword({
+    email: usernameToEmail(username),
+    password,
+  })
+  if (error) throw new Error(norskAuthFeil(error.message))
+}
+
+export async function signOut(): Promise<void> {
+  if (!supabase) return
+  await supabase.auth.signOut()
+}
 
 // ---------------------------------------------------------------------------
 //  RPC-wrappere — all tidslogikk håndheves server-side (se 0001_init.sql).
@@ -54,23 +141,42 @@ export async function getUnlockedDays(): Promise<number[]> {
   return (data as { day: number }[]).map((r) => r.day)
 }
 
-/** Send inn / oppdater stemme. Kaster ved feil (f.eks. utenfor tidsvindu). */
+/** Send inn / oppdater stemme. Identitet + navn hentes server-side fra den
+ *  innloggede brukeren (auth.uid()/JWT), så klienten sender kun svaret.
+ *  Kaster ved feil (f.eks. utenfor tidsvindu eller ikke innlogget). */
 export async function submitVote(args: {
   day: number
-  playerId: string
-  name: string
   choice: string | null
   freeText: string | null
 }): Promise<void> {
   if (!supabase) return // demo-modus: ingen lagring
   const { error } = await supabase.rpc('submit_vote', {
     p_day: args.day,
-    p_player_id: args.playerId,
-    p_name: args.name,
     p_choice: args.choice,
     p_free_text: args.freeText,
   })
   if (error) throw new Error(error.message)
+}
+
+export interface MyVoteRow {
+  day: number
+  choice: string | null
+  freeText: string | null
+}
+
+/** Den innloggede brukerens egne stemmer (alle dager). Tomt i demo-modus. */
+export async function getMyVotes(): Promise<MyVoteRow[]> {
+  if (!supabase) return []
+  const { data, error } = await supabase.rpc('get_my_votes')
+  if (error) {
+    console.error('get_my_votes', error)
+    return []
+  }
+  return (data as { day: number; choice: string | null; free_text: string | null }[]).map((r) => ({
+    day: r.day,
+    choice: r.choice,
+    freeText: r.free_text,
+  }))
 }
 
 /** Aggregerte resultater for en dag — tomt før resultatene frigis (results_at). */
