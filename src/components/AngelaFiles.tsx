@@ -3,6 +3,10 @@ import { CASE, type CaseDoc } from '../case/manifest'
 import AppWindow from './AppWindow'
 import DocView from './DocView'
 import Markdown from './Markdown'
+import PhoneLock from './PhoneLock'
+
+// Husk at telefonen er låst opp på denne enheten (kode/hack gjøres én gang).
+const UNLOCK_KEY = 'gfm:angela-unlocked'
 
 const GLYPH: Record<CaseDoc['kind'], string> = {
   image: '🖼️',
@@ -14,6 +18,30 @@ const GLYPH: Record<CaseDoc['kind'], string> = {
 export default function AngelaFiles() {
   const files = CASE.angelaFiles ?? []
   const [openDoc, setOpenDoc] = useState<CaseDoc | null>(null)
+  const [unlocked, setUnlocked] = useState(() => {
+    try {
+      return localStorage.getItem(UNLOCK_KEY) === '1'
+    } catch {
+      return false
+    }
+  })
+
+  // Telefonen er låst med kode (hvis satt i manifestet) til man taster riktig
+  // eller lykkes med politi-hacket.
+  if (CASE.phonePin && !unlocked) {
+    return (
+      <PhoneLock
+        onUnlock={() => {
+          try {
+            localStorage.setItem(UNLOCK_KEY, '1')
+          } catch {
+            /* privat modus e.l. — lås opp bare for denne økten */
+          }
+          setUnlocked(true)
+        }}
+      />
+    )
+  }
 
   if (openDoc) {
     return (

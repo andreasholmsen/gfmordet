@@ -99,6 +99,21 @@ Detaljer:
 - Profilpool fryses når dag 2 åpner (profil kan kun lages mens dag 1-vinduet er åpent).
 - Selfie kan ikke verifiseres teknisk (soft via UX); admin kan slette bilder i dashbordet.
 
+## Offerets filer = låst mobil (kode + «POLITI-HACK»)
+
+«Offerets filer» vises som en smarttelefon på skrivebordet. Innholdet (`CASE.angelaFiles`)
+ligger bak en låseskjerm med 4-sifret kode (`CASE.phonePin` i manifestet — plant koden som
+spor i dokumentene; eksempelsaken bruker `2503`). Alternativ vei inn: «POLITI-HACK»-knappen
+åpner et fingeravtrykk-minigame i GTA Casino Heist-stil (`FingerprintHack.tsx`, «clone
+target»): avtrykket er kuttet i 8 horisontale striper som er forskjøvet sidelengs (med wrap);
+skyv radene på plass (trykk venstre/høyre halvdel av raden, eller piltaster på PC) så de
+matcher målavtrykket. **Tre avtrykk** må klones på **60 sek totalt** (klokka løper videre
+mellom avtrykkene); hvert mislykkede forsøk gir **+5 sek** på neste (gradvis lettere, nullstilles
+når minigamet lukkes). Løses automatisk når alt står riktig (ingen sjekk-knapp).
+Avtrykket tegnes prosedyrelt som SVG (seeded) — ingen bildefiler. Opplåsing huskes per enhet
+(`localStorage: gfm:angela-unlocked`). Utelat `phonePin` for å skru av låsen helt. Alt er
+klient-side (ingen Supabase).
+
 ## Datoer / tidsplan (settes i Supabase `case_config`, IKKE i koden)
 
 Hver dag åpner kl. **09:00 Europe/Oslo**. Forrige dags resultater + avstemnings-stenging
@@ -180,6 +195,8 @@ skjer når neste dag slippes.
   galleri-reserve; brukes av `StoryComposer` (story) og `RomansaiansaApp` (selfie).
 - `src/components/RomansaiansaApp.tsx` — Tinder-modus: profil-oppsett, swiping, match/avlys.
 - `src/components/SuspectBoard.tsx` — «Mistenkte»-korktavle (vises kun når `suspects` finnes).
+- `src/components/PhoneLock.tsx` + `FingerprintHack.tsx` — låseskjerm for Angelas mobil
+  (kode fra `CASE.phonePin`) og politi-hack-minigamet som omgår den.
 - `src/components/Minesveiper.tsx` — lite frittstående minesveiper-spill (påskeegg).
 - `src/components/Dialog.tsx` + `ContextMenu.tsx` — gjenbrukbar modal + høyreklikk-meny.
 - `src/components/PoliceApp.tsx` + `VoteForm.tsx` + `ResultsView.tsx` — POLITI-app. Identitet

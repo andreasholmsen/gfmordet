@@ -128,9 +128,13 @@ export interface CaseManifest {
   linkedin: LinkedInPost[]
   /** Personene i saken (valgfritt) — vises på «Mistenkte»-tavla. */
   suspects?: Suspect[]
-  /** Angelas egne, personlige filer (valgfritt) — vises i en fargerik mappe.
+  /** Angelas egne, personlige filer (valgfritt) — vises som en låst mobil.
    *  Bruker samme CaseDoc-type som dagene (bilde/pdf/markdown/html). */
   angelaFiles?: CaseDoc[]
+  /** 4-sifret kode til Angelas mobil. Plant koden som et spor i dokumentene
+   *  (f.eks. en bursdag). Utelates ⇒ ingen lås (filene åpnes direkte).
+   *  Spillere kan også komme forbi via «POLITI-HACK»-minispillet. */
+  phonePin?: string
   /** Sanger til Spotify-appen (valgfritt). Legg lydfiler i public/case/spotify/. */
   spotify?: SpotifyTrack[]
   /** Dag 4: fasit og konklusjon. */
@@ -435,7 +439,11 @@ export const CASE: CaseManifest = {
     },
   ],
 
-  // Angelas egne filer (fargerik mappe). Ren eksempeldata — bytt ut med ekte
+  // Koden til Angelas mobil — plant den som et spor i dokumentene
+  // (f.eks. en dato: 25.03).
+  phonePin: '2503',
+
+  // Angelas egne filer (låst mobil). Ren eksempeldata — bytt ut med ekte
   // innhold. Tekst kan skrives inline; bilder legges i public/case/angela/.
   angelaFiles: [
     {

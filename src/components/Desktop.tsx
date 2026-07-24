@@ -35,10 +35,10 @@ const LinkedInGlyph = () => (
   </span>
 )
 
-// Angelas mappe — pastellfarget flis med blomst (skiller seg fra de grå dagmappene).
-const AngelaGlyph = () => (
-  <span className="angela-glyph" aria-hidden>
-    🌸
+// Angelas mobil — liten smarttelefon med blomster-bakgrunn (låst med kode).
+const PhoneGlyph = () => (
+  <span className="phone-glyph" aria-hidden>
+    <span className="phone-glyph__screen">🌸</span>
   </span>
 )
 
@@ -146,7 +146,7 @@ export default function Desktop() {
     appIcons.push({ label: 'Mistenkte', glyph: '📌', to: '/mistenkte' })
   }
   if (CASE.angelaFiles && CASE.angelaFiles.length > 0) {
-    appIcons.push({ label: 'Offerets filer', glyph: '🌸', node: <AngelaGlyph />, to: '/angela' })
+    appIcons.push({ label: 'Offerets filer', glyph: '📱', node: <PhoneGlyph />, to: '/angela' })
   }
   if (CASE.spotify && CASE.spotify.length > 0) {
     appIcons.push({ label: 'Spotify', glyph: '🎵', node: <SpotifyGlyph />, to: '/spotify' })
