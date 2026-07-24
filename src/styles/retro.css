@@ -97,6 +97,42 @@ textarea.field {
   padding: 14px;
 }
 
+/* --- Error boundary (fullskjerm-fallback ved uventet krasj) ---------------- */
+.errbound {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: var(--bg-desktop);
+}
+.errbound__card {
+  max-width: 420px;
+  width: 100%;
+  background: var(--surface);
+  box-shadow: var(--bevel-out);
+  padding: 20px;
+}
+.errbound__title {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+.errbound__card .btn {
+  margin-top: 14px;
+}
+.errbound__detail {
+  margin-top: 14px;
+  max-height: 220px;
+  overflow: auto;
+  background: #000;
+  color: #6f6;
+  font-size: 0.72rem;
+  padding: 10px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 /* ===========================================================================
    Skrivebord
    =========================================================================== */

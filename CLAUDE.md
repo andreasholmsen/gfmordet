@@ -198,6 +198,12 @@ skjer når neste dag slippes.
 - `supabase/migrations/0002_schedule.sql` — valgfri `get_schedule`-RPC for nedtellingen.
 - `supabase/migrations/0004_auth.sql` — innlogging: `votes.user_id`, `submit_vote` skrevet om
   til autentisert (`auth.uid()`), ny `get_my_votes`, grants til `authenticated`.
+- `supabase/migrations/0007_lockdown.sql` — fjerner anon-`execute` på innloggings-RPC-ene
+  (Supabase gir anon direkte grant som `revoke from public` ikke fjerner). MÅ kjøres.
+- **Verktøy:** `npm run preflight` (sjekker migrasjoner/bucketer/datoer/demo-modus + at anon er
+  blokkert — trenger `.env`). `scripts/jump-day.sh <1-4|reset>` flytter `case_config`-datoene
+  for testing (se filens topp; valgfri `SUPABASE_DB_URL` for å kjøre direkte via psql).
+- `src/components/ErrorBoundary.tsx` — fullskjerm-fallback ved uventet render-krasj (i main.tsx).
 - `.github/workflows/deploy.yml` — Pages-deploy (trenger de to repo-secrets).
 
 ## Mulige videre oppgaver (ikke gjort ennå)
