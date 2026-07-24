@@ -62,7 +62,6 @@ function CameraFlow({
     streamRef.current = null
   }
 
-  // Start kamera når vi er i live-fasen; stopp alltid ved unmount.
   useEffect(() => {
     if (phase !== 'live') return
     let cancelled = false

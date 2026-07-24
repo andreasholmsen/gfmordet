@@ -33,7 +33,6 @@ export default function CameraCapture({
     streamRef.current = null
   }
 
-  // Start (og bytt) kamera mens vi er i «camera»-fasen.
   useEffect(() => {
     if (phase !== 'camera') return
     let cancelled = false
@@ -64,7 +63,6 @@ export default function CameraCapture({
     }
   }, [phase, facing])
 
-  // Rydd opp forhåndsvisnings-URL.
   useEffect(() => {
     return () => {
       if (shot) URL.revokeObjectURL(shot.url)

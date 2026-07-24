@@ -35,7 +35,6 @@ export default function SpotifyApp() {
   const currentIdx = hist[pos] ?? 0
   const track = tracks[currentIdx]
 
-  // Spill/pause + start ny sang når sporet byttes.
   useEffect(() => {
     const a = audioRef.current
     if (!a) return
@@ -58,7 +57,7 @@ export default function SpotifyApp() {
   function prev() {
     setError(false)
     if (pos > 0) setPos(pos - 1)
-    else if (audioRef.current) audioRef.current.currentTime = 0 // start på nytt
+    else if (audioRef.current) audioRef.current.currentTime = 0
     setPlaying(true)
   }
 

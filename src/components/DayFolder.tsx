@@ -69,7 +69,6 @@ export default function DayFolder() {
     )
   }
 
-  // Et åpent dokument vises i samme vindu med tilbake-knapp.
   if (openDoc) {
     return (
       <AppWindow title={`${title} — ${openDoc.title}`} icon={GLYPH[openDoc.kind]}>

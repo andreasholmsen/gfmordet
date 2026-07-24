@@ -65,7 +65,6 @@ export default function ContextMenu({
   items: MenuItem[]
   onClose: () => void
 }) {
-  // Lukk ved klikk utenfor eller Escape.
   useEffect(() => {
     const close = () => onClose()
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()

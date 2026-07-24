@@ -63,7 +63,6 @@ export default function LarryEasterEgg() {
       // så Larry-gif-en ikke vises bak tastaturet.
       const focused = document.activeElement
       if (focused instanceof HTMLElement) focused.blur()
-      // Lås opp Larry-ikonet på skrivebordet fra og med nå.
       markLarryFound()
       setPhase('in')
       sfx.glitch()

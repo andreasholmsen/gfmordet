@@ -13,7 +13,6 @@ export default class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    // Logg til konsollen så det kan feilsøkes (synlig i nettleserens dev tools).
     console.error('App-krasj fanget av ErrorBoundary:', error, info)
   }
 

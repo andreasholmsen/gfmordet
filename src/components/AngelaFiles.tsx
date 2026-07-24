@@ -15,7 +15,6 @@ export default function AngelaFiles() {
   const files = CASE.angelaFiles ?? []
   const [openDoc, setOpenDoc] = useState<CaseDoc | null>(null)
 
-  // Et åpent dokument vises i samme vindu med tilbake-knapp.
   if (openDoc) {
     return (
       <AppWindow title={`Offerets filer — ${openDoc.title}`} icon={GLYPH[openDoc.kind]} variant="angela">

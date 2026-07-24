@@ -61,7 +61,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    // Første lasting: gjenopprett en eventuell lagret sesjon.
     supabase.auth.getSession().then(({ data }) => {
       const u = userFromSession(data.session)
       setUser(u)

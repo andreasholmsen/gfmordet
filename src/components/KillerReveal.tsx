@@ -75,7 +75,6 @@ export default function KillerReveal({ day3 }: { day3?: DayContent }) {
   }
   useEffect(() => clearTimers, [])
 
-  // Kjør sekvensen fra og med «decrypt».
   function runSequence() {
     clearTimers()
     setPhase('decrypt')

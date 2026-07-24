@@ -37,7 +37,6 @@ export default function Taskbar() {
     }
   }, [])
 
-  // Tikk hvert sekund.
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000)
     return () => window.clearInterval(id)

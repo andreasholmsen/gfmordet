@@ -38,7 +38,6 @@ export default function StoriesBar() {
     refresh()
   }, [])
 
-  // Tikk for cooldown-nedtellingen.
   const cooldownLeft = lastAt ? Math.max(0, lastAt + STORY_COOLDOWN_MS - now) : 0
   useEffect(() => {
     if (cooldownLeft <= 0) return

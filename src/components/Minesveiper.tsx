@@ -127,7 +127,6 @@ function Game() {
     }
 
     if (working[r][c].mine) {
-      // Avslør alle miner.
       const next = working.map((row) => row.map((x) => ({ ...x })))
       next.forEach((row) => row.forEach((x) => x.mine && (x.revealed = true)))
       sfx.error()

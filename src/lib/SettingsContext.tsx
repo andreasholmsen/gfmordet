@@ -31,7 +31,6 @@ const Ctx = createContext<SettingsState | null>(null)
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>(load)
 
-  // Hold sfx-modulen og localStorage i synk med innstillingene.
   useEffect(() => {
     setSfxMuted(settings.muted)
     try {
