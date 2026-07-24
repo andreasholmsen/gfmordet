@@ -20,6 +20,10 @@ export interface CaseDoc {
   src?: string
   /** For 'markdown'/'html': skriv innholdet rett her i stedet for en fil. */
   inline?: string
+  /** DAG 3-BEVIS-DELING (Romansaiansa): merk dokumentet 'A' eller 'B' for å dele
+   *  det mellom matchede partnere. Umerkede dokumenter vises til begge. Solo-
+   *  spillere (uparet/avlyst romanse) ser alt uansett. */
+  group?: 'A' | 'B'
 }
 
 export interface InstagramPost {
@@ -101,11 +105,25 @@ export interface DayContent {
   question?: Question
 }
 
+/** «Romansaiansa» (Tinder-modus). Valgfri — utelates for å skru av feature-en.
+ *  Alternativene her fyller nedtrekk/valg i profil-oppsettet. `quiz` er rene
+ *  flavor-spørsmål som vises på swipe-kortene. */
+export interface RomanceConfig {
+  /** Kjønnsalternativer man velger for seg selv (id lagres, label vises). */
+  genders: { id: string; label: string }[]
+  /** «Interessert i» — hvilke kjønn-id-er man kan krysse av for. */
+  interestedIn: { id: string; label: string }[]
+  /** Mini-quiz om romantiske preferanser (flavor). Vises på kortene. */
+  quiz: { id: string; prompt: string; options: string[] }[]
+}
+
 export interface CaseManifest {
   title: string
   /** Kort velkomsttekst på skrivebordet / i POLITI-appen. */
   intro: string
   days: DayContent[]
+  /** Romansaiansa-config (valgfritt). */
+  romance?: RomanceConfig
   instagram: InstagramPost[]
   linkedin: LinkedInPost[]
   /** Personene i saken (valgfritt) — vises på «Mistenkte»-tavla. */
@@ -133,6 +151,35 @@ export const CASE: CaseManifest = {
   title: 'GF-mordet',
   intro:
     'SWQganVzdCBsaWtlIHRvIGludGVyamVjdCBmb3IgYSBtb21lbnQuIFdoYXQgeW91cmUgcmVmZXJpbmcgdG8gYXMgTGludXgsIGlzIGluIGZhY3QsIEdOVS9MaW51eCwgb3IgYXMgSXZlIHJlY2VudGx5IHRha2VuIHRvIGNhbGxpbmcgaXQsIEdOVSBwbHVzIExpbnV4LiBMaW51eCBpcyBub3QgYW4gb3BlcmF0aW5nIHN5c3RlbSB1bnRvIGl0c2VsZiwgYnV0IHJhdGhlciBhbm90aGVyIGZyZWUgY29tcG9uZW50IG9mIGEgZnVsbHkgZnVuY3Rpb25pbmcgR05VIHN5c3RlbSBtYWRlIHVzZWZ1bCBieSB0aGUgR05VIGNvcmVsaWJzLCBzaGVsbCB1dGlsaXRpZXMgYW5kIHZpdGFsIHN5c3RlbSBjb21wb25lbnRzIGNvbXByaXNpbmcgYSBmdWxsIE9TIGFzIGRlZmluZWQgYnkgUE9TSVgu',
+  romance: {
+    genders: [
+      { id: 'mann', label: 'Mann' },
+      { id: 'kvinne', label: 'Kvinne' },
+      { id: 'annet', label: 'Annet' },
+    ],
+    interestedIn: [
+      { id: 'mann', label: 'Menn' },
+      { id: 'kvinne', label: 'Kvinner' },
+      { id: 'annet', label: 'Andre' },
+    ],
+    quiz: [
+      {
+        id: 'date',
+        prompt: 'Perfekt første date?',
+        options: ['Krimkveld', 'Lang skogstur', 'Utepils', 'Netflix og avhør'],
+      },
+      {
+        id: 'redflag',
+        prompt: 'Ditt største red flag?',
+        options: ['Sier «uansett» for mye', 'Alltid for sen', 'For glad i mord-mysterier', 'Ingen — jeg er perfekt'],
+      },
+      {
+        id: 'weapon',
+        prompt: 'Våpen i Cluedo?',
+        options: ['Lysestaken', 'Tauet', 'Skiftenøkkelen', 'Giften'],
+      },
+    ],
+  },
   days: [
     {
       day: 1,

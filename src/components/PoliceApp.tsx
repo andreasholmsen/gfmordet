@@ -1,11 +1,47 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CASE } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
 import { useAuth } from '../lib/AuthContext'
+import { hasSupabase, getRomanceStatus, type RomanceStatus } from '../lib/supabase'
 import AppWindow from './AppWindow'
 import VoteForm from './VoteForm'
 import ResultsView from './ResultsView'
 import KillerReveal from './KillerReveal'
+
+// Romansaiansa-gate: dag 1 krever profil, dag 2 krever ferdig swiping (kun for
+// deltakere med profil). Blokkert → vis vei til Romansaiansa i stedet for skjema.
+// Kun UX — submit_vote håndhever det samme server-side.
+function VoteGate({ day, children }: { day: number; children: ReactNode }) {
+  const navigate = useNavigate()
+  const [status, setStatus] = useState<RomanceStatus | null>(null)
+
+  useEffect(() => {
+    if (!hasSupabase || (day !== 1 && day !== 2)) return
+    getRomanceStatus().then(setStatus)
+  }, [day])
+
+  // Ingen gate i demo, eller for dag 3/4.
+  if (!hasSupabase || (day !== 1 && day !== 2)) return <>{children}</>
+  if (status === null) return <p className="notice">Sjekker Romansaiansa …</p>
+
+  let blocked: string | null = null
+  if (day === 1 && !status.hasProfile) {
+    blocked = 'Du må lage en Romansaiansa-profil (selfie + mini-quiz) for å stemme på dag 1.'
+  } else if (day === 2 && status.hasProfile && !status.swipeComplete) {
+    blocked = `Du må swipe ferdig i Romansaiansa (${status.swipedCount}/${status.deckTotal}) for å stemme på dag 2.`
+  }
+  if (!blocked) return <>{children}</>
+
+  return (
+    <div className="panel">
+      <p style={{ marginTop: 0 }}>💔 {blocked}</p>
+      <button className="btn btn--primary" onClick={() => navigate('/romansaiansa')}>
+        Åpne Romansaiansa 🔥
+      </button>
+    </div>
+  )
+}
 
 export default function PoliceApp() {
   const { unlockedDays, isUnlocked, loading } = useUnlock()
@@ -68,7 +104,9 @@ export default function PoliceApp() {
           <>
             <h2>{dayContent.title}</h2>
             {dayContent.question && (
-              <VoteForm key={dayContent.day} day={dayContent} />
+              <VoteGate day={dayContent.day}>
+                <VoteForm key={dayContent.day} day={dayContent} />
+              </VoteGate>
             )}
             <hr style={{ margin: '20px 0', borderColor: 'var(--shadow)' }} />
             <h3>Resultater</h3>

@@ -73,6 +73,32 @@ felles «Minnealbum» (desktop-ikon 📸 → `/album`). Bilder **komprimeres på
 - Hvis SQL-bucketoppretting feiler: lag bucketen `stories` manuelt i dashbordet (privat), kjør
   resten. Admin kan slette upassende bilder i dashbordet (service_role omgår RLS).
 
+## Romansaiansa (Tinder-modus) + samarbeids-bevis
+
+Sosial feature koblet til avstemningen som «gulrot» (`RomansaiansaApp`, desktop-ikon 🔥):
+- **Dag 1-stemme** krever en profil: selfie (in-browser kamera, front) + kjønn/interesse + mini-quiz.
+- **Dag 2-stemme** krever at deltakere har **swipet ferdig** på alle kompatible. Uten profil
+  (etternølere) er man unntatt.
+- **Dag 3:** admin kjører `select assign_matches();` i SQL Editor → folk pares (gjensidige «ja»
+  først, så preferanse-respekterende, så vilkårlig). Dag 3-beviset **deles**: dokumenter merket
+  `group: 'A' | 'B'` i manifestet vises kun til rett partner; umerkede vises til begge.
+- **Full-bevis-fallback:** uparet (oddetall) eller «Avlys romanse» ⇒ ser **alt** beviset solo.
+  Avlysning kan gjøres unilateralt (dekker også partner som blir borte) — ingen soft-lock.
+- **Matchmaking-lås:** når dag 3 er åpen men `assign_matches()` ennå ikke er kjørt, blokkeres
+  HELE appen med en fullskjerm «Romansaiansa laster»-skjerm (poller til admin kjører den).
+  Uten dette ville uparede sett begge halvdeler av beviset. Deaktivert i dev (`import.meta.env.DEV`).
+  Fail-open: mangler RPC-en (0006 ikke kjørt) blokkeres ingenting.
+
+Detaljer:
+- **Kjør migrasjon `0006_romance.sql`** (etter 0004): privat bucket `profiles`, tabeller
+  `romance_profiles/_swipes/_matches`, RPC-er (profil/deck/swipe/match/cancel), oppdatert
+  `submit_vote` med dag 1/2-gate, og admin-funksjonen `assign_matches()` (ikke grantet til
+  klient — kjør i SQL Editor).
+- Innhold i `src/case/manifest.ts` → `romance` (kjønn/interesse-valg + quiz-spørsmål) og
+  `group`-merking på dag 3-dokumenter. Utelat `romance` for å skru av feature-en.
+- Profilpool fryses når dag 2 åpner (profil kan kun lages mens dag 1-vinduet er åpent).
+- Selfie kan ikke verifiseres teknisk (soft via UX); admin kan slette bilder i dashbordet.
+
 ## Datoer / tidsplan (settes i Supabase `case_config`, IKKE i koden)
 
 Hver dag åpner kl. **09:00 Europe/Oslo**. Forrige dags resultater + avstemnings-stenging
@@ -150,6 +176,9 @@ skjer når neste dag slippes.
 - `src/components/StoriesBar.tsx` + `StoryViewer.tsx` + `StoryAlbum.tsx` — spiller-stories:
   opplaster m/cooldown, fullskjerm-visning, og post-game minnealbum (`/album`).
 - `src/lib/image.ts` — komprimerer bilder på enheten før opplasting.
+- `src/components/CameraCapture.tsx` — gjenbrukbart kamera-i-nettleser (getUserMedia) med
+  galleri-reserve; brukes av `StoryComposer` (story) og `RomansaiansaApp` (selfie).
+- `src/components/RomansaiansaApp.tsx` — Tinder-modus: profil-oppsett, swiping, match/avlys.
 - `src/components/SuspectBoard.tsx` — «Mistenkte»-korktavle (vises kun når `suspects` finnes).
 - `src/components/Minesveiper.tsx` — lite frittstående minesveiper-spill (påskeegg).
 - `src/components/Dialog.tsx` + `ContextMenu.tsx` — gjenbrukbar modal + høyreklikk-meny.

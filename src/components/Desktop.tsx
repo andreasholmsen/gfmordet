@@ -159,6 +159,9 @@ export default function Desktop() {
     to: '/linkedin',
   })
   appIcons.push({ label: 'Minnealbum', glyph: '📸', to: '/album' })
+  if (CASE.romance) {
+    appIcons.push({ label: 'Romansaiansa', glyph: '🔥', to: '/romansaiansa' })
+  }
   // Låst opp etter at Larry er sett minst én gang — klikk spiller ham av igjen.
   if (foundLarry) {
     appIcons.push({ label: 'larry', glyph: '👽', node: <LarryGlyph />, onClick: () => triggerLarry() })
