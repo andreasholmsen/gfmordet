@@ -55,6 +55,45 @@ function tone({ freq, dur, type = 'square', gain = 0.05, delay = 0 }: ToneOpts):
 }
 
 export const sfx = {
+  /** spiller en lydfil fra /public (mp3 o.l.) — respekterer demping.
+   *  Mangler fila spilles ingenting (feilen svelges). */
+  playFile(src: string) {
+    if (muted) return
+    try {
+      void new Audio(src).play().catch(() => {})
+    } catch {
+      /* ignorer — lyd er aldri kritisk */
+    }
+  },
+
+  /** starter en loopende bakgrunnslyd. Prøver kildene i rekkefølge til én
+   *  laster (m4a → mp3-fallback). Returnerer en stopp-funksjon — kall den
+   *  når lyden skal av (f.eks. i useEffect-cleanup). Respekterer demping. */
+  loopFile(sources: string[], volume = 0.5): () => void {
+    if (muted || sources.length === 0) return () => {}
+    let audio: HTMLAudioElement | null = null
+    let stopped = false
+    const tryPlay = (i: number) => {
+      if (stopped || i >= sources.length) return
+      try {
+        const a = new Audio(sources[i])
+        a.loop = true
+        a.volume = volume
+        a.onerror = () => tryPlay(i + 1) // fila finnes ikke → prøv neste format
+        void a.play().catch(() => {})
+        audio = a
+      } catch {
+        /* ignorer — lyd er aldri kritisk */
+      }
+    }
+    tryPlay(0)
+    return () => {
+      stopped = true
+      audio?.pause()
+      audio = null
+    }
+  },
+
   /** kort terminal-blip (boot-linjer) */
   beep() {
     tone({ freq: 660, dur: 0.05, gain: 0.035 })

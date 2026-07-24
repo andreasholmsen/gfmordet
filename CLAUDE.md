@@ -109,7 +109,9 @@ target»): avtrykket er kuttet i 8 horisontale striper som er forskjøvet sidele
 skyv radene på plass (trykk venstre/høyre halvdel av raden, eller piltaster på PC) så de
 matcher målavtrykket. **Tre avtrykk** må klones på **60 sek totalt** (klokka løper videre
 mellom avtrykkene); hvert mislykkede forsøk gir **+5 sek** på neste (gradvis lettere, nullstilles
-når minigamet lukkes). Løses automatisk når alt står riktig (ingen sjekk-knapp).
+når minigamet lukkes). Løses automatisk når alt står riktig (ingen sjekk-knapp). Lyd (valgfrie
+filer, mangler de spilles ingenting): `public/sfx/30sec.mp3` ved 30 sek igjen, og
+`public/sfx/hack-theme.m4a` (evt. `.mp3`) looper som bakgrunnsmusikk mens hacket er åpent.
 Avtrykket tegnes prosedyrelt som SVG (seeded) — ingen bildefiler. Opplåsing huskes per enhet
 (`localStorage: gfm:angela-unlocked`). Utelat `phonePin` for å skru av låsen helt. Alt er
 klient-side (ingen Supabase).

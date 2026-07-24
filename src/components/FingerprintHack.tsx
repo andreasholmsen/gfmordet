@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { sfx } from '../lib/sfx'
+import { assetUrl } from '../lib/assets'
 
 // «Politi-hack» à la GTA Casino Heist («clone target»): målavtrykket vises til
 // høyre, og til venstre ligger samme avtrykk kuttet i horisontale striper som
@@ -148,6 +149,8 @@ export default function FingerprintHack({
 
   useEffect(() => {
     sfx.glitch()
+    // bakgrunnsmusikk så lenge hacket er åpent (valgfri fil — se public/sfx/)
+    return sfx.loopFile([assetUrl('sfx/hack-theme.m4a'), assetUrl('sfx/hack-theme.mp3')])
   }, [])
 
   // Nedtelling — stopper når spillet er avgjort.
@@ -161,6 +164,13 @@ export default function FingerprintHack({
     if (timeLeft === 0 && status === 'playing') {
       setStatus('failed')
       sfx.error()
+    }
+  }, [timeLeft, status])
+
+  // «30 sekunder igjen»-lyd — spilles idet klokka krysser 30 (også per retry).
+  useEffect(() => {
+    if (timeLeft === 30 && status === 'playing') {
+      sfx.playFile(assetUrl('sfx/30sec.mp3'))
     }
   }, [timeLeft, status])
 
