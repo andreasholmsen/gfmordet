@@ -150,7 +150,7 @@ export default function FingerprintHack({
   useEffect(() => {
     sfx.glitch()
     // bakgrunnsmusikk så lenge hacket er åpent (valgfri fil — se public/sfx/)
-    return sfx.loopFile([assetUrl('sfx/hack-theme.m4a'), assetUrl('sfx/hack-theme.mp3')])
+    return sfx.loopFile([assetUrl('sfx/hack-theme.m4a'), assetUrl('sfx/hack-theme.mp3')], 0.125)
   }, [])
 
   // Nedtelling — stopper når spillet er avgjort.
@@ -170,7 +170,7 @@ export default function FingerprintHack({
   // «30 sekunder igjen»-lyd — spilles idet klokka krysser 30 (også per retry).
   useEffect(() => {
     if (timeLeft === 30 && status === 'playing') {
-      sfx.playFile(assetUrl('sfx/30sec.mp3'))
+      sfx.playFile(assetUrl('sfx/30sec.mp3'), 0.8)
     }
   }, [timeLeft, status])
 

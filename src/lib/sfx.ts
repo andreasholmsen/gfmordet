@@ -57,10 +57,12 @@ function tone({ freq, dur, type = 'square', gain = 0.05, delay = 0 }: ToneOpts):
 export const sfx = {
   /** spiller en lydfil fra /public (mp3 o.l.) — respekterer demping.
    *  Mangler fila spilles ingenting (feilen svelges). */
-  playFile(src: string) {
+  playFile(src: string, volume = 1) {
     if (muted) return
     try {
-      void new Audio(src).play().catch(() => {})
+      const a = new Audio(src)
+      a.volume = volume
+      void a.play().catch(() => {})
     } catch {
       /* ignorer — lyd er aldri kritisk */
     }

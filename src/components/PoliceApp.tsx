@@ -46,6 +46,7 @@ function VoteGate({ day, children }: { day: number; children: ReactNode }) {
 export default function PoliceApp() {
   const { unlockedDays, isUnlocked, loading } = useUnlock()
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   // Synlige faner = åpne dager. Standardfane = siste åpne dag.
   const visibleDays = useMemo(
@@ -79,6 +80,16 @@ export default function PoliceApp() {
         <p style={{ marginTop: 0, fontSize: '0.85rem' }}>
           Innlogget som <strong>{user.displayName}</strong>
         </p>
+
+        {CASE.suspects && CASE.suspects.length > 0 && (
+          <button
+            className="btn"
+            style={{ marginBottom: 14 }}
+            onClick={() => navigate('/mistenkte')}
+          >
+            📌 Åpne Mistenkte-tavla
+          </button>
+        )}
 
         {visibleDays.length > 1 && (
           <div className="tabs">

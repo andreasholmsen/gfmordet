@@ -102,8 +102,12 @@ export default function CrimeSceneIntro({ onDone }: { onDone: () => void }) {
     function corridor(approach: number, bobX: number, bobY: number) {
       const cx = VW / 2 + bobX
       const cy = 54 + bobY
-      const dw = lerp(22, 150, approach)
+      // Døra vokser med KONSTANT proporsjon (ekte perspektiv skalerer bredde og
+      // høyde likt). BACKUP — gammel oppførsel der døra «flatet ut» mot slutten:
+      //   const dw = lerp(22, 150, approach)
+      //   const dh = lerp(38, 128, approach)
       const dh = lerp(38, 128, approach)
+      const dw = dh * (22 / 38)
       const dl = cx - dw / 2
       const dt = cy - dh / 2
       const dr = cx + dw / 2

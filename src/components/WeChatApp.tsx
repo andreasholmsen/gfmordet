@@ -229,7 +229,7 @@ function BankFlow({ onBack }: { onBack: () => void }) {
   if (done) {
     return (
       <div className="wechat__flow">
-        <p className="wechat__done-note">⚠️ 验证失败 · Verifisering mislyktes</p>
+        <p className="wechat__done-note">⚠️ 验证失败 · You just got hacked</p>
         <MemeMedia src="case/memes/alarm.mp4" alt="alarm" />
         <button className="wechat__back" onClick={onBack}>
           ‹ 返回 / Tilbake

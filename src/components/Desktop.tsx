@@ -57,21 +57,24 @@ const WeChatGlyph = () => (
   </span>
 )
 
-// Spotify-logo som SVG-ikon (grønn sirkel med tre buer).
-const SpotifyGlyph = () => (
+// Radio France-ikon som SVG (marineblå sirkel, sendemast med radiobølger).
+const RadioGlyph = () => (
   <span className="spotify-glyph" aria-hidden>
     <svg viewBox="0 0 24 24" width="30" height="30">
-      <circle cx="12" cy="12" r="12" fill="#1db954" />
-      <g fill="none" stroke="#0b1b10" strokeWidth="1.8" strokeLinecap="round">
-        <path d="M6 9.5c4-1.2 8-.8 11 1" />
-        <path d="M6.8 13c3.2-.9 6.4-.5 8.8 1" />
-        <path d="M7.6 16.2c2.5-.7 4.9-.4 6.8.8" />
+      <circle cx="12" cy="12" r="12" fill="#24439c" />
+      <circle cx="12" cy="12" r="2" fill="#e33" />
+      <g fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round">
+        <path d="M7.5 7.5a6.4 6.4 0 0 0 0 9" />
+        <path d="M16.5 7.5a6.4 6.4 0 0 1 0 9" />
+        <path d="M9.6 9.6a3.4 3.4 0 0 0 0 4.8" />
+        <path d="M14.4 9.6a3.4 3.4 0 0 1 0 4.8" />
       </g>
+      <path d="M12 14v6" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   </span>
 )
 
-function DesktopIcon({ icon }: { icon: IconDef }) {
+function DesktopIcon({ icon, onLockedClick }: { icon: IconDef; onLockedClick?: () => void }) {
   const navigate = useNavigate()
   return (
     <button
@@ -79,7 +82,10 @@ function DesktopIcon({ icon }: { icon: IconDef }) {
         icon.blink ? 'desktop-icon--blink' : ''
       }`}
       onClick={() => {
-        if (icon.locked) return
+        if (icon.locked) {
+          onLockedClick?.()
+          return
+        }
         sfx.click()
         if (icon.onClick) {
           icon.onClick()
@@ -102,7 +108,7 @@ function DesktopIcon({ icon }: { icon: IconDef }) {
   )
 }
 
-type DialogKind = 'about' | 'recycle' | null
+type DialogKind = 'about' | 'recycle' | 'locked' | null
 
 export default function Desktop() {
   const { isUnlocked, demo, refresh } = useUnlock()
@@ -118,12 +124,14 @@ export default function Desktop() {
     return () => window.removeEventListener('larry:found', on)
   }, [])
 
-  // «START HER» blinker til den har vært åpnet minst én gang.
+  // «START HER» blinker til den har vært åpnet minst én gang. Før den er åpnet
+  // er ALLE andre ikoner låst (🔒) — spillet begynner med intro-brevet.
+  const started = startSeen()
   const startIcon: IconDef = {
     label: 'START HER',
     glyph: '📨',
     to: '/start',
-    blink: !startSeen(),
+    blink: !started,
   }
 
   // Vis kun dager som er åpne — låste dager (f.eks. dag 2–4) skjules helt.
@@ -142,14 +150,12 @@ export default function Desktop() {
     { label: 'Excel', glyph: '📊', node: <ExcelGlyph />, to: '/resultater' },
     { label: 'WeChat', glyph: '💬', node: <WeChatGlyph />, to: '/wechat' },
   ]
-  if (CASE.suspects && CASE.suspects.length > 0) {
-    appIcons.push({ label: 'Mistenkte', glyph: '📌', to: '/mistenkte' })
-  }
+  // «Mistenkte»-tavla nås nå via en knapp inne i POLITI-appen (ikke eget ikon).
   if (CASE.angelaFiles && CASE.angelaFiles.length > 0) {
     appIcons.push({ label: 'Offerets filer', glyph: '📱', node: <PhoneGlyph />, to: '/angela' })
   }
   if (CASE.spotify && CASE.spotify.length > 0) {
-    appIcons.push({ label: 'Spotify', glyph: '🎵', node: <SpotifyGlyph />, to: '/spotify' })
+    appIcons.push({ label: 'Radio France', glyph: '📻', node: <RadioGlyph />, to: '/spotify' })
   }
   appIcons.push({ label: 'Minesveiper', glyph: '💣', to: '/spill/minesveiper' })
   appIcons.push({
@@ -202,8 +208,15 @@ export default function Desktop() {
       )}
 
       <div className="icon-grid">
-        {[startIcon, ...dayIcons, ...appIcons].map((icon) => (
-          <DesktopIcon key={icon.to ?? icon.href ?? icon.label} icon={icon} />
+        {[
+          startIcon,
+          ...[...dayIcons, ...appIcons].map((i) => ({ ...i, locked: i.locked || !started })),
+        ].map((icon) => (
+          <DesktopIcon
+            key={icon.to ?? icon.href ?? icon.label}
+            icon={icon}
+            onLockedClick={() => setDialog('locked')}
+          />
         ))}
       </div>
 
@@ -227,6 +240,15 @@ export default function Desktop() {
           </p>
           <p style={{ color: 'var(--shadow)' }}>
             Bygget med kaffe og altfor lite søvn. Lykke til, etterforsker.
+          </p>
+        </Dialog>
+      )}
+
+      {dialog === 'locked' && (
+        <Dialog title="Låst" icon="🔒" onClose={() => setDialog(null)}>
+          <p style={{ marginTop: 0 }}>Etterforskningen har ikke startet ennå.</p>
+          <p style={{ marginBottom: 0 }}>
+            Åpne <strong>📨 START HER</strong> først.
           </p>
         </Dialog>
       )}

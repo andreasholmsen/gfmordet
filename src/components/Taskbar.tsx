@@ -6,6 +6,7 @@ import { useSettings } from '../lib/SettingsContext'
 import { useAuth } from '../lib/AuthContext'
 import { getSchedule, type Schedule } from '../lib/supabase'
 import { sfx } from '../lib/sfx'
+import Dialog from './Dialog'
 
 function two(n: number): string {
   return String(n).padStart(2, '0')
@@ -27,6 +28,7 @@ export default function Taskbar() {
   const { user, signOut } = useAuth()
   const [schedule, setSchedule] = useState<Schedule | null>(null)
   const [now, setNow] = useState(() => Date.now())
+  const [confirmLogout, setConfirmLogout] = useState(false)
 
   // Hent tidsplanen én gang (null i demo / hvis RPC-en ikke finnes).
   useEffect(() => {
@@ -111,13 +113,44 @@ export default function Taskbar() {
           className="taskbar__user"
           onClick={() => {
             sfx.click()
-            void signOut()
+            setConfirmLogout(true) // bekreft først — ett klikk skal ikke logge ut
           }}
           title="Logg ut"
         >
           <span aria-hidden>👤</span> {user.displayName}
           <span className="taskbar__logout"> · Logg ut</span>
         </button>
+      )}
+
+      {confirmLogout && user && (
+        <Dialog
+          title="Logg ut"
+          icon="👤"
+          onClose={() => setConfirmLogout(false)}
+          actions={
+            <>
+              <button className="btn" onClick={() => setConfirmLogout(false)}>
+                Avbryt
+              </button>
+              <button
+                className="btn btn--primary"
+                onClick={() => {
+                  setConfirmLogout(false)
+                  void signOut()
+                }}
+              >
+                Logg ut
+              </button>
+            </>
+          }
+        >
+          <p style={{ marginTop: 0 }}>
+            Er du sikker på at du vil logge ut, <strong>{user.displayName}</strong>?
+          </p>
+          <p style={{ fontSize: '0.8rem', opacity: 0.8, marginBottom: 0 }}>
+            Stemmene dine er trygt lagret — du kan logge inn igjen når som helst.
+          </p>
+        </Dialog>
       )}
 
       <span className="taskbar__clock" aria-hidden>

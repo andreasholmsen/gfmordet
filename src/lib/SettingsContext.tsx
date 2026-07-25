@@ -11,6 +11,7 @@ interface Settings {
 
 interface SettingsState extends Settings {
   toggleMuted: () => void
+  setMuted: (muted: boolean) => void
 }
 
 const DEFAULTS: Settings = { muted: true }
@@ -43,6 +44,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const value: SettingsState = {
     ...settings,
     toggleMuted: () => setSettings((s) => ({ ...s, muted: !s.muted })),
+    setMuted: (muted) => setSettings((s) => ({ ...s, muted })),
   }
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

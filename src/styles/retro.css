@@ -451,6 +451,22 @@ textarea.field {
   font-size: 0.8rem;
   word-break: break-word;
 }
+/* Undermappe-flis: litt tydeligere ramme + antall dokumenter under tittelen. */
+.doc-tile--folder {
+  border: 1px solid rgba(0, 0, 0, 0.18);
+}
+.doc-tile__count {
+  font-size: 0.68rem;
+  opacity: 0.65;
+}
+/* Åpnet dokument fra en tintet undermappe: «papiret» får mappens farge. */
+.doc-tinted .markdown {
+  background: var(--doc-tint, #fff);
+}
+.doc-tinted .doc-view img,
+.doc-tinted .doc-view iframe {
+  background: var(--doc-tint, #fff);
+}
 
 .intro-note {
   margin-bottom: 16px;
@@ -2031,6 +2047,607 @@ textarea.field {
 }
 
 /* ===========================================================================
+   Offerets mobil — telefonramme, hjemskjerm og apper (WhatsApp/e-post/Slack)
+   =========================================================================== */
+.phone {
+  max-width: 420px;
+  margin: 0 auto;
+  background: #1b1b1f;
+  border-radius: 26px;
+  padding: 10px;
+  box-shadow: 0 8px 26px rgba(60, 20, 60, 0.35), inset 0 0 0 2px #333;
+}
+.phone__screen {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: min(72vh, 640px);
+  color: #1a1a1a;
+}
+.ph-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #111;
+  color: #fff;
+  font-size: 0.72rem;
+  padding: 4px 12px;
+  letter-spacing: 1px;
+}
+.ph-status__right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.ph-status__batt {
+  color: #ff6b6b;
+}
+.ph-empty {
+  padding: 24px 16px;
+  text-align: center;
+  opacity: 0.6;
+}
+
+/* Hjemskjerm */
+.ph-home {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(160deg, #ffd6e8, #cdb6f2 55%, #9fd8f5);
+  padding: 22px 14px 12px;
+}
+.ph-apps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px 6px;
+}
+.ph-app {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  font: inherit;
+}
+.ph-app__icon {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(40, 20, 50, 0.35);
+}
+.ph-app__icon:active {
+  transform: scale(0.94);
+}
+.ph-app__badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+.ph-app__label {
+  font-size: 0.72rem;
+  color: #3c2b46;
+  font-weight: 600;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+.ph-home__note {
+  margin-top: auto;
+  padding-top: 18px;
+  text-align: center;
+  font-size: 0.72rem;
+  font-style: italic;
+  color: #5b3a5b;
+  opacity: 0.85;
+}
+
+/* Felles app-header (farget stripe med tilbake-pil) */
+.ph-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  color: #fff;
+}
+.ph-head--dark {
+  color: #5b3a5b;
+}
+.ph-head__back {
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  color: inherit;
+  font-size: 1.3rem;
+  line-height: 1;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  flex: none;
+  display: grid;
+  place-items: center;
+  padding-bottom: 3px;
+}
+.ph-head--dark .ph-head__back {
+  background: rgba(0, 0, 0, 0.08);
+}
+.ph-head__titles {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.ph-head__title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ph-head__subtitle {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+.ph-head__right {
+  margin-left: auto;
+}
+
+/* Filer-appen inne i telefonen */
+.ph-files {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fff5fa;
+}
+.ph-files__grid {
+  padding: 12px;
+}
+.ph-files__view {
+  padding: 12px;
+}
+
+/* --- WhatsApp ------------------------------------------------------------ */
+.wa-app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #efe7dd;
+}
+.wa-chatlist {
+  flex: 1;
+  background: #fff;
+}
+.wa-chatrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.wa-chatrow:active {
+  background: #f5f5f5;
+}
+.wa-avatar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #dfe5e7;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+}
+.wa-avatar--sm {
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+  display: inline-grid;
+  vertical-align: middle;
+}
+.wa-chatrow__mid {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.wa-chatrow__name {
+  font-weight: 700;
+  color: #111;
+}
+.wa-chatrow__snippet {
+  font-size: 0.78rem;
+  color: #667781;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wa-chatrow__side {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.wa-chatrow__time {
+  font-size: 0.68rem;
+  color: #667781;
+}
+.wa-chatrow__time--unread {
+  color: #25d366;
+  font-weight: 700;
+}
+.wa-badge {
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: #25d366;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+.wa-thread {
+  flex: 1;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* klassisk WhatsApp-«doodle»-bakgrunn, forenklet */
+  background: #efe7dd;
+}
+.wa-msg {
+  position: relative;
+  max-width: 78%;
+  padding: 6px 9px 4px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+}
+.wa-msg--in {
+  align-self: flex-start;
+  background: #fff;
+  border-top-left-radius: 2px;
+}
+.wa-msg--out {
+  align-self: flex-end;
+  background: #d9fdd3;
+  border-top-right-radius: 2px;
+}
+.wa-msg__text {
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #111;
+}
+.wa-msg__img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+.wa-msg__deleted {
+  font-style: italic;
+  color: #8696a0;
+}
+.wa-msg__meta {
+  align-self: flex-end;
+  font-size: 0.62rem;
+  color: #8696a0;
+  margin-top: 2px;
+  display: flex;
+  gap: 3px;
+}
+.wa-msg__ticks {
+  color: #53bdeb;
+  letter-spacing: -2px;
+}
+.wa-composer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #f0f2f5;
+}
+.wa-composer__field {
+  flex: 1;
+  background: #fff;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  color: #8696a0;
+}
+.wa-composer__send {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 0.9rem;
+}
+
+/* --- E-post ---------------------------------------------------------------- */
+.pmail-app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f6f8fc;
+}
+.pmail-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 8px 10px 0;
+  background: #f6f8fc;
+}
+.pmail-tab {
+  border: none;
+  background: #e3e9f2;
+  color: #445;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.pmail-tab--active {
+  background: #3478f6;
+  color: #fff;
+}
+.pmail-list {
+  flex: 1;
+  padding: 8px 0;
+}
+.pmail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  padding: 9px 14px;
+  border-bottom: 1px solid #e8ecf3;
+}
+.pmail-row:active {
+  background: #eef2f9;
+}
+.pmail-row__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.pmail-row__from {
+  font-size: 0.82rem;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pmail-row--unread .pmail-row__from,
+.pmail-row--unread .pmail-row__subject {
+  font-weight: 700;
+  color: #111;
+}
+.pmail-row__date {
+  flex: none;
+  font-size: 0.68rem;
+  color: #78808c;
+}
+.pmail-row__subject {
+  font-size: 0.8rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pmail-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3478f6;
+}
+.pmail-read {
+  flex: 1;
+  padding: 14px;
+  background: #fff;
+}
+.pmail-read__subject {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  color: #111;
+}
+.pmail-read__meta {
+  font-size: 0.76rem;
+  color: #555;
+  border-bottom: 1px solid #e8ecf3;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pmail-read__date {
+  color: #78808c;
+}
+.pmail-read__draft {
+  color: #b05a00;
+  font-weight: 700;
+}
+.pmail-read__body .markdown {
+  box-shadow: none;
+  padding: 0;
+}
+.pmail-read__attachments {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #e8ecf3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.pmail-read__att-label {
+  font-size: 0.74rem;
+  color: #555;
+  width: 100%;
+}
+.pmail-att {
+  border: 1px solid #d5ddea;
+  background: #f2f5fa;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: #234;
+}
+.pmail-att:active {
+  background: #e4eaf4;
+}
+.pmail-attachment-view {
+  padding: 12px;
+  background: #fff;
+  flex: 1;
+}
+
+/* --- Slack ----------------------------------------------------------------- */
+.pslack-app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+.pslack-list {
+  flex: 1;
+}
+.pslack-section {
+  padding: 12px 14px 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #7a7a85;
+}
+.pslack-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  padding: 8px 14px;
+  color: #222;
+}
+.pslack-row:active {
+  background: #f2eef3;
+}
+.pslack-row__hash {
+  color: #7a7a85;
+  font-weight: 700;
+  width: 20px;
+  text-align: center;
+}
+.pslack-row__name {
+  font-size: 0.88rem;
+}
+.pslack-thread {
+  flex: 1;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pslack-msg {
+  display: flex;
+  gap: 8px;
+}
+.pslack-msg__avatar {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  background: #611f69;
+  color: #fff;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+.pslack-msg__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.pslack-msg__head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.pslack-msg__author {
+  font-weight: 700;
+  font-size: 0.84rem;
+  color: #111;
+}
+.pslack-msg__time {
+  font-size: 0.66rem;
+  color: #7a7a85;
+}
+.pslack-msg__text {
+  font-size: 0.84rem;
+  color: #222;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.pslack-msg__edited {
+  font-size: 0.7rem;
+  color: #7a7a85;
+}
+.pslack-composer {
+  margin: 8px 10px 10px;
+  border: 1px solid #d5d5dd;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  color: #7a7a85;
+}
+
+/* ===========================================================================
    Excel — stemmetall kamuflert som et regneark med innebygd stolpediagram
    =========================================================================== */
 /* Excel-grønn tittellinje */
@@ -2458,14 +3075,17 @@ textarea.field {
 }
 
 /* ===========================================================================
-   Spotify — enkel musikkspiller (mørkt tema, grønn aksent)
+   Radio France — radiokanal (marineblått tema, trikolor-detalj, rød DIREKTE)
    =========================================================================== */
 .window--spotify .titlebar {
-  background: linear-gradient(180deg, #1db954, #1a9147);
+  background: linear-gradient(180deg, #24439c, #172c66);
   color: #fff;
+  /* diskret trikolor-stripe i bunnen av tittellinjen 🇫🇷 */
+  border-bottom: 3px solid;
+  border-image: linear-gradient(90deg, #1f3a93 33%, #f4f4f4 33% 67%, #d33 67%) 1;
 }
 .window--spotify .window__body {
-  background: linear-gradient(180deg, #2a2a2a, #121212 60%);
+  background: linear-gradient(180deg, #1c2540, #0d1120 60%);
   color: #fff;
 }
 .sp {
@@ -2482,11 +3102,154 @@ textarea.field {
   width: min(70vw, 240px);
   aspect-ratio: 1;
   border-radius: 8px;
-  background: linear-gradient(135deg, #1db954, #155f34);
+  background: linear-gradient(135deg, #2a52be, #14204a);
   display: grid;
   place-items: center;
   font-size: 4rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.sp__station {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #aab6d8;
+}
+.sp__live {
+  color: #555;
+  font-size: 0.8rem;
+}
+.sp__live--on {
+  color: #e33;
+  animation: sp-live-blink 1.4s ease-in-out infinite;
+}
+@keyframes sp-live-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+/* liten equalizer i stedet for spolebar — radio har ingen tidslinje */
+.sp__eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 26px;
+}
+.sp__eq span {
+  width: 5px;
+  height: 4px;
+  border-radius: 2px;
+  background: #f2c14e;
+}
+.sp__eq--on span {
+  animation: sp-eq 0.9s ease-in-out infinite;
+}
+.sp__eq--on span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.sp__eq--on span:nth-child(3) {
+  animation-delay: 0.35s;
+}
+.sp__eq--on span:nth-child(4) {
+  animation-delay: 0.1s;
+}
+.sp__eq--on span:nth-child(5) {
+  animation-delay: 0.25s;
+}
+@keyframes sp-eq {
+  0%,
+  100% {
+    height: 5px;
+  }
+  50% {
+    height: 24px;
+  }
+}
+.sp__hint {
+  font-size: 0.7rem;
+  color: #8892b0;
+  font-style: italic;
+}
+/* Pause-knappen skal tåle 5-sek-langtrykket uten tekstmarkering/callout */
+.sp__btn--play {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+/* Hemmelig sendestyring (hold pause i 5 sek) — internt teknikerpanel */
+.sp-override {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(7, 11, 26, 0.97);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+  font-family: 'Courier New', monospace;
+  color: #d7e0ff;
+  overflow-y: auto;
+}
+.sp-override__head {
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #f2c14e;
+  border-bottom: 1px dashed #f2c14e66;
+  padding-bottom: 8px;
+}
+.sp-override__note {
+  font-size: 0.72rem;
+  color: #8892b0;
+}
+.sp-override__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sp-override__row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  border: 1px solid #2a3a6a;
+  background: #101830;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+.sp-override__row:active {
+  background: #1a2547;
+}
+.sp-override__row--cur {
+  border-color: #f2c14e;
+  color: #f2c14e;
+}
+.sp-override__cue {
+  flex: none;
+  width: 22px;
+  opacity: 0.7;
+}
+.sp-override__artist {
+  opacity: 0.65;
+  font-size: 0.8em;
+}
+.sp-override__close {
+  margin-top: auto;
+  border: 1px solid #f2c14e;
+  background: transparent;
+  color: #f2c14e;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 10px;
+  cursor: pointer;
+}
+.sp-override__close:active {
+  background: #f2c14e22;
 }
 .sp__meta {
   text-align: center;
@@ -2502,18 +3265,6 @@ textarea.field {
   font-size: 0.85rem;
   margin-top: 3px;
   overflow-wrap: break-word;
-}
-.sp__bar {
-  width: min(80vw, 300px);
-  height: 4px;
-  border-radius: 2px;
-  background: #4d4d4d;
-  overflow: hidden;
-}
-.sp__bar-fill {
-  height: 100%;
-  background: #1db954;
-  transition: width 0.25s linear;
 }
 .sp__controls {
   display: flex;
@@ -2536,8 +3287,8 @@ textarea.field {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: #1db954;
-  color: #000;
+  background: #f2c14e;
+  color: #14204a;
   display: grid;
   place-items: center;
   font-size: 1.7rem;
@@ -2755,6 +3506,10 @@ textarea.field {
   place-items: center;
   padding: 16px;
   background: rgba(0, 0, 0, 0.35);
+}
+/* Lyd-spørsmålet vises FØR boot — gi dialogen helsvart bakgrunn (ingen app bak). */
+.sound-prompt .dialog-overlay {
+  background: #000;
 }
 .dialog {
   width: 100%;

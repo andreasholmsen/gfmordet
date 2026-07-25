@@ -6,11 +6,14 @@ export default function Dialog({
   title,
   icon = 'ℹ️',
   onClose,
+  actions,
   children,
 }: {
   title: string
   icon?: string
   onClose: () => void
+  /** Egne knapper i bunnen (f.eks. Avbryt/Bekreft). Standard: én OK-knapp. */
+  actions?: ReactNode
   children: ReactNode
 }) {
   return (
@@ -32,9 +35,11 @@ export default function Dialog({
         </div>
         <div className="dialog__body">{children}</div>
         <div className="dialog__actions">
-          <button className="btn btn--primary" onClick={onClose}>
-            OK
-          </button>
+          {actions ?? (
+            <button className="btn btn--primary" onClick={onClose}>
+              OK
+            </button>
+          )}
         </div>
       </div>
     </div>

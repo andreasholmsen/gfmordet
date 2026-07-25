@@ -20,11 +20,14 @@ export default function AppWindow({
   title,
   icon,
   variant = 'folder',
+  closeTo = '/',
   children,
 }: {
   title: string
   icon: string
   variant?: WindowVariant
+  /** Hvor lukkeknappen navigerer (standard: skrivebordet). */
+  closeTo?: string
   children: ReactNode
 }) {
   const navigate = useNavigate()
@@ -38,7 +41,7 @@ export default function AppWindow({
     if (closing) return
     sfx.closeWindow()
     setClosing(true) // spiller lukke-animasjonen, så naviger
-    window.setTimeout(() => navigate('/'), CLOSE_MS)
+    window.setTimeout(() => navigate(closeTo), CLOSE_MS)
   }
 
   return (

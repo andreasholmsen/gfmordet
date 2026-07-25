@@ -24,6 +24,23 @@ export interface CaseDoc {
    *  det mellom matchede partnere. Umerkede dokumenter vises til begge. Solo-
    *  spillere (uparet/avlyst romanse) ser alt uansett. */
   group?: 'A' | 'B'
+  /** Legger dokumentet i en undermappe i dag-mappen. Verdien er `id`-en til en
+   *  mappe i dagens `folders`-liste. Utelates ⇒ dokumentet ligger løst i dagen. */
+  folder?: string
+}
+
+/** Undermappe i en dag-mappe — grupperer dokumenter og gir dem et felles utseende. */
+export interface SubfolderDef {
+  id: string
+  title: string // 'Vitneutsagn'
+  /** Emoji på mappe-flisen (standard 📁). */
+  icon?: string
+  /** Pastellfarge (CSS-farge) som tinter mappe-flisen, dokument-flisene inni og
+   *  «papiret» når et dokument åpnes — f.eks. '#d7e9fb' for lyseblå vitneutsagn.
+   *  Bruk lyse farger; teksten er alltid mørk. */
+  tint?: string
+  /** Kort intro øverst i undermappen (markdown støttes). */
+  intro?: string
 }
 
 export interface InstagramPost {
@@ -108,6 +125,8 @@ export interface DayContent {
   title: string // 'Dag 1'
   /** Kort intro vist øverst i mappen (markdown støttes). */
   intro?: string
+  /** Undermapper (valgfritt). Dokumenter havner i en mappe via `doc.folder`. */
+  folders?: SubfolderDef[]
   docs: CaseDoc[]
   /** Dagens spørsmål i POLITI-appen. La stå udefinert for dag 4 (ingen stemming). */
   question?: Question
@@ -125,6 +144,85 @@ export interface RomanceConfig {
   quiz: { id: string; prompt: string; options: string[] }[]
 }
 
+// ---------------------------------------------------------------------------
+//  Offerets mobil — apper (WhatsApp / e-post / Slack). Alt er valgfritt; en app
+//  vises kun når den har innhold. `day` på samtaler/meldinger/e-poster betyr
+//  «vises først når dag N er åpen» (samme tidslås som dag-mappene) — slik kan
+//  telefonen avsløre nytt innhold utover i spillet. Uten `day` vises alt straks.
+// ---------------------------------------------------------------------------
+
+export interface ChatMessage {
+  /** 'me' = Angela (høyre, grønn boble) · 'them' = motparten (venstre, hvit). */
+  from: 'me' | 'them'
+  text?: string
+  /** Bilde-boble: sti i /public, f.eks. 'case/angela/bilde.jpg'. */
+  img?: string
+  /** Vises i boblen, f.eks. '21:47' eller 'i går 21:47'. */
+  time?: string
+  /** «🚫 Denne meldingen ble slettet» — teksten/bildet vises IKKE. */
+  deleted?: boolean
+  /** Uleste innkommende meldinger telles opp i badge på samtalelisten. */
+  unread?: boolean
+  /** Vises først når dag N er åpen. */
+  day?: number
+}
+
+export interface WhatsAppChat {
+  id: string
+  name: string // kontaktnavn
+  /** Emoji-avatar i samtalelisten (standard 👤). */
+  avatar?: string
+  /** Undertittel i samtale-headeren, f.eks. 'sist sett i går 22:14'. */
+  subtitle?: string
+  messages: ChatMessage[]
+  /** Hele samtalen vises først når dag N er åpen. */
+  day?: number
+}
+
+export interface EmailMessage {
+  id: string
+  folder?: 'innboks' | 'sendt' | 'utkast' | 'spam'
+  from: string // 'Marte Wik <marte@firma.no>'
+  to?: string
+  subject: string
+  date?: string // 'ons. 17. juni, 14:02'
+  /** Markdown. */
+  body: string
+  /** Vedlegg — åpnes med vanlig dokumentviser (bilde/pdf/markdown). */
+  attachments?: CaseDoc[]
+  /** Uleste vises i fet skrift + telles i badge. */
+  unread?: boolean
+  /** Vises først når dag N er åpen. */
+  day?: number
+}
+
+export interface SlackMessage {
+  author: string
+  text: string
+  time?: string // 'i går 15:12'
+  edited?: boolean // viser «(redigert)»
+  day?: number
+}
+
+export interface SlackChannel {
+  id: string
+  name: string // 'festkomiteen' (uten #) eller personnavn for DM
+  /** true ⇒ vises som direktemelding (👤) i stedet for #kanal. */
+  dm?: boolean
+  topic?: string
+  messages: SlackMessage[]
+  day?: number
+}
+
+export interface AngelaPhoneConfig {
+  whatsapp?: WhatsAppChat[]
+  email?: EmailMessage[]
+  slack?: {
+    workspace?: string // 'Firmaet AS'
+    channels: SlackChannel[]
+  }
+}
+
 export interface CaseManifest {
   title: string
   /** Kort velkomsttekst på skrivebordet / i POLITI-appen. */
@@ -139,11 +237,16 @@ export interface CaseManifest {
   /** Angelas egne, personlige filer (valgfritt) — vises som en låst mobil.
    *  Bruker samme CaseDoc-type som dagene (bilde/pdf/markdown/html). */
   angelaFiles?: CaseDoc[]
+  /** Apper på Angelas mobil (WhatsApp/e-post/Slack). Valgfritt — apper uten
+   *  innhold vises ikke. Se typene over for dag-gating av meldinger. */
+  angelaPhone?: AngelaPhoneConfig
   /** 4-sifret kode til Angelas mobil. Plant koden som et spor i dokumentene
    *  (f.eks. en bursdag). Utelates ⇒ ingen lås (filene åpnes direkte).
    *  Spillere kan også komme forbi via «POLITI-HACK»-minispillet. */
   phonePin?: string
-  /** Sanger til Spotify-appen (valgfritt). Legg lydfiler i public/case/spotify/. */
+  /** Sendeplan til «Radio France»-appen (valgfritt). Legg lydfiler i
+   *  public/case/spotify/. Appen starter på tilfeldig sang ved åpning og
+   *  looper lista — kun pause, ingen hopping (det er radio). */
   spotify?: SpotifyTrack[]
   /** Dag 4: fasit og konklusjon. */
   solution: {
@@ -197,6 +300,17 @@ export const CASE: CaseManifest = {
       day: 1,
       title: 'Dag 1',
       intro: 'De første dokumentene i saken. Les nøye — hvem av vitnene snakker egentlig sant?',
+      // Undermapper: dokumenter med `folder: '<id>'` havner i mappen, og
+      // `tint` farger både flisene og «papiret» (lyseblå vitneutsagn ↓).
+      folders: [
+        {
+          id: 'vitner',
+          title: 'Vitneutsagn',
+          icon: '🗣️',
+          tint: '#d7e9fb',
+          intro: 'Forklaringer avgitt til politiet. _Minst én av dem lyver._',
+        },
+      ],
       docs: [
         {
           id: 'd1-rapport',
@@ -213,6 +327,7 @@ export const CASE: CaseManifest = {
           id: 'd1-vitne-1',
           title: 'Vitneutsagn: Kari',
           kind: 'markdown',
+          folder: 'vitner',
           inline:
             '## Kari Lund (nabo)\n\n' +
             '«Jeg så lyset i kjøkkenet til Angela slukke rundt 23. ' +
@@ -222,6 +337,7 @@ export const CASE: CaseManifest = {
           id: 'd1-vitne-2',
           title: 'Vitneutsagn: Per',
           kind: 'markdown',
+          folder: 'vitner',
           inline:
             '## Per Haug (eks-kjæreste)\n\n' +
             '«Vi snakket på telefon rundt 22. Hun hørtes glad ut. ' +
@@ -423,7 +539,7 @@ export const CASE: CaseManifest = {
     {
       id: 'andreas',
       name: 'Andreas',
-      role: 'Mystisk fyr',
+      role: '\"ANSA Brasil\"',
       status: 'ukjent',
       // 8-bit-portrett (tegnet for hånd — palett + piksel-grid, se PixelPortraitData)
       pixel: {
@@ -472,7 +588,7 @@ export const CASE: CaseManifest = {
     {
       id: 'maud',
       name: 'Maud',
-      role: 'Mystisk dame',
+      role: 'President i ANSA',
       status: 'ukjent',
       pixel: {
         palette: {
@@ -520,14 +636,11 @@ export const CASE: CaseManifest = {
     {
       id: 'erik',
       name: 'Erik',
-      role: 'Blomsterelsker',
+      role: 'ANSA Tyskland Sør',
       status: 'ukjent',
       pixel: {
         palette: {
-          B: '#5f9bd8', // himmel
-          P: '#f2cfdc', // kirsebærblomst, lys
-          p: '#e5aec6', // kirsebærblomst
-          v: '#6f9a63', // grøntanlegg
+          _: '#e8b4c8', // bakgrunn (kirsebærrosa, solid)
           d: '#8a6b42', // hår, mørkt
           h: '#a8874f', // hår
           H: '#c9a869', // hår, lyst
@@ -542,27 +655,27 @@ export const CASE: CaseManifest = {
           z: '#8b8f99', // glidelås
         },
         rows: [
-          'BBBBpPBBBBBBBBBBBBpBBBBB',
-          'BBBpPPpBBBBBBBBBBpPpBBBB',
-          'BpPPpPPBBBBBBBBBpPPPpBBB',
-          'pPPpPPpBhhhhhhhBpPPpPPpP',
-          'PpPPpPhHHhhhhHhhhpPPpPPp',
-          'pPPpPhhHhhhhhhhhhhPpPPpP',
-          'PpPpdhhhhhhhhhhhhhdpPPpP',
-          'pPpPdhhhHhhhhhhhhhdPpPpP',
-          'pPpPdhhhhhhhhhhhshdPpPpP',
-          'pPpPdhsgggggggggshdpPpPP',
-          'pPpPdsggsegsgesggsdPpPpP',
-          'pPpPdSsggggsggggsSdPpPpP',
-          'pPpPpSsssssSsssssSPpPpPp',
-          'pPpPpSsssmmmmmsssSPpPpPp',
-          'pPpPpPSsssssssSpPpPpPPpP',
-          'pvPpPpPvSssssSvpPpPpPpPv',
-          'vvPpvPpwwwwzwwwwvPpvvPpv',
-          'vvpvnnwwwwwzwwwwwnnvpvvv',
-          'vvnnnnnwwwwzwwwnnnnnvvvv',
-          'vnnnnnnwwwwzwwwnnnnnnvvv',
-          'nnnnnnnwwwwzwwwnnnnnnnnv',
+          '________________________',
+          '________________________',
+          '________________________',
+          '________hhhhhhh_________',
+          '______hHHhhhhHhhh_______',
+          '_____hhHhhhhhhhhhh______',
+          '____dhhhhhhhhhhhhhd_____',
+          '____dhhhHhhhhhhhhhd_____',
+          '____dhhhhhhhhhhhshd_____',
+          '____dhsgggggggggshd_____',
+          '____dsggsegsgesggsd_____',
+          '____dSsggggsggggsSd_____',
+          '_____SsssssSsssssS______',
+          '_____SsssmmmmmsssS______',
+          '______SsssssssS_________',
+          '________SssssS__________',
+          '_______wwwwzwwww________',
+          '____nnwwwwwzwwwwwnn_____',
+          '__nnnnnwwwwzwwwnnnnn____',
+          '_nnnnnnwwwwzwwwnnnnnn___',
+          'nnnnnnnwwwwzwwwnnnnnnnn_',
           'Nnnnnnnnwwwzwwwnnnnnnnnn',
           'NNnnnnnnwwwzwwnnnnnnnnNN',
           'NNnnnnnnwwwzwwnnnnnnnnNN',
@@ -572,7 +685,7 @@ export const CASE: CaseManifest = {
     {
       id: 'oskar',
       name: 'Oskar',
-      role: 'Overraskende velkledd',
+      role: 'ANSA Toulouse',
       status: 'ukjent',
       pixel: {
         palette: {
@@ -622,11 +735,11 @@ export const CASE: CaseManifest = {
     {
       id: 'runill',
       name: 'Runill',
-      role: 'Fra en annen tid',
+      role: 'Sosialveileder',
       status: 'ukjent',
       pixel: {
         palette: {
-          _: '#d5c9b6', // bakgrunn (varm greige vegg)
+          _: '#a48fc9', // bakgrunn (lavendel, solid)
           d: '#7d5c3a', // hår, mørkt (midtskill/skygge)
           h: '#9c7a4e', // hår
           H: '#c09a62', // hår, lyst
@@ -669,15 +782,11 @@ export const CASE: CaseManifest = {
     {
       id: 'hedvig',
       name: 'Hedvig',
-      role: 'Strikkeentusiast',
+      role: 'ANSA Madrid',
       status: 'ukjent',
       pixel: {
         palette: {
-          _: '#eae3d4', // vinterhimmel, blek
-          v: '#5a6a52', // grantrær (uskarpe)
-          q: '#f4f1e8', // snø
-          c: '#a84028', // rød låve
-          C: '#7e2e1c', // låvedør
+          _: '#4f9a94', // bakgrunn (teal, solid)
           d: '#4e3a28', // hår, mørkt brunt
           h: '#6a5138', // hår
           s: '#f0c49e', // hud
@@ -692,25 +801,25 @@ export const CASE: CaseManifest = {
         },
         rows: [
           '________________________',
-          'vv______hhh_____________',
-          'v_____hhhhhhhh______qqqq',
-          '_____hhhhhhhhhhh___qqqqq',
-          'v___dhhhhhhhhhhhh__ccccc',
-          'v___dhssssssssssshdccccc',
-          'v___dhssssssssssshdccCCc',
-          '____dhsdddsssdddshdccCCc',
-          '____dhsseessseesshdccCCc',
-          '___hdhsfsssSsssfshdccCCc',
-          '___hdhsfssSSsssfshdccccc',
-          'q___dhssSmmmmSssshd_qqqq',
-          'qq___dSsssssssSd____qqqq',
-          'qqq___SssssssS______qqqq',
-          'qqqq____SssssS____qqqqqq',
-          'qqqqq__gssssg____qqqqqqq',
-          'qq__KKKKKKgKKKKKK___qqqq',
-          'qq_kpkpkpkpkpkpkpk__qqqq',
-          'q_kkpkkkpkkkpkkkpkk__qqq',
-          '_kppkppkppkppkppkppkp_qq',
+          '________hhh_____________',
+          '______hhhhhhhh__________',
+          '_____hhhhhhhhhhh________',
+          '____dhhhhhhhhhhhh_______',
+          '____dhssssssssssshd_____',
+          '____dhssssssssssshd_____',
+          '____dhsdddsssdddshd_____',
+          '____dhsseessseesshd_____',
+          '___hdhsfsssSsssfshd_____',
+          '___hdhsfssSSsssfshd_____',
+          '____dhssSmmmmSssshd_____',
+          '_____dSsssssssSd________',
+          '______SssssssS__________',
+          '________SssssS__________',
+          '_______gssssg___________',
+          '____KKKKKKgKKKKKK_______',
+          '___kpkpkpkpkpkpkpk______',
+          '__kkpkkkpkkkpkkkpkk_____',
+          '_kppkppkppkppkppkppkp___',
           'kkkkkkkkkkkkkkkkkkkkkkkk',
           'kkpkkkkpkkkkpkkkkpkkkkpk',
           'kkkkkkkkkkkkkkkkkkkkkkkk',
@@ -721,11 +830,11 @@ export const CASE: CaseManifest = {
     {
       id: 'ane',
       name: 'Ane',
-      role: 'Smilende vitne',
+      role: 'ANSA Irland',
       status: 'ukjent',
       pixel: {
         palette: {
-          _: '#b5b5ae', // bakgrunn (betongvegg)
+          _: '#e07a5f', // bakgrunn (korall, solid)
           d: '#a87f45', // hår, mørk blond (midtskill/skygge)
           h: '#d4ab62', // hår, blond
           H: '#e8c987', // hår, lys blond
@@ -734,7 +843,6 @@ export const CASE: CaseManifest = {
           e: '#4f7396', // øyne (blå)
           m: '#c26557', // lepper
           T: '#f6f1e8', // tenner (stort smil)
-          g: '#c9a24a', // gullsmykker (øredobber + kjede)
           b: '#9db8e2', // bluse, lyseblå
           B: '#7e9cc9', // bluse, skygge/krage
           w: '#f0f2f5', // knapper, hvite
@@ -751,12 +859,12 @@ export const CASE: CaseManifest = {
           '_____dhseessseesshd_____',
           '_____dhssssSssssshd_____',
           '____hdhssssSSsssshdh____',
-          '____hdhssmTTTTmsshdh____',
-          '____hdhsssSmmSssshdh____',
-          '____gdSssssssSdg________',
+          '____hdhsssTTTTssshdh____',
+          '____hdhsssssssssshdh____',
+          '_____dSssssssSd_________',
           '________SssssS__________',
-          '_______gSssssSg_________',
-          '____bbssssgsssssbb______',
+          '________SssssS__________',
+          '____bbssssssssssbb______',
           '___bbbbBssssssBbbbb_____',
           '__bbbbbbBssssBbbbbbb____',
           '_bbbbbbbbBssBbbbbbbbb___',
@@ -770,7 +878,7 @@ export const CASE: CaseManifest = {
     {
       id: 'sverre',
       name: 'Sverre',
-      role: 'Den voksne i rommet',
+      role: 'Studentprest',
       status: 'ukjent',
       pixel: {
         palette: {
@@ -819,7 +927,7 @@ export const CASE: CaseManifest = {
     {
       id: 'anna',
       name: 'Anna',
-      role: 'Stirrer tilbake',
+      role: 'ANSA Danmark',
       status: 'ukjent',
       pixel: {
         palette: {
@@ -867,15 +975,11 @@ export const CASE: CaseManifest = {
     {
       id: 'pia',
       name: 'Pia',
-      role: 'Verdensvant',
+      role: 'ANSA Sør-Korea',
       status: 'ukjent',
       pixel: {
         palette: {
-          _: '#c3c9cf', // disig himmel (Shanghai)
-          t: '#9aa5b0', // skyskrapere
-          T: '#7e8a98', // skyskrapere, mørke
-          r: '#b07878', // Oriental Pearl Tower
-          q: '#9fb5ae', // elven
+          _: '#e2b13c', // bakgrunn (gyllen, solid)
           d: '#4e3a2a', // hår, mørkt (midtskill)
           h: '#6e5138', // hår, brunt
           H: '#a5825a', // hår, lyse tupper (balayage)
@@ -893,15 +997,15 @@ export const CASE: CaseManifest = {
           '_______hhdhh____________',
           '_____hhhhdhhhhh_________',
           '____hhhhhdhhhhhh________',
-          '___hhhhhsssshhhhhh__tt__',
-          '__hhhhhsssssssssshhhhhtt',
-          'tthhhhhsddsssddsshhhhhtt',
-          'tThhhhhseessseesshhhhhTt',
-          'tthhhhhssssSSsssshhhhhrt',
-          'TthhhhgssssSSssssghhhhrt',
-          'tthhhhhssSmmmmSsshhhhhrt',
-          'qqhhhhhSssssssssShhhhhqq',
-          'qqhhhhhhSssssssShhhhhhqq',
+          '___hhhhhsssshhhhhh______',
+          '__hhhhhsssssssssshhhhh__',
+          '__hhhhhsddsssddsshhhhh__',
+          '__hhhhhseessseesshhhhh__',
+          '__hhhhhssssSSsssshhhhh__',
+          '__hhhhgssssSSssssghhhh__',
+          '__hhhhhssSmmmmSsshhhhh__',
+          '__hhhhhSssssssssShhhhh__',
+          '__hhhhhhSssssssShhhhhh__',
           '__hhhhhhhSssssShhhhhhh__',
           '__hhhhhhhkSssSkhhhhhhh__',
           '_hhhhhhhkkksskkkhhhhhhh_',
@@ -968,12 +1072,120 @@ export const CASE: CaseManifest = {
     },
   ],
 
-  // Sanger til Spotify-appen. Legg .mp3-filene i public/case/spotify/ og pek på
-  // dem her. `title`/`artist` er valgfritt (utledes ellers fra filnavnet).
+  // Apper på Angelas mobil. Eksempeldata — viser alle triksene: slettet melding,
+  // uleste meldinger (badge), dag-gating (`day: 2` dukker opp når dag 2 åpner),
+  // e-postutkast som aldri ble sendt, vedlegg, og «(redigert)» i Slack.
+  angelaPhone: {
+    whatsapp: [
+      {
+        id: 'wa-per',
+        name: 'Per 🚫',
+        avatar: '🧔',
+        subtitle: 'sist sett lørdag 22:41',
+        messages: [
+          { from: 'them', text: 'Kan vi ikke bare snakke sammen? 5 minutter.', time: 'lør 20:12' },
+          { from: 'me', text: 'Per. Slutt å ringe meg.', time: 'lør 20:30' },
+          { from: 'them', text: 'Du gjør en stor feil nå.', time: 'lør 21:02' },
+          { from: 'them', deleted: true, time: 'lør 21:03' },
+          { from: 'them', text: 'Glem det jeg skrev. Sees på GF.', time: 'lør 21:05', unread: true },
+        ],
+      },
+      {
+        id: 'wa-thomas',
+        name: 'Thomas (bror)',
+        avatar: '👨',
+        subtitle: 'sist sett for 3 uker siden',
+        messages: [
+          { from: 'me', text: 'Hei — ringte deg i går. Alt bra på hytta?', time: 'ons 18:44' },
+          { from: 'me', text: 'Thomas?', time: 'tor 09:12' },
+          // Dukker først opp når dag 2 er åpen — telefonen «avslører» mer utover i spillet.
+          { from: 'them', text: 'Beklager. Har hatt mye å tenke på. Vi må snakke om Kari.', time: 'lør 22:58', unread: true, day: 2 },
+        ],
+      },
+    ],
+    email: [
+      {
+        id: 'ep-styret',
+        from: 'Styret <styret@borettslaget.no>',
+        to: 'angela@epost.no',
+        subject: 'Vedr. klage på gjerde — sak 118',
+        date: 'ons. 15:02',
+        unread: true,
+        body:
+          'Hei Angela,\n\nVi har mottatt klagen din på naboens gjerde. Saken behandles på ' +
+          'styremøtet neste uke. Vedlagt følger nabovarselet.\n\nMvh Styret',
+        attachments: [
+          {
+            id: 'ep-styret-vedlegg',
+            title: 'Nabovarsel',
+            kind: 'markdown',
+            inline:
+              '## NABOVARSEL\n\nDet varsles herved om oppføring av gjerde i eiendomsgrensen. ' +
+              'Merknader må fremsettes innen 14 dager.\n\n_Signert: K. Lund_',
+          },
+        ],
+      },
+      {
+        id: 'ep-utkast',
+        folder: 'utkast',
+        from: 'Angela',
+        to: 'politiet@politiet.no',
+        subject: '(uten emne)',
+        date: 'lør. 22:47',
+        body:
+          'Hei. Jeg vil anmelde et forhold. Jeg tror noen prøver å skade meg. ' +
+          'Det begynte etter at jeg fant ut at',
+        // Utkast — setningen slutter brått. Aldri sendt. 🕯️
+      },
+      {
+        id: 'ep-spam',
+        folder: 'spam',
+        from: 'Advokat B. Diallo <winner@lotteri-intl.biz>',
+        subject: 'DU HAR VUNNET 4 500 000 NOK!!',
+        date: 'man. 03:11',
+        body: 'Kjære heldige vinner! Send oss kontonummer og BankID for å motta premien.',
+      },
+    ],
+    slack: {
+      workspace: 'GF-komiteen',
+      channels: [
+        {
+          id: 'sl-festkomiteen',
+          name: 'festkomiteen',
+          topic: 'Bankettmiddag lørdag 🥂',
+          messages: [
+            { author: 'Angela', text: 'Bordplasseringen er klar! Ligger i driven.', time: 'fre 14:05' },
+            { author: 'Kari', text: 'Hvorfor sitter jeg ved siden av Per??', time: 'fre 14:22' },
+            { author: 'Angela', text: 'Det ordner seg sikkert 😅', time: 'fre 14:30', edited: true },
+            { author: 'Per', text: 'Jeg bytter gjerne plass.', time: 'fre 15:01' },
+          ],
+        },
+        {
+          id: 'sl-dm-kari',
+          name: 'Kari',
+          dm: true,
+          messages: [
+            { author: 'Kari', text: 'Vi må snakke om det du så. IKKE si det til noen.', time: 'fre 23:12' },
+            { author: 'Angela', text: 'Jeg lover ingenting.', time: 'lør 08:03' },
+          ],
+        },
+      ],
+    },
+  },
+
+  // Sendeplan til «Radio France»-appen. Legg .mp3-filene i public/case/spotify/
+  // og pek på dem her. `title`/`artist` er valgfritt (utledes ellers fra filnavnet).
   spotify: [
-    { src: 'case/spotify/sang1.mp3', title: 'Spor 1', artist: 'Ukjent artist' },
-    { src: 'case/spotify/sang2.mp3', title: 'Spor 2', artist: 'Ukjent artist' },
-    { src: 'case/spotify/sang3.mp3', title: 'Spor 3', artist: 'Ukjent artist' },
+    { src: 'case/spotify/chanson_1.m4a', title: 'On va s\'aimer', artist: 'Gilbert Montagné' },
+    { src: 'case/spotify/chanson_2.m4a', title: 'Nuit de folie', artist: 'Début De Soirée' },
+    { src: 'case/spotify/chanson_3.m4a', title: 'Les démons de minuit', artist: 'Images' },
+    { src: 'case/spotify/chanson_4.m4a', title: 'Emmenez-moi', artist: 'Charles Aznavour' },
+    { src: 'case/spotify/chanson_5.m4a', title: 'Dans les yeux d\'Émilie', artist: 'Joe Dassin' },
+    { src: 'case/spotify/chanson_6.m4a', title: 'Destinée', artist: 'Vladimir Cosma, Guy Marchand' },
+    { src: 'case/spotify/chanson_7.m4a', title: 'Les lacs du Connemara', artist: 'Michel   Sardou' },
+    { src: 'case/spotify/chanson_8.m4a', title: 'Partenaire Particulier', artist: 'Partenaire Particulier' },
+    { src: 'case/spotify/chanson_9.m4a', title: 'Aline', artist: 'Christophe' },
+    { src: 'case/spotify/chanson_10.m4a', title: 'Hier encore', artist: 'Charles Aznavour' },
   ],
 
   solution: {

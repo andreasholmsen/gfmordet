@@ -99,6 +99,16 @@ Detaljer:
 - Profilpool fryses når dag 2 åpner (profil kan kun lages mens dag 1-vinduet er åpent).
 - Selfie kan ikke verifiseres teknisk (soft via UX); admin kan slette bilder i dashbordet.
 
+## Undermapper i dag-mappene (med farge-tema)
+
+Dag-mapper kan ha undermapper: definer `folders: [{ id, title, icon?, tint?, intro? }]`
+på dagen i manifestet og sett `folder: '<id>'` på dokumentene som skal inn. `tint`
+(lys pastellfarge, f.eks. `#d7e9fb`) farger mappe-flisen, dokument-flisene inni OG
+«papiret» når dokumentet åpnes — brukes til å gi dokumenttyper eget utseende (eks:
+lyseblå vitneutsagn i dag 1). Umerkede dokumenter ligger løst i dagen som før.
+Dag 3-delingen (`group: 'A'|'B'`) virker uendret — mapper med null synlige dokumenter
+skjules. Implementert i `DayFolder.tsx`; CSS: `.doc-tile--folder` / `.doc-tinted`.
+
 ## Offerets filer = låst mobil (kode + «POLITI-HACK»)
 
 «Offerets filer» vises som en smarttelefon på skrivebordet. Innholdet (`CASE.angelaFiles`)
@@ -115,6 +125,23 @@ filer, mangler de spilles ingenting): `public/sfx/30sec.mp3` ved 30 sek igjen, o
 Avtrykket tegnes prosedyrelt som SVG (seeded) — ingen bildefiler. Opplåsing huskes per enhet
 (`localStorage: gfm:angela-unlocked`). Utelat `phonePin` for å skru av låsen helt. Alt er
 klient-side (ingen Supabase).
+
+**Etter opplåsing vises en telefon-hjemskjerm** (ramme + statuslinje + app-ikoner med
+badge for uleste), ikke lenger en flat filliste. Innhold i `CASE.angelaPhone` i manifestet:
+- **WhatsApp** (`whatsapp: WhatsAppChat[]`) — samtaleliste + boble-tråder. Per melding:
+  `deleted: true` («🚫 Denne meldingen ble slettet»), `unread` (telles i badges), `img`
+  (bilde-boble), `time`. Komponent: `src/components/phone/WhatsAppApp.tsx`.
+- **E-post** (`email: EmailMessage[]`) — faner Innboks/Sendt/Utkast/Søppelpost (kun de med
+  innhold), ulest = fet + badge, `attachments` er vanlige `CaseDoc` (åpnes med DocView),
+  utkast merkes «aldri sendt». Komponent: `phone/MailApp.tsx`.
+- **Slack** (`slack: { workspace, channels }`) — kanaler (#) og DM-er (`dm: true`), meldinger
+  med forfatter/tid/`edited` («(redigert)»). Komponent: `phone/SlackApp.tsx`.
+- **Filer** — de gamle `angelaFiles`-dokumentene, nå som app på hjemskjermen.
+- **Dag-gating:** `day: N` på samtale/melding/e-post/kanal ⇒ vises først når dag N er åpen
+  (samme `useUnlock()`-tidslås som dag-mappene) — telefonen «avslører» mer utover i spillet,
+  og nye uleste dukker opp i badgene. Uten `day` vises alt straks. Apper uten innhold skjules.
+Orkestrering + hjemskjerm: `AngelaFiles.tsx`. CSS-seksjon «Offerets mobil» i `retro.css`
+(`.phone`, `.ph-*`, `.wa-*`, `.pmail-*`, `.pslack-*`).
 
 ## Datoer / tidsplan (settes i Supabase `case_config`, IKKE i koden)
 
@@ -197,10 +224,13 @@ skjer når neste dag slippes.
   galleri-reserve; brukes av `StoryComposer` (story) og `RomansaiansaApp` (selfie).
 - `src/components/RomansaiansaApp.tsx` — Tinder-modus: profil-oppsett, swiping, match/avlys.
 - `src/components/SuspectBoard.tsx` — «Mistenkte»-korktavle (vises kun når `suspects` finnes).
+  Nås via knapp i POLITI-appen (ikke eget skrivebordsikon); lukking går tilbake til `/politi`.
 - `src/components/PixelPortrait.tsx` — 8-bit-portrett fra piksel-grid i manifestet
   (`Suspect.pixel`: palett + tegn-rader; vinner over `img`). Eksempel: «Andreas»-kortet.
 - `src/components/PhoneLock.tsx` + `FingerprintHack.tsx` — låseskjerm for Angelas mobil
   (kode fra `CASE.phonePin`) og politi-hack-minigamet som omgår den.
+- `src/components/AngelaFiles.tsx` + `src/components/phone/` (`PhoneHeader`, `WhatsAppApp`,
+  `MailApp`, `SlackApp`) — telefon-hjemskjerm + appene på Angelas mobil (`CASE.angelaPhone`).
 - `src/components/Minesveiper.tsx` — lite frittstående minesveiper-spill (påskeegg).
 - `src/components/Dialog.tsx` + `ContextMenu.tsx` — gjenbrukbar modal + høyreklikk-meny.
 - `src/components/PoliceApp.tsx` + `VoteForm.tsx` + `ResultsView.tsx` — POLITI-app. Identitet

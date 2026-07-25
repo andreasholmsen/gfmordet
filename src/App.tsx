@@ -6,6 +6,7 @@ import { SettingsProvider } from './lib/SettingsContext'
 import { AuthProvider, useAuth } from './lib/AuthContext'
 import { hasSupabase, getRomanceAssigned } from './lib/supabase'
 import BootScreen from './components/BootScreen'
+import SoundPrompt, { needsSoundPrompt } from './components/SoundPrompt'
 import AuthScreen from './components/AuthScreen'
 import StartHere from './components/StartHere'
 import Desktop from './components/Desktop'
@@ -31,12 +32,20 @@ export default function App() {
   const [booting, setBooting] = useState(true)
   const finishBoot = useCallback(() => setBooting(false), [])
 
+  // Førstegangsbesøk: anbefal lyd FØR boot-animasjonen (svaret huskes per enhet).
+  const [askSound, setAskSound] = useState(needsSoundPrompt)
+
   return (
     <SettingsProvider>
       <AuthProvider>
         <UnlockProvider>
-          {booting && <BootScreen onDone={finishBoot} />}
-          {!booting && <Gate />}
+          {askSound ? (
+            <SoundPrompt onDone={() => setAskSound(false)} />
+          ) : booting ? (
+            <BootScreen onDone={finishBoot} />
+          ) : (
+            <Gate />
+          )}
         </UnlockProvider>
       </AuthProvider>
     </SettingsProvider>

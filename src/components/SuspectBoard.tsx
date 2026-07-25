@@ -44,7 +44,7 @@ function SuspectCard({ s }: { s: Suspect }) {
 export default function SuspectBoard() {
   const suspects = CASE.suspects ?? []
   return (
-    <AppWindow title="Mistenkte" icon="📌" variant="folder">
+    <AppWindow title="Mistenkte" icon="📌" variant="folder" closeTo="/politi">
       <div className="suspect-board">
         {suspects.length === 0 ? (
           <p className="notice">Ingen personer er lagt inn i saken ennå.</p>

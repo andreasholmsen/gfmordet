@@ -3,8 +3,9 @@ import { CASE, type SpotifyTrack } from '../case/manifest'
 import { assetUrl } from '../lib/assets'
 import AppWindow from './AppWindow'
 
-// Enkel musikkspiller: velger tilfeldig sang, og lar deg pause, hoppe fram
-// (ny tilfeldig) og tilbake (forrige spilte). Ikke noe fancy.
+// «Radio France»: radiokanal, ikke musikkspiller. Hver åpning slår på radioen
+// midt i sendeplanen (tilfeldig sang), deretter spilles lista videre i loop.
+// Radio kan ikke hoppes i — eneste knapp er pause/på.
 
 function prettyTitle(t: SpotifyTrack): string {
   if (t.title) return t.title
@@ -12,58 +13,52 @@ function prettyTitle(t: SpotifyTrack): string {
   return base.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ')
 }
 
-function randomOther(exclude: number, count: number): number {
-  if (count <= 1) return 0
-  let n = exclude
-  while (n === exclude) n = Math.floor(Math.random() * count)
-  return n
-}
-
 export default function SpotifyApp() {
   const tracks = CASE.spotify ?? []
   const audioRef = useRef<HTMLAudioElement>(null)
 
-  // Spillehistorikk: hist[pos] = indeks til sangen som spilles nå.
-  const [hist, setHist] = useState<number[]>(() =>
-    tracks.length ? [Math.floor(Math.random() * tracks.length)] : [],
+  // Tilfeldig startsang per åpning; deretter sekvensielt med wrap (loop).
+  const [idx, setIdx] = useState(() =>
+    tracks.length ? Math.floor(Math.random() * tracks.length) : 0,
   )
-  const [pos, setPos] = useState(0)
   const [playing, setPlaying] = useState(true) // forsøk autoplay ved åpning
   const [error, setError] = useState(false)
-  const [progress, setProgress] = useState({ cur: 0, dur: 0 })
 
-  const currentIdx = hist[pos] ?? 0
-  const track = tracks[currentIdx]
+  // Hemmelig overstyring: hold pause-knappen i 5 sek → sendestyring-meny
+  // der man kan velge sang fritt. Ingen visuell hint — den skal være hemmelig.
+  const [override, setOverride] = useState(false)
+  const holdTimer = useRef<number | null>(null)
+  const holdFired = useRef(false) // svelg klikket som følger etter et langt trykk
+
+  function stopHold() {
+    if (holdTimer.current !== null) {
+      window.clearTimeout(holdTimer.current)
+      holdTimer.current = null
+    }
+  }
+  function startHold() {
+    stopHold()
+    holdFired.current = false
+    holdTimer.current = window.setTimeout(() => {
+      holdFired.current = true
+      setOverride(true)
+    }, 5000)
+  }
+  useEffect(() => stopHold, [])
+
+  const track = tracks[idx]
+  const live = playing && !error
 
   useEffect(() => {
     const a = audioRef.current
     if (!a) return
     if (playing) a.play().catch(() => setPlaying(false))
     else a.pause()
-  }, [playing, currentIdx])
-
-  function next() {
-    if (tracks.length === 0) return
-    setError(false)
-    if (pos < hist.length - 1) {
-      setPos(pos + 1) // vi hadde gått tilbake — gå framover i historikken
-    } else {
-      setHist([...hist, randomOther(currentIdx, tracks.length)])
-      setPos(pos + 1)
-    }
-    setPlaying(true)
-  }
-
-  function prev() {
-    setError(false)
-    if (pos > 0) setPos(pos - 1)
-    else if (audioRef.current) audioRef.current.currentTime = 0
-    setPlaying(true)
-  }
+  }, [playing, idx])
 
   if (tracks.length === 0 || !track) {
     return (
-      <AppWindow title="Spotify" icon="🎵" variant="spotify">
+      <AppWindow title="Radio France" icon="📻" variant="spotify">
         <div className="sp">
           <p className="notice">Ingen sanger ennå. Legg .mp3-filer i public/case/spotify/.</p>
         </div>
@@ -71,54 +66,99 @@ export default function SpotifyApp() {
     )
   }
 
-  const pct = progress.dur > 0 ? (progress.cur / progress.dur) * 100 : 0
-
   return (
-    <AppWindow title="Spotify" icon="🎵" variant="spotify">
+    <AppWindow title="Radio France" icon="📻" variant="spotify">
       <div className="sp">
+        <div className="sp__station">
+          <span className={`sp__live ${live ? 'sp__live--on' : ''}`} aria-hidden>
+            ●
+          </span>
+          {live ? 'DIREKTE' : 'PAUSE'} · RADIO FRANCE · 98,8 MHz
+        </div>
+
         <div className="sp__art" aria-hidden>
-          🎵
+          📻
         </div>
 
         <div className="sp__meta">
-          <div className="sp__title">{error ? 'Kunne ikke spille sporet' : prettyTitle(track)}</div>
+          <div className="sp__title">{error ? 'Sendingen falt ut' : prettyTitle(track)}</div>
           <div className="sp__artist">{error ? track.src : (track.artist ?? 'Ukjent artist')}</div>
         </div>
 
-        <div className="sp__bar">
-          <div className="sp__bar-fill" style={{ width: `${pct}%` }} />
+        <div className={`sp__eq ${live ? 'sp__eq--on' : ''}`} aria-hidden>
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
         </div>
 
         <div className="sp__controls">
-          <button className="sp__btn" onClick={prev} aria-label="Forrige">
-            ⏮
-          </button>
           <button
             className="sp__btn sp__btn--play"
-            onClick={() => setPlaying((p) => !p)}
+            onPointerDown={startHold}
+            onPointerUp={stopHold}
+            onPointerLeave={stopHold}
+            onPointerCancel={stopHold}
+            onContextMenu={(e) => e.preventDefault()} // mobil: langtrykk skal ikke åpne meny
+            onClick={() => {
+              if (holdFired.current) {
+                holdFired.current = false // langtrykket åpnet menyen — ikke pause i tillegg
+                return
+              }
+              setPlaying((p) => !p)
+            }}
             aria-label={playing ? 'Pause' : 'Spill'}
           >
             {playing ? '⏸' : '▶'}
           </button>
-          <button className="sp__btn" onClick={next} aria-label="Neste">
-            ⏭
-          </button>
         </div>
+
+        <p className="sp__hint">Radio kan ikke spoles. Det som sendes, sendes.</p>
+
+        {override && (
+          <div className="sp-override" role="dialog" aria-label="Sendestyring">
+            <div className="sp-override__head">⚙ SENDESTYRING · RF INTERN</div>
+            <p className="sp-override__note">
+              Overstyring aktiv. Uautorisert bruk logges (ikke egentlig).
+            </p>
+            <div className="sp-override__list">
+              {tracks.map((t, i) => (
+                <button
+                  key={t.src}
+                  className={`sp-override__row ${i === idx ? 'sp-override__row--cur' : ''}`}
+                  onClick={() => {
+                    setError(false)
+                    setIdx(i)
+                    setPlaying(true)
+                  }}
+                >
+                  <span className="sp-override__cue" aria-hidden>
+                    {i === idx ? (live ? '▶' : '⏸') : String(i + 1).padStart(2, '0')}
+                  </span>
+                  {prettyTitle(t)}
+                  {t.artist && <span className="sp-override__artist"> — {t.artist}</span>}
+                </button>
+              ))}
+            </div>
+            <button className="sp-override__close" onClick={() => setOverride(false)}>
+              Lukk overstyring
+            </button>
+          </div>
+        )}
 
         <audio
           ref={audioRef}
           src={assetUrl(track.src)}
-          onEnded={next}
+          onEnded={() => {
+            setError(false)
+            setIdx((i) => (i + 1) % tracks.length) // lista looper — radioen slutter aldri
+            setPlaying(true)
+          }}
           onError={() => {
             setError(true)
             setPlaying(false)
           }}
-          onTimeUpdate={(e) =>
-            setProgress({ cur: e.currentTarget.currentTime, dur: e.currentTarget.duration || 0 })
-          }
-          onLoadedMetadata={(e) =>
-            setProgress({ cur: 0, dur: e.currentTarget.duration || 0 })
-          }
         />
       </div>
     </AppWindow>
