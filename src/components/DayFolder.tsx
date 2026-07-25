@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { useParams } from 'react-router-dom'
 import { CASE, type CaseDoc, type SubfolderDef } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
+import { useScrollMemory } from '../lib/useScrollMemory'
 import { getMyMatch, type MyMatch } from '../lib/supabase'
 import AppWindow from './AppWindow'
 import DocView from './DocView'
@@ -27,6 +28,10 @@ export default function DayFolder() {
   const { isUnlocked, loading } = useUnlock()
   const [openDoc, setOpenDoc] = useState<CaseDoc | null>(null)
   const [openFolder, setOpenFolder] = useState<SubfolderDef | null>(null)
+  // «← Tilbake» skal lande der man var (rot / undermappe / dokument).
+  const anchor = useScrollMemory(
+    openDoc ? `dok:${openDoc.id}` : openFolder ? `mappe:${openFolder.id}` : 'rot',
+  )
 
   // Dag 3-bevis er delt mellom matchede partnere. Hent egen match for å vite
   // hvilken halvdel (side) man ser. Uparet/avlyst → alt beviset (solo).
@@ -83,6 +88,7 @@ export default function DayFolder() {
     const tint = folderOf(openDoc)?.tint
     return (
       <AppWindow title={`${title} — ${openDoc.title}`} icon={GLYPH[openDoc.kind]}>
+        <div ref={anchor} />
         <button className="btn" onClick={() => setOpenDoc(null)}>
           ← Tilbake til mappen
         </button>
@@ -119,6 +125,7 @@ export default function DayFolder() {
     const folderDocs = visibleDocs.filter((d) => d.folder === openFolder.id)
     return (
       <AppWindow title={`${title} — ${openFolder.title}`} icon={openFolder.icon ?? '📁'}>
+        <div ref={anchor} />
         <button className="btn" onClick={() => setOpenFolder(null)}>
           ← Tilbake til {title}
         </button>
@@ -152,6 +159,7 @@ export default function DayFolder() {
 
   return (
     <AppWindow title={title} icon="📁">
+      <div ref={anchor} />
       {dayContent.intro && (
         <div className="intro-note">
           <Markdown source={dayContent.intro} />

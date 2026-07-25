@@ -140,6 +140,20 @@ badge for uleste), ikke lenger en flat filliste. Innhold i `CASE.angelaPhone` i 
 - **Dag-gating:** `day: N` på samtale/melding/e-post/kanal ⇒ vises først når dag N er åpen
   (samme `useUnlock()`-tidslås som dag-mappene) — telefonen «avslører» mer utover i spillet,
   og nye uleste dukker opp i badgene. Uten `day` vises alt straks. Apper uten innhold skjules.
+- **App-nivå lås:** `angelaPhone.appDays: { slack: 1, email: 2, whatsapp: 3 }` — appen vises
+  på hjemskjermen men er «kryptert» (🔒 + «dag N», placeholder-skjerm) til dagen er nådd.
+  Planen: hver app får sitt eget hack-minigame for å komme inn når dagen er nådd.
+- **E-post-hacket:** `SignalBoxHack.tsx` (GTA Cayo Perico «signal box»): tre tall
+  kobles unikt til tre symboler med skjulte multiplikatorer (×1/×2/×3); RESULT-displayet
+  viser løpende sum, låses opp når den treffer TARGET. Ingen timer; hack-musikken looper
+  (0.125 volum). Løst én gang per enhet (`localStorage: gfm:hack-email`).
+- **WhatsApp-hacket:** `BruteForceHack.tsx` (GTA «BRUTEFORCE.EXE»): et forhåndsvalgt ord
+  (`angelaPhone.whatsappHackWord`, standard GIGACHAD) knekkes bokstav for bokstav. ALLE
+  hjulene vises side om side og spinner; fokus (grønn ramme) flyttes venstre → høyre.
+  Stopp når den røde bokstaven står i den blå stripen; bom ⇒ ett tegn tilbake (hjulet bak
+  spinner igjen). INGEN timer. Fart/lengde: `TICK_MS`/`REEL_LEN` øverst i fila. Musikk
+  looper. Løst én gang per enhet (`localStorage: gfm:hack-whatsapp`). Slack har ikke eget
+  hack ennå (åpnes rett når dagen nås).
 Orkestrering + hjemskjerm: `AngelaFiles.tsx`. CSS-seksjon «Offerets mobil» i `retro.css`
 (`.phone`, `.ph-*`, `.wa-*`, `.pmail-*`, `.pslack-*`).
 

@@ -1,9 +1,36 @@
 import { useState } from 'react'
-import type { ChatMessage, WhatsAppChat } from '../../case/manifest'
+import { CASE, type ChatMessage, type WhatsAppChat } from '../../case/manifest'
 import { assetUrl } from '../../lib/assets'
+import { useScrollMemory } from '../../lib/useScrollMemory'
+import PixelPortrait from '../PixelPortrait'
 import PhoneHeader from './PhoneHeader'
 
 const WA_GREEN = '#075e54'
+
+// Avatar-sirkelen: mistenkt-portrett (pixel/img) > emoji > 👤.
+function Avatar({ chat, small }: { chat: WhatsAppChat; small?: boolean }) {
+  const cls = `wa-avatar ${small ? 'wa-avatar--sm' : ''}`
+  const suspect = chat.suspectId ? CASE.suspects?.find((s) => s.id === chat.suspectId) : undefined
+  if (suspect?.pixel) {
+    return (
+      <span className={`${cls} wa-avatar--portrait`} aria-hidden>
+        <PixelPortrait data={suspect.pixel} />
+      </span>
+    )
+  }
+  if (suspect?.img) {
+    return (
+      <span className={`${cls} wa-avatar--portrait`} aria-hidden>
+        <img src={assetUrl(suspect.img)} alt="" />
+      </span>
+    )
+  }
+  return (
+    <span className={cls} aria-hidden>
+      {chat.avatar ?? '👤'}
+    </span>
+  )
+}
 
 // Kort forhåndsvisning av siste synlige melding til samtalelisten.
 function snippet(m: ChatMessage | undefined): string {
@@ -13,10 +40,22 @@ function snippet(m: ChatMessage | undefined): string {
   return m.text ?? ''
 }
 
+// Stabil b80er-farge per avsendernavn (gruppechat, som ekte WhatsApp).
+function nameColor(name: string): string {
+  let h = 0
+  for (const c of name) h = (h * 31 + c.charCodeAt(0)) % 360
+  return `hsl(${h}, 55%, 42%)`
+}
+
 function Bubble({ m }: { m: ChatMessage }) {
   const out = m.from === 'me'
   return (
-    <div className={`wa-msg ${out ? 'wa-msg--out' : 'wa-msg--in'}`}>
+    <div className={`wa-msg ${out ? 'wa-msg--out' : 'wa-msg--in'}`} title={m.hover}>
+      {!out && !m.deleted && m.author && (
+        <span className="wa-msg__author" style={{ color: nameColor(m.author) }}>
+          {m.author}
+        </span>
+      )}
       {m.deleted ? (
         <span className="wa-msg__deleted">🚫 Denne meldingen ble slettet</span>
       ) : (
@@ -47,19 +86,18 @@ export default function WhatsAppApp({
   onBack: () => void
 }) {
   const [open, setOpen] = useState<WhatsAppChat | null>(null)
+  // «← Tilbake» skal lande der man var i samtalelisten (og i lange tråder).
+  const anchor = useScrollMemory(open ? `chat:${open.id}` : 'list')
 
   if (open) {
     const msgs = open.messages.filter((m) => visible(m.day))
     return (
-      <div className="wa-app">
+      <div className="wa-app" ref={anchor}>
         <PhoneHeader
           color={WA_GREEN}
           title={
             <>
-              <span className="wa-avatar wa-avatar--sm" aria-hidden>
-                {open.avatar ?? '👤'}
-              </span>{' '}
-              {open.name}
+              <Avatar chat={open} small /> {open.name}
             </>
           }
           subtitle={open.subtitle}
@@ -79,7 +117,7 @@ export default function WhatsAppApp({
   }
 
   return (
-    <div className="wa-app">
+    <div className="wa-app" ref={anchor}>
       <PhoneHeader color={WA_GREEN} title="WhatsApp" onBack={onBack} />
       <div className="wa-chatlist">
         {chats.length === 0 && <p className="ph-empty">Ingen samtaler.</p>}
@@ -89,9 +127,7 @@ export default function WhatsAppApp({
           const unread = msgs.filter((m) => m.unread && m.from === 'them').length
           return (
             <button key={c.id} className="wa-chatrow" onClick={() => setOpen(c)}>
-              <span className="wa-avatar" aria-hidden>
-                {c.avatar ?? '👤'}
-              </span>
+              <Avatar chat={c} />
               <span className="wa-chatrow__mid">
                 <span className="wa-chatrow__name">{c.name}</span>
                 <span className="wa-chatrow__snippet">{snippet(last)}</span>

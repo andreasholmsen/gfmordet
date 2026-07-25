@@ -170,7 +170,7 @@ export default function FingerprintHack({
   // «30 sekunder igjen»-lyd — spilles idet klokka krysser 30 (også per retry).
   useEffect(() => {
     if (timeLeft === 30 && status === 'playing') {
-      sfx.playFile(assetUrl('sfx/30sec.mp3'), 0.8)
+      sfx.playFile(assetUrl('sfx/30sec.mp3'), 0.5)
     }
   }, [timeLeft, status])
 

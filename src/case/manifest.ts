@@ -154,6 +154,8 @@ export interface RomanceConfig {
 export interface ChatMessage {
   /** 'me' = Angela (høyre, grønn boble) · 'them' = motparten (venstre, hvit). */
   from: 'me' | 'them'
+  /** GRUPPECHAT: avsendernavn vist over boblen (farge utledes av navnet). */
+  author?: string
   text?: string
   /** Bilde-boble: sti i /public, f.eks. 'case/angela/bilde.jpg'. */
   img?: string
@@ -161,6 +163,9 @@ export interface ChatMessage {
   time?: string
   /** «🚫 Denne meldingen ble slettet» — teksten/bildet vises IKKE. */
   deleted?: boolean
+  /** Skjult påskeegg: vises som tooltip når man holder musa over boblen (PC).
+   *  Mobil har ikke hover — bruk det til bonus-fluff, aldri nødvendige spor. */
+  hover?: string
   /** Uleste innkommende meldinger telles opp i badge på samtalelisten. */
   unread?: boolean
   /** Vises først når dag N er åpen. */
@@ -172,6 +177,9 @@ export interface WhatsAppChat {
   name: string // kontaktnavn
   /** Emoji-avatar i samtalelisten (standard 👤). */
   avatar?: string
+  /** Bruk en mistenkt sitt portrett (pixel/img fra `suspects`) som avatar —
+   *  sett til suspect-id, f.eks. 'erik'. Vinner over `avatar`. */
+  suspectId?: string
   /** Undertittel i samtale-headeren, f.eks. 'sist sett i går 22:14'. */
   subtitle?: string
   messages: ChatMessage[]
@@ -198,9 +206,19 @@ export interface EmailMessage {
 
 export interface SlackMessage {
   author: string
+  /** Emoji-avatar (overstyrer forbokstav-firkanten), f.eks. '🌸'. */
+  avatar?: string
+  /** Bruk en mistenkt sitt portrett (pixel/img fra `suspects`) som avatar —
+   *  sett til suspect-id, f.eks. 'erik'. Vinner over `avatar`. */
+  suspectId?: string
   text: string
+  /** Bilde/gif i meldingen: sti i /public ('case/memes/party.gif') ELLER full
+   *  URL ('https://…'). Lokal fil anbefales — virker uten nett-avhengigheter. */
+  img?: string
   time?: string // 'i går 15:12'
   edited?: boolean // viser «(redigert)»
+  /** Viser «👀 Sett av X» under meldingen — for ubesvarte meldinger som spor. */
+  seenBy?: string
   day?: number
 }
 
@@ -215,6 +233,13 @@ export interface SlackChannel {
 }
 
 export interface AngelaPhoneConfig {
+  /** App-nivå tidslås: appen vises på hjemskjermen, men er låst (🔒) til dag N
+   *  er åpen. Planen er at hver app får sitt eget «hack»-minigame for å komme
+   *  inn — inntil de er laget åpnes appen automatisk når dagen nås. Utelatt
+   *  app ⇒ åpen fra start. (Kommer i tillegg til `day` på enkeltinnhold.) */
+  appDays?: { whatsapp?: number; email?: number; slack?: number }
+  /** Ordet som knekkes i WhatsApp-hacket (BruteForce). Standard: 'GIGACHAD'. */
+  whatsappHackWord?: string
   whatsapp?: WhatsAppChat[]
   email?: EmailMessage[]
   slack?: {
@@ -1072,38 +1097,217 @@ export const CASE: CaseManifest = {
     },
   ],
 
-  // Apper på Angelas mobil. Eksempeldata — viser alle triksene: slettet melding,
-  // uleste meldinger (badge), dag-gating (`day: 2` dukker opp når dag 2 åpner),
-  // e-postutkast som aldri ble sendt, vedlegg, og «(redigert)» i Slack.
+  // Apper på Angelas mobil. Tilgjengelige triks (se typene over): slettet
+  // melding (`deleted`), uleste (badge, `unread`), dag-gating (`day: N`),
+  // hover-påskeegg, e-postutkast, vedlegg, «(redigert)» og «Sett av» i Slack.
   angelaPhone: {
+    // Appene «hackes opp» utover i spillet: Slack fra dag 1, e-post fra dag 2,
+    // WhatsApp (det mest private) fra dag 3. Låste apper vises med 🔒 + dag.
+    appDays: { slack: 1, email: 2, whatsapp: 3 },
+    whatsappHackWord: 'gigachad',
     whatsapp: [
       {
-        id: 'wa-per',
-        name: 'Per 🚫',
-        avatar: '🧔',
-        subtitle: 'sist sett lørdag 22:41',
+        id: 'wa-erik',
+        name: 'Erik',
+        suspectId: 'erik',
+        subtitle: 'sist sett i dag 11:52',
         messages: [
-          { from: 'them', text: 'Kan vi ikke bare snakke sammen? 5 minutter.', time: 'lør 20:12' },
-          { from: 'me', text: 'Per. Slutt å ringe meg.', time: 'lør 20:30' },
-          { from: 'them', text: 'Du gjør en stor feil nå.', time: 'lør 21:02' },
-          { from: 'them', deleted: true, time: 'lør 21:03' },
-          { from: 'them', text: 'Glem det jeg skrev. Sees på GF.', time: 'lør 21:05', unread: true },
+          {
+            from: 'them',
+            text:
+              'Beklager sent svar på slack meldingen! Jeg har lest igjennom hele ordboka og ' +
+              'dette er hva jeg fant: "Leiing" er faktisk lovleg bokmål. Radikalt, men lovleg ' +
+              '— sjå Bokmålsordboka. Så eg skjønar ikkje heilt kva du meiner eg har gjort. ' +
+              'Det som er rart er at §55 under seier "ledelse" to gonger, og at overskrifta ' +
+              'lenger nede seier "Møteledelse". Nokon har endra eitt ord og gløymt resten. ' +
+              'Ikkje eg. Fint at nokon spør.',
+            time: '29. juli 11:37',
+            hover:
+              'notat fra Gud – jeg var dønn sikker på at leiing ikke var lovlig men etter ' +
+              'litt research så fant jeg det i ordboka. The more you know!',
+          },
+          { from: 'me', text: 'Skjønner, takk! Er du klar for GF da?', time: '29. juli 11:50' },
+          {
+            from: 'them',
+            text: 'Ja, eg gler meg som ei kyr på vårslepp! 🐄',
+            time: '29. juli 11:52',
+          },
+        ],
+      },
+
+      // ---- Støy: Angela svarer aldri — innboksen flommer over av uleste -----
+      {
+        id: 'wa-amelia',
+        name: 'Amelia ❤️',
+        avatar: '👩',
+        subtitle: 'sist sett i dag 08:15',
+        messages: [
+          { from: 'them', text: 'Hei søs! Kommer du hjem i sommer eller? Mamma maser', time: '2. juli 19:04' },
+          { from: 'them', text: 'Angela???', time: '5. juli 12:31' },
+          { from: 'them', text: 'Typisk deg 🙄 Ok, men du MÅ komme i bursdagen til mamma', time: '11. juli 20:15', unread: true },
+          { from: 'them', text: 'Ring meg når du er ferdig med GF-greia di. Glad i deg ❤️', time: '27. juli 21:48', unread: true },
         ],
       },
       {
-        id: 'wa-thomas',
-        name: 'Thomas (bror)',
-        avatar: '👨',
-        subtitle: 'sist sett for 3 uker siden',
+        id: 'wa-maia',
+        name: 'Maia (Toulouse) 🏠',
+        avatar: '👱‍♀️',
+        subtitle: 'sist sett i går 23:12',
         messages: [
-          { from: 'me', text: 'Hei — ringte deg i går. Alt bra på hytta?', time: 'ons 18:44' },
-          { from: 'me', text: 'Thomas?', time: 'tor 09:12' },
-          // Dukker først opp når dag 2 er åpen — telefonen «avslører» mer utover i spillet.
-          { from: 'them', text: 'Beklager. Har hatt mye å tenke på. Vi må snakke om Kari.', time: 'lør 22:58', unread: true, day: 2 },
+          { from: 'them', text: 'Heeei! Vinkveld i helgen? 🍷', time: '14. juli 18:22' },
+          { from: 'them', text: 'Du la igjen laderen din på kjøkkenet btw', time: '19. juli 10:05', unread: true },
+          { from: 'them', text: 'Husleia!! Du har ikke vippset 😅', time: '25. juli 16:40', unread: true },
+          { from: 'them', text: 'Si ifra når du lander etter GF, jeg henter deg på flyplassen 💕', time: '28. juli 22:03', unread: true },
+        ],
+      },
+      {
+        id: 'wa-andreas',
+        name: 'Andreas',
+        suspectId: 'andreas',
+        subtitle: 'sist sett i dag 07:58',
+        messages: [
+          { from: 'them', text: 'Yo, kaffe neste uke?', time: '8. juli 13:37' },
+          { from: 'them', text: 'Jeg tar stillheten som et ja', time: '10. juli 09:12', unread: true },
+          { from: 'them', text: '(du svarer aldri, men jeg prøver igjen) padel lørdag?', time: '24. juli 17:26', unread: true },
+        ],
+      },
+      {
+        id: 'wa-claire',
+        name: 'Claire',
+        avatar: '👩‍🦰',
+        subtitle: 'vue aujourd’hui à 09:40',
+        messages: [
+          { from: 'them', text: 'Coucou ! On se fait un café cette semaine ? ☕', time: '3. juli 11:15' },
+          { from: 'them', text: 'Angela ?? T’es vivante ?', time: '9. juli 14:02', unread: true },
+          { from: 'them', text: 'Bon. Je prends ça pour un non 😤', time: '16. juli 19:55', unread: true },
+        ],
+      },
+      {
+        id: 'wa-alice',
+        name: 'Alice',
+        avatar: '👧',
+        subtitle: 'vue hier à 22:10',
+        messages: [
+          { from: 'them', text: 'Soirée chez moi vendredi, tu viens ? 🎉', time: '10. juli 15:44' },
+          { from: 'them', text: 'Ramène un truc norvégien, genre le chocolat là 🍫', time: '10. juli 15:45', unread: true },
+          { from: 'them', text: 't’es passée où ?? On t’a attendue !', time: '12. juli 01:12', unread: true },
+        ],
+      },
+      {
+        id: 'wa-malaumne',
+        name: 'Malaumne',
+        avatar: '🧑‍🎨',
+        subtitle: 'vue le 20 juillet',
+        messages: [
+          { from: 'them', text: 'Salut ! Ça te dit un ciné ce soir ? Le nouveau film est sorti 🎬', time: '17. juli 16:30' },
+          { from: 'them', text: 'Ok, une prochaine fois alors 🥲', time: '17. juli 22:41', unread: true },
+        ],
+      },
+      {
+        id: 'wa-carole',
+        name: 'Carole 🏃‍♀️',
+        avatar: '🏃‍♀️',
+        subtitle: 'vue aujourd’hui à 07:02',
+        messages: [
+          { from: 'them', text: 'On va courir dimanche matin ? 8h au parc ?', time: '18. juli 20:12' },
+          { from: 'them', text: 'Je suis devant le parc, tu arrives ?', time: '20. juli 08:07', unread: true },
+          { from: 'them', text: '… t’es pas venue 😑', time: '20. juli 08:42', unread: true },
+        ],
+      },
+      {
+        id: 'wa-paulrohel',
+        name: 'Paul Rohel',
+        avatar: '🤓',
+        subtitle: 'vue hier à 18:33',
+        messages: [
+          { from: 'them', text: 'Salut Angela, t’as les notes du cours de jeudi ?', time: '21. juli 12:20' },
+          { from: 'them', text: 'stp stp stp 🙏', time: '21. juli 12:21', unread: true },
+          { from: 'them', text: 'bon, tant pis. je demande à Claire', time: '22. juli 09:15', unread: true },
+        ],
+      },
+      {
+        id: 'wa-paul',
+        name: 'Paul',
+        avatar: '⚽',
+        subtitle: 'vue le 26 juillet',
+        messages: [
+          { from: 'them', text: 'yo, foot mercredi ? il nous manque une personne', time: '22. juli 18:50' },
+          { from: 'them', text: '??', time: '23. juli 10:04', unread: true },
+        ],
+      },
+      {
+        id: 'wa-gruppe-toulouse',
+        name: 'Les Norvégiennes de Toulouse 🇳🇴',
+        avatar: '👥',
+        subtitle: 'Maia, Claire, Alice, deg',
+        messages: [
+          { from: 'them', author: 'Maia (Toulouse) 🏠', text: 'Apéro fredag? Vi tar med brunost 🧀', time: '15. juli 17:20' },
+          { from: 'them', author: 'Claire', text: 'ouiii !! 🙌', time: '15. juli 17:22' },
+          { from: 'them', author: 'Alice', text: 'Angela tu viens ??', time: '15. juli 17:31', unread: true },
+          { from: 'them', author: 'Maia (Toulouse) 🏠', text: 'Hun leser ikke meldinger, dere vet det 😂', time: '15. juli 17:33', unread: true },
+        ],
+      },
+      {
+        id: 'wa-gruppe-apero',
+        name: 'Apéro du jeudi 🍷',
+        avatar: '🍷',
+        subtitle: 'Claire, Carole, Paul +3',
+        messages: [
+          { from: 'them', author: 'Paul', text: 'jeudi 19h, comme d’hab ?', time: '24. juli 14:10' },
+          { from: 'them', author: 'Carole 🏃‍♀️', text: 'Je peux pas avant 20h !', time: '24. juli 14:18', unread: true },
+          { from: 'them', author: 'Claire', text: '20h alors. Angela, on sait que tu lis pas, mais t’es invitée quand même 💅', time: '24. juli 14:25', unread: true },
+        ],
+      },
+      {
+        id: 'wa-gruppe-coloc',
+        name: 'Coloc 🏠🔥',
+        avatar: '🏠',
+        subtitle: 'Maia, Paul Rohel, deg',
+        messages: [
+          { from: 'them', author: 'Paul Rohel', text: 'QUI a fini le lait ??', time: '26. juli 08:31' },
+          { from: 'them', author: 'Maia (Toulouse) 🏠', text: 'Ikke meg. Angela er i Norge. Så … deg? 🤨', time: '26. juli 08:45', unread: true },
+          { from: 'them', author: 'Paul Rohel', text: 'ah oui. pardon', time: '26. juli 08:46', unread: true },
         ],
       },
     ],
     email: [
+      // E-post-tråden med Ingeborg om vedtektene (29. juli) — spørsmålet i
+      // Sendt, svaret i Innboks, og Angelas beroligende svar i Sendt.
+      {
+        id: 'ep-ingeborg-1',
+        folder: 'sendt',
+        from: 'Angela',
+        to: 'Ingeborg Frogner Dahl-Hilstad <ingeborg@ansa.no>',
+        subject: 'Spørsmål om vedtektene',
+        date: 'tir. 29. juli, 09:05',
+        body:
+          'Hei Ingeborg,\n\n' +
+          'Kort spørsmål: Hva gjør jeg hvis jeg har oppdaget at noen har endret vedtektene ' +
+          'bak ryggen på oss andre? Hva er konsekvensene?\n\n' +
+          'Mvh\nAngela',
+      },
+      {
+        id: 'ep-ingeborg-2',
+        from: 'Ingeborg Frogner Dahl-Hilstad <ingeborg@ansa.no>',
+        to: 'angela@epost.no',
+        subject: 'SV: Spørsmål om vedtektene',
+        date: 'tir. 29. juli, 09:38',
+        body:
+          'Dette er høyst ulovlig! Hvis dette faktisk har skjedd er det mulig at vedkommende ' +
+          'får forvaring (mye mye fengsel). Hvem er det snakk om??',
+      },
+      {
+        id: 'ep-ingeborg-3',
+        folder: 'sendt',
+        from: 'Angela',
+        to: 'Ingeborg Frogner Dahl-Hilstad <ingeborg@ansa.no>',
+        subject: 'SV: SV: Spørsmål om vedtektene',
+        date: 'tir. 29. juli, 10:02',
+        body:
+          'Neida det var bare hypotetisk... Jeg sier ifra hvis noe sånt ville skjedd. ' +
+          'Men har en liten mistanke, snakker først med vedkommende og tar det opp med deg ' +
+          'på GF hvis det blir et problem',
+      },
       {
         id: 'ep-styret',
         from: 'Styret <styret@borettslaget.no>',
@@ -1125,17 +1329,114 @@ export const CASE: CaseManifest = {
           },
         ],
       },
+      // ---- Reklame/varsler (fyllstoff — gjør innboksen troverdig) ----------
+      {
+        id: 'ep-github',
+        from: 'GitHub <billing@github.com>',
+        to: 'angela@epost.no',
+        subject: 'Ditt GitHub Premium Push Assistant™-abonnement utløper snart',
+        date: 'man. 28. juli, 08:14',
+        unread: true,
+        body:
+          'Hei **angela-liu**,\n\n' +
+          'Abonnementet ditt på **GitHub Premium Push Assistant™** utløper om 7 dager.\n\n' +
+          'Uten Push Assistant må du dessverre pushe koden din helt selv. Vi anbefaler å ' +
+          'fornye før det er for sent.\n\n' +
+          '· Plan: Premium Push Assistant (årlig)\n' +
+          '· Pris: $6-7/år\n\n' +
+          '_Du mottar denne e-posten fordi du er et bedre menneske enn de fleste._',
+      },
+      {
+        id: 'ep-slack-2fa',
+        from: 'Slack <no-reply@slack.com>',
+        to: 'angela@epost.no',
+        subject: 'Bekreftelseskode for Slack: 828 417',
+        date: 'fre. 25. juli, 19:32',
+        body:
+          'Koden din for å logge inn på **GF-komiteen.slack.com** er:\n\n' +
+          '## 828 417\n\n' +
+          'Koden er gyldig i 10 minutter. Var ikke dette deg? Da kan du trygt ignorere ' +
+          'denne e-posten.',
+      },
+      {
+        id: 'ep-slack-ad',
+        from: 'Slack <hello@slack.com>',
+        to: 'angela@epost.no',
+        subject: 'Nytt i Slack: Huddles 2.0 og 14 andre ting du ikke ba om',
+        date: 'tor. 24. juli, 11:00',
+        body:
+          'Hei Angela!\n\n' +
+          'Visste du at teamet ditt kan være **23 % mer produktivt**?* Prøv Slack Pro gratis ' +
+          'i 30 dager.\n\n' +
+          '_*Tall fra en undersøkelse vi gjennomførte blant oss selv._',
+      },
+      {
+        id: 'ep-foodora',
+        from: 'foodora <noreply@foodora.no>',
+        to: 'angela@epost.no',
+        subject: 'Vi savner deg, Angela 🥺 20 % på neste bestilling',
+        date: 'ons. 23. juli, 16:45',
+        unread: true,
+        body:
+          'Det er 11 dager siden sist. Kebaben tenker fortsatt på deg.\n\n' +
+          'Bruk koden **KOMTILBAKE20** innen søndag.',
+      },
+      {
+        id: 'ep-finn',
+        from: 'FINN.no <varsler@finn.no>',
+        to: 'angela@epost.no',
+        subject: '3 nye treff i søket ditt: «leilighet Grünerløkka»',
+        date: 'tir. 22. juli, 07:30',
+        body:
+          'Nye annonser som matcher lagret søk:\n\n' +
+          '· Lys 2-roms med balkong — 4 950 000 kr\n' +
+          '· Sjarmerende loftsleilighet (42 m²) — 5 200 000 kr\n' +
+          '· «Oppussingsobjekt» (les: brannskade) — 3 100 000 kr',
+      },
+      {
+        id: 'ep-tbs',
+        from: 'TBS Education — Service des Admissions <admissions@tbs-education.fr>',
+        to: 'angela@epost.no',
+        subject: 'Décision d’admission — Programme Grande École (dossier n° 2026-08841)',
+        date: 'fre. 29. mai, 14:07',
+        body:
+          'Madame,\n\n' +
+          'À la suite de l’examen attentif de votre dossier de candidature ainsi que de ' +
+          'votre entretien de motivation du 26 mars dernier, nous avons l’honneur de vous ' +
+          'informer que le jury d’admission a émis un **avis favorable** à votre intégration ' +
+          'au sein du Programme Grande École de Toulouse Business School, pour la rentrée ' +
+          'universitaire 2026–2027.\n\n' +
+          'Afin de confirmer votre inscription, nous vous saurions gré de bien vouloir ' +
+          'compléter les formalités administratives sur votre espace candidat avant le ' +
+          '30 juin 2026, délai de rigueur. Passé cette date, votre place sera proposée à ' +
+          'un candidat inscrit sur liste complémentaire.\n\n' +
+          'Nous vous adressons toutes nos félicitations et nous réjouissons de vous ' +
+          'accueillir prochainement sur notre campus de Toulouse.\n\n' +
+          'Nous vous prions d’agréer, Madame, l’expression de nos salutations les plus ' +
+          'distinguées.\n\n' +
+          '_Le Service des Admissions_\n' +
+          '_TBS Education — Toulouse Business School_\n' +
+          '_1 Place Alphonse Jourdain, 31068 Toulouse_',
+      },
+      {
+        id: 'ep-spam-toll',
+        folder: 'spam',
+        from: 'PostNorden <security@post-norden-tracking.info>',
+        subject: 'Din pakke er holdt tilbake i tollen ⚠️',
+        date: 'søn. 04:27',
+        body:
+          'Kjære kunde, pakken din (sporingsnr. NO-4471822) venter på betaling av tollgebyr: ' +
+          '**23,50 kr**. Klikk her og oppgi kortnummer for å frigi pakken.',
+      },
       {
         id: 'ep-utkast',
         folder: 'utkast',
         from: 'Angela',
-        to: 'politiet@politiet.no',
+        to: 'andreash@andreash.no',
         subject: '(uten emne)',
-        date: 'lør. 22:47',
+        date: 'lør. 12:13',
         body:
-          'Hei. Jeg vil anmelde et forhold. Jeg tror noen prøver å skade meg. ' +
-          'Det begynte etter at jeg fant ut at',
-        // Utkast — setningen slutter brått. Aldri sendt. 🕯️
+          'Var det sånn at Broiler var i slekt med deg og du kunne fått han til å opptre på GF-banketten? Jeg tenkte at ',
       },
       {
         id: 'ep-spam',
@@ -1158,6 +1459,90 @@ export const CASE: CaseManifest = {
             { author: 'Kari', text: 'Hvorfor sitter jeg ved siden av Per??', time: 'fre 14:22' },
             { author: 'Angela', text: 'Det ordner seg sikkert 😅', time: 'fre 14:30', edited: true },
             { author: 'Per', text: 'Jeg bytter gjerne plass.', time: 'fre 15:01' },
+          ],
+        },
+        {
+          id: 'sl-dm-erik',
+          name: 'Erik',
+          dm: true,
+          messages: [
+            { author: 'Angela', text: 'Erik, husk møtet!', time: '4. juni 11:32' },
+            {
+              author: 'Erik',
+              suspectId: 'erik',
+              text: 'Helsike, eg kjappar meg! 🏃',
+              time: '4. juni 11:45',
+            },
+            {
+              author: 'Angela',
+              text:
+                'Bra møte i dag! Ikke glem arbeidsoppgavene dine. Maud virket også veldig ' +
+                'fornøyd med innsatsen.',
+              time: '4. juni 18:12',
+            },
+            {
+              author: 'Erik',
+              suspectId: 'erik',
+              text: '',
+              // Legg gif-en i public/case/memes/ (lokal fil anbefales — funker
+              // også med full https://-URL hvis du heller vil det).
+              img: 'case/memes/party.gif',
+              time: '4. juni 18:14',
+            },
+            {
+              author: 'Erik',
+              suspectId: 'erik',
+              text:
+                'Kan jeg få tilgang på noen av medlemssystemene og slikt? Jeg må sjekke noe ' +
+                'småting. Lover å ikke ødelegge noe!',
+              time: '18. juni 13:05',
+            },
+            {
+              author: 'Angela',
+              text: 'Jada burde ikke være noe problem det. Jeg fikser i systemene våre',
+              time: '18. juni 13:20',
+            },
+            { author: 'Erik', suspectId: 'erik', text: 'Takk!', time: '18. juni 13:21' },
+            {
+              author: 'Erik',
+              suspectId: 'erik',
+              text: 'Ligg SharePoint nede no?',
+              time: '22. juni 09:58',
+            },
+            {
+              author: 'Angela',
+              text: 'Hacker meg inn i Microsoft og sjekker, 2 sek...',
+              time: '22. juni 10:01',
+            },
+            {
+              author: 'Angela',
+              text:
+                'Jepp virker sånn, en ansatt der glemte noen .env filer, to sek jeg får vel ' +
+                'fikse det for dem',
+              time: '22. juni 10:04',
+            },
+            {
+              author: 'Angela',
+              text:
+                'Sånn! SharePoint skal være oppe igjen, og Microsoft har blitt fakturert for ' +
+                'arbeidet mitt. Nå blir det gratis champagne på alle på GF!',
+              time: '22. juni 10:12',
+            },
+            {
+              author: 'Erik',
+              suspectId: 'erik',
+              text:
+                'Nei no har eg sett det òg!',
+              time: '22. juni 10:13',
+            },
+            {
+              author: 'Angela',
+              text:
+                'Hvorfor i ANSA-Vedtekter-2025-2026-1.pdf står det «Daglig leiing» rett over §55? ' +
+                'Har du i all hemmelighet endret vedtektene til å bli mer nynorsk??',
+              time: '28. juli 14:51',
+              seenBy: 'Erik',
+            },
           ],
         },
         {

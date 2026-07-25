@@ -71,7 +71,6 @@ export default function PhoneLock({ onUnlock }: { onUnlock: () => void }) {
       <div className="phone-lock">
         <div className="phone-lock__screen">
           <div className="phone-lock__clock">{clock}</div>
-          <div className="phone-lock__owner">🌸 Angelas mobil</div>
           <div className="phone-lock__hint">Skriv inn kode</div>
 
           <div className={`phone-lock__dots ${shake ? 'phone-lock__dots--shake' : ''}`} aria-hidden>

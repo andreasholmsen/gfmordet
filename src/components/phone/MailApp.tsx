@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { CaseDoc, EmailMessage } from '../../case/manifest'
+import { useScrollMemory } from '../../lib/useScrollMemory'
 import DocView from '../DocView'
 import Markdown from '../Markdown'
 import PhoneHeader from './PhoneHeader'
@@ -32,6 +33,10 @@ export default function MailApp({
   const [folder, setFolder] = useState<MailFolder>('innboks')
   const [open, setOpen] = useState<EmailMessage | null>(null)
   const [attachment, setAttachment] = useState<CaseDoc | null>(null)
+  // «← Tilbake» husker posisjonen — per fane, per åpnet e-post og per vedlegg.
+  const anchor = useScrollMemory(
+    attachment ? `vedlegg:${attachment.id}` : open ? `epost:${open.id}` : `liste:${folder}`,
+  )
 
   // Kun faner med innhold vises (mail uten `folder` havner i innboksen).
   const folderOf = (m: EmailMessage): MailFolder => m.folder ?? 'innboks'
@@ -39,7 +44,7 @@ export default function MailApp({
 
   if (attachment && open) {
     return (
-      <div className="pmail-app">
+      <div className="pmail-app" ref={anchor}>
         <PhoneHeader
           color={MAIL_BLUE}
           title={attachment.title}
@@ -54,7 +59,7 @@ export default function MailApp({
 
   if (open) {
     return (
-      <div className="pmail-app">
+      <div className="pmail-app" ref={anchor}>
         <PhoneHeader color={MAIL_BLUE} title={FOLDER_LABEL[folderOf(open)]} onBack={() => setOpen(null)} />
         <div className="pmail-read">
           <h2 className="pmail-read__subject">{open.subject}</h2>
@@ -93,7 +98,7 @@ export default function MailApp({
   const list = mails.filter((m) => folderOf(m) === folder)
 
   return (
-    <div className="pmail-app">
+    <div className="pmail-app" ref={anchor}>
       <PhoneHeader color={MAIL_BLUE} title="E-post" onBack={onBack} />
       {tabs.length > 1 && (
         <div className="pmail-tabs">
