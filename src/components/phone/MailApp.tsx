@@ -50,7 +50,7 @@ export default function MailApp({
           title={attachment.title}
           onBack={() => setAttachment(null)}
         />
-        <div className="pmail-attachment-view">
+        <div className="pmail-attachment-view" data-scroll>
           <DocView doc={attachment} />
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function MailApp({
     return (
       <div className="pmail-app" ref={anchor}>
         <PhoneHeader color={MAIL_BLUE} title={FOLDER_LABEL[folderOf(open)]} onBack={() => setOpen(null)} />
-        <div className="pmail-read">
+        <div className="pmail-read" data-scroll>
           <h2 className="pmail-read__subject">{open.subject}</h2>
           <div className="pmail-read__meta">
             <div>
@@ -113,7 +113,7 @@ export default function MailApp({
           ))}
         </div>
       )}
-      <div className="pmail-list">
+      <div className="pmail-list" data-scroll>
         {list.length === 0 && <p className="ph-empty">Ingen e-post her.</p>}
         {list.map((m) => (
           <button

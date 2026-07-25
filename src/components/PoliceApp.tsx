@@ -1,13 +1,61 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CASE } from '../case/manifest'
+import { CASE, type DayContent } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
 import { useAuth } from '../lib/AuthContext'
+import { getMyVote } from '../lib/votes'
 import { hasSupabase, getRomanceStatus, type RomanceStatus } from '../lib/supabase'
 import AppWindow from './AppWindow'
 import VoteForm from './VoteForm'
-import ResultsView from './ResultsView'
 import KillerReveal from './KillerReveal'
+
+// Tydelig sperre når dagens avstemning er stengt (en nyere dag har åpnet) —
+// så ingen prøver å stemme på feil dag. Viser hva man svarte, og peker til
+// dagen som faktisk gjelder. (Server-siden håndhever det samme uansett.)
+function VoteClosed({
+  day,
+  currentDay,
+  onGoToCurrent,
+}: {
+  day: DayContent
+  currentDay: number
+  onGoToCurrent: () => void
+}) {
+  const q = day.question
+  const saved = getMyVote(day.day)
+  const answerLabel = (() => {
+    if (!q || !saved) return null
+    if (q.type === 'free_text') return saved.freeText
+    const opt = 'options' in q ? q.options.find((o) => o.id === saved.choice) : undefined
+    const base = opt?.label ?? saved.choice ?? ''
+    if (q.type === 'mc_with_other' && saved.choice === q.otherOptionId && saved.freeText) {
+      return `${base}: ${saved.freeText}`
+    }
+    return base
+  })()
+
+  return (
+    <div className="vote-closed">
+      <span className="vote-closed__lock" aria-hidden>
+        🔒
+      </span>
+      <p className="vote-closed__title">Avstemningen for {day.title} er STENGT</p>
+      {answerLabel ? (
+        <p className="vote-closed__answer">
+          Du svarte: <strong>{answerLabel}</strong>
+        </p>
+      ) : (
+        <p className="vote-closed__answer">Fristen har gått ut — svar kan ikke lenger endres.</p>
+      )}
+      <p className="vote-closed__now">
+        Det er <strong>Dag {currentDay}</strong> som gjelder nå.
+      </p>
+      <button className="btn btn--primary" onClick={onGoToCurrent}>
+        Gå til Dag {currentDay} →
+      </button>
+    </div>
+  )
+}
 
 // Romansaiansa-gate: dag 1 krever profil, dag 2 krever ferdig swiping (kun for
 // deltakere med profil). Blokkert → vis vei til Romansaiansa i stedet for skjema.
@@ -44,7 +92,7 @@ function VoteGate({ day, children }: { day: number; children: ReactNode }) {
 }
 
 export default function PoliceApp() {
-  const { unlockedDays, isUnlocked, loading } = useUnlock()
+  const { unlockedDays, isUnlocked, loading, demo } = useUnlock()
   const { user } = useAuth()
   const navigate = useNavigate()
 
@@ -114,14 +162,21 @@ export default function PoliceApp() {
         ) : (
           <>
             <h2>{dayContent.title}</h2>
-            {dayContent.question && (
-              <VoteGate day={dayContent.day}>
-                <VoteForm key={dayContent.day} day={dayContent} />
-              </VoteGate>
-            )}
-            <hr style={{ margin: '20px 0', borderColor: 'var(--shadow)' }} />
-            <h3>Resultater</h3>
-            <ResultsView day={dayContent} />
+            {dayContent.question &&
+              // Stemming stenger når neste dag åpner. (Hoppes over i demo/dev,
+              // der alle dager er kunstig åpne samtidig.)
+              (!demo && !import.meta.env.DEV && isUnlocked(dayContent.day + 1) ? (
+                <VoteClosed
+                  day={dayContent}
+                  currentDay={Math.max(...unlockedDays)}
+                  onGoToCurrent={() => setTab(Math.max(...unlockedDays))}
+                />
+              ) : (
+                <VoteGate day={dayContent.day}>
+                  <VoteForm key={dayContent.day} day={dayContent} />
+                </VoteGate>
+              ))}
+            {/* Resultater vises IKKE her — de ligger i Excel-appen (/resultater). */}
           </>
         )}
       </div>

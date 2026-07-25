@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { CASE, type AngelaPhoneConfig, type SlackChannel, type SlackMessage } from '../../case/manifest'
 import { assetUrl } from '../../lib/assets'
+import { dayPart } from '../../lib/chatDate'
 import { useScrollMemory } from '../../lib/useScrollMemory'
 import PixelPortrait from '../PixelPortrait'
 import PhoneHeader from './PhoneHeader'
@@ -55,9 +56,19 @@ export default function SlackApp({
           subtitle={open.topic}
           onBack={() => setOpen(null)}
         />
-        <div className="pslack-thread">
-          {msgs.map((m, i) => (
-            <div key={i} className="pslack-msg">
+        <div className="pslack-thread" data-scroll>
+          {msgs.map((m, i) => {
+            // Dato-skille når meldinger er fra ulike dager.
+            const day = dayPart(m.time)
+            const newDay = day && day !== dayPart(msgs[i - 1]?.time)
+            return (
+              <Fragment key={i}>
+                {newDay && (
+                  <div className="pslack-daysep" aria-hidden>
+                    {day}
+                  </div>
+                )}
+                <div className="pslack-msg">
               <Avatar m={m} />
               <span className="pslack-msg__body">
                 <span className="pslack-msg__head">
@@ -77,8 +88,10 @@ export default function SlackApp({
                 )}
                 {m.seenBy && <span className="pslack-msg__seen">👀 Sett av {m.seenBy}</span>}
               </span>
-            </div>
-          ))}
+                </div>
+              </Fragment>
+            )
+          })}
         </div>
         <div className="pslack-composer" aria-hidden>
           <span>Melding til {open.dm ? open.name : `#${open.name}`}</span>
@@ -93,7 +106,7 @@ export default function SlackApp({
   return (
     <div className="pslack-app" ref={anchor}>
       <PhoneHeader color={SLACK_PURPLE} title={slack.workspace ?? 'Slack'} onBack={onBack} />
-      <div className="pslack-list">
+      <div className="pslack-list" data-scroll>
         {channels.length === 0 && <p className="ph-empty">Ingen kanaler.</p>}
         {chans.length > 0 && <div className="pslack-section">Kanaler</div>}
         {chans.map((c) => (

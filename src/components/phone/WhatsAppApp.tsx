@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CASE, type ChatMessage, type WhatsAppChat } from '../../case/manifest'
 import { assetUrl } from '../../lib/assets'
+import { dayPart } from '../../lib/chatDate'
 import { useScrollMemory } from '../../lib/useScrollMemory'
 import PixelPortrait from '../PixelPortrait'
 import PhoneHeader from './PhoneHeader'
@@ -103,10 +104,22 @@ export default function WhatsAppApp({
           subtitle={open.subtitle}
           onBack={() => setOpen(null)}
         />
-        <div className="wa-thread">
-          {msgs.map((m, i) => (
-            <Bubble key={i} m={m} />
-          ))}
+        <div className="wa-thread" data-scroll>
+          {msgs.map((m, i) => {
+            // Dato-pille (som ekte WhatsApp) når meldinger er fra ulike dager.
+            const day = dayPart(m.time)
+            const newDay = day && day !== dayPart(msgs[i - 1]?.time)
+            return (
+              <div key={i} className="wa-thread__item">
+                {newDay && (
+                  <div className="wa-daysep" aria-hidden>
+                    {day}
+                  </div>
+                )}
+                <Bubble m={m} />
+              </div>
+            )
+          })}
         </div>
         <div className="wa-composer" aria-hidden>
           <span className="wa-composer__field">Melding</span>
@@ -119,7 +132,7 @@ export default function WhatsAppApp({
   return (
     <div className="wa-app" ref={anchor}>
       <PhoneHeader color={WA_GREEN} title="WhatsApp" onBack={onBack} />
-      <div className="wa-chatlist">
+      <div className="wa-chatlist" data-scroll>
         {chats.length === 0 && <p className="ph-empty">Ingen samtaler.</p>}
         {chats.map((c) => {
           const msgs = c.messages.filter((m) => visible(m.day))

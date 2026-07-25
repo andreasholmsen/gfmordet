@@ -1134,6 +1134,16 @@ export const CASE: CaseManifest = {
           },
         ],
       },
+      {
+        id: 'wa-maia',
+        name: 'Maia 🏠',
+        avatar: '👱‍♀️',
+        subtitle: 'sist sett i går 23:12',
+        messages: [
+          { from: 'them', text: 'Heeei! Du ville vel ikke hatt lyst til å bli med til Køben i sommer? 🍷', time: '14. mai 18:22' },
+          { from: 'them', text: 'Du la igjen laderen din på kjøkkenet btw', time: '19. mai 10:05', unread: true },
+        ],
+      },
 
       // ---- Støy: Angela svarer aldri — innboksen flommer over av uleste -----
       {
@@ -1142,87 +1152,18 @@ export const CASE: CaseManifest = {
         avatar: '👩',
         subtitle: 'sist sett i dag 08:15',
         messages: [
-          { from: 'them', text: 'Hei søs! Kommer du hjem i sommer eller? Mamma maser', time: '2. juli 19:04' },
-          { from: 'them', text: 'Angela???', time: '5. juli 12:31' },
-          { from: 'them', text: 'Typisk deg 🙄 Ok, men du MÅ komme i bursdagen til mamma', time: '11. juli 20:15', unread: true },
-          { from: 'them', text: 'Ring meg når du er ferdig med GF-greia di. Glad i deg ❤️', time: '27. juli 21:48', unread: true },
+          { from: 'them', text: '你好！你能帮我做作业吗？', time: '2. juni 19:04', unread: true },
+          { from: 'them', text: 'Angela???', time: '5. juni 12:31', unread: true },
         ],
       },
       {
-        id: 'wa-maia',
-        name: 'Maia (Toulouse) 🏠',
-        avatar: '👱‍♀️',
-        subtitle: 'sist sett i går 23:12',
+        id: 'wa-gruppe-coloc',
+        name: 'Coloc 🏠🔥',
+        avatar: '🏠',
+        subtitle: 'Maia, Sara, deg',
         messages: [
-          { from: 'them', text: 'Heeei! Vinkveld i helgen? 🍷', time: '14. juli 18:22' },
-          { from: 'them', text: 'Du la igjen laderen din på kjøkkenet btw', time: '19. juli 10:05', unread: true },
-          { from: 'them', text: 'Husleia!! Du har ikke vippset 😅', time: '25. juli 16:40', unread: true },
-          { from: 'them', text: 'Si ifra når du lander etter GF, jeg henter deg på flyplassen 💕', time: '28. juli 22:03', unread: true },
-        ],
-      },
-      {
-        id: 'wa-andreas',
-        name: 'Andreas',
-        suspectId: 'andreas',
-        subtitle: 'sist sett i dag 07:58',
-        messages: [
-          { from: 'them', text: 'Yo, kaffe neste uke?', time: '8. juli 13:37' },
-          { from: 'them', text: 'Jeg tar stillheten som et ja', time: '10. juli 09:12', unread: true },
-          { from: 'them', text: '(du svarer aldri, men jeg prøver igjen) padel lørdag?', time: '24. juli 17:26', unread: true },
-        ],
-      },
-      {
-        id: 'wa-claire',
-        name: 'Claire',
-        avatar: '👩‍🦰',
-        subtitle: 'vue aujourd’hui à 09:40',
-        messages: [
-          { from: 'them', text: 'Coucou ! On se fait un café cette semaine ? ☕', time: '3. juli 11:15' },
-          { from: 'them', text: 'Angela ?? T’es vivante ?', time: '9. juli 14:02', unread: true },
-          { from: 'them', text: 'Bon. Je prends ça pour un non 😤', time: '16. juli 19:55', unread: true },
-        ],
-      },
-      {
-        id: 'wa-alice',
-        name: 'Alice',
-        avatar: '👧',
-        subtitle: 'vue hier à 22:10',
-        messages: [
-          { from: 'them', text: 'Soirée chez moi vendredi, tu viens ? 🎉', time: '10. juli 15:44' },
-          { from: 'them', text: 'Ramène un truc norvégien, genre le chocolat là 🍫', time: '10. juli 15:45', unread: true },
-          { from: 'them', text: 't’es passée où ?? On t’a attendue !', time: '12. juli 01:12', unread: true },
-        ],
-      },
-      {
-        id: 'wa-malaumne',
-        name: 'Malaumne',
-        avatar: '🧑‍🎨',
-        subtitle: 'vue le 20 juillet',
-        messages: [
-          { from: 'them', text: 'Salut ! Ça te dit un ciné ce soir ? Le nouveau film est sorti 🎬', time: '17. juli 16:30' },
-          { from: 'them', text: 'Ok, une prochaine fois alors 🥲', time: '17. juli 22:41', unread: true },
-        ],
-      },
-      {
-        id: 'wa-carole',
-        name: 'Carole 🏃‍♀️',
-        avatar: '🏃‍♀️',
-        subtitle: 'vue aujourd’hui à 07:02',
-        messages: [
-          { from: 'them', text: 'On va courir dimanche matin ? 8h au parc ?', time: '18. juli 20:12' },
-          { from: 'them', text: 'Je suis devant le parc, tu arrives ?', time: '20. juli 08:07', unread: true },
-          { from: 'them', text: '… t’es pas venue 😑', time: '20. juli 08:42', unread: true },
-        ],
-      },
-      {
-        id: 'wa-paulrohel',
-        name: 'Paul Rohel',
-        avatar: '🤓',
-        subtitle: 'vue hier à 18:33',
-        messages: [
-          { from: 'them', text: 'Salut Angela, t’as les notes du cours de jeudi ?', time: '21. juli 12:20' },
-          { from: 'them', text: 'stp stp stp 🙏', time: '21. juli 12:21', unread: true },
-          { from: 'them', text: 'bon, tant pis. je demande à Claire', time: '22. juli 09:15', unread: true },
+          { from: 'them', author: 'Sara', text: 'QUI a fini le lait ??', time: '26. mars 08:31', unread: true },
+          { from: 'them', author: 'Maia 🏠', text: '??', time: '26. mars 09:12', unread: true },
         ],
       },
       {
@@ -1231,42 +1172,126 @@ export const CASE: CaseManifest = {
         avatar: '⚽',
         subtitle: 'vue le 26 juillet',
         messages: [
-          { from: 'them', text: 'yo, foot mercredi ? il nous manque une personne', time: '22. juli 18:50' },
-          { from: 'them', text: '??', time: '23. juli 10:04', unread: true },
+          { from: 'them', text: 'yo, tu viens au reunion de PIR aujourd\'hui ? Perso j\'ai rien fait', time: '10. april 12:50', unread: true },
+          { from: 'them', text: '??', time: '10. april 14:19', unread: true },
+        ],
+      },
+      {
+        id: 'wa-paulrohel',
+        name: 'Paul Rohel',
+        avatar: '🤓',
+        subtitle: 'vue hier à 18:33',
+        messages: [
+          { from: 'them', text: 'Salut Angela, n\'oublie pas d\'installer l\'appli Hevy', time: '21. november 2025 12:20' },
+                    { from: 'me', text: 'Oui, comme ca je peux voir le 300kg leg press d\'Andreas!', time: '21. november 2025 19:20' },
+        ],
+      },
+      {
+        id: 'wa-carole',
+        name: 'Carole 🏃‍♀️',
+        avatar: '🏃‍♀️',
+        subtitle: 'vue aujourd’hui à 07:02',
+        messages: [
+          { from: 'them', text: 'Coucou! T\'étais pas en cours aujourd\'hui, est-ce que tout va bien ?', time: '19. mars 20:12', unread: true },
+        ],
+      },
+      {
+        id: 'wa-malaumne',
+        name: 'Malaumne',
+        avatar: '🧑‍🎨',
+        subtitle: 'vue le 20 juillet',
+        messages: [
+          { from: 'them', text: 'Si j\'emprunte ton passeport, je pourrai recevoir des tutorats gratuitement??', time: '17. april 16:30', unread: true },
+        ],
+      },
+      {
+        id: 'wa-claire',
+        name: 'Claire',
+        avatar: '👩‍🦰',
+        subtitle: 'vue aujourd’hui à 09:40',
+        messages: [
+          { from: 'them', text: 'Coucou ! On se fait un café cette semaine ? ☕', time: '3. mai 11:15', unread: true },
+          { from: 'them', text: 'Angela ?? T’es vivante ?', time: '9. mai 14:02', unread: true },
+          { from: 'them', text: 'Bon. Je prends ça pour un non 😤', time: '16. mai 19:55', unread: true },
+        ],
+      },
+      {
+        id: 'wa-alice',
+        name: 'Alice',
+        avatar: '👧',
+        subtitle: 'vue hier à 22:10',
+        messages: [
+          { from: 'them', text: 'Soirée chez moi vendredi, tu viens ? 🎉', time: '10. juli 15:44', unread: true },
+        ],
+      },
+      {
+        id: 'wa-andreas',
+        name: 'Andreas',
+        suspectId: 'andreas',
+        subtitle: 'sist sett i dag 07:58',
+        messages: [
+          { from: 'them', text: 'Jeg fant en komando på git som fikser alt!! Magisk', time: '13. mars 2025 13:37' },
+          { from: 'me', text: 'Ahah hvilken?', time: '13. mars 2025 18:12'},
+          { from: 'them', text: '\"git push origin main --force\"! Men nå fungerer ingenting lenger. Gjorde du noe?', time: '13. mars 2025 18:13' },
+          { from: 'me', text: 'Mais bah tu es idiot, je sais même pas pourquoi t\'es en IR💀', time: '13. mars 2025 19:02'},
+          { from: 'them', text: 'Moi un idiot?? C\'est toi qui a mis des choses dans ma branche!', time: '24. juli 17:26' },
+          { from: 'me', text: 'Vi fikk en A lol, chillern da', time: '22. mars 2025 17:26' },
+          { from: 'them', text: 'LETSGOO', time: '22. mars 2025 18:01' },
+          { from: 'them', text: 'Gratulerer med dagen!!', time: '25. mars 2025 18:01' },
+          { from: 'them', text: 'Du som er ANSA proff, vet du om det er for sent å sende inn vedtektsforslag? Står åtte uker på nettsiden (aka utgått frist), men tenkte det var greit å spørre i tilfelle', time: '11. juni 2026 16:51' },
+          { from: 'me', text: 'Det er dessverre for sent, men lov å ta med juice til åpen debatt!!', time: '12. juni 2026 14:55' },
+          { from: 'me', text: 'Håper du koser deg så langt i Noreg', time: '12. juni 2026 14:56' },
+          { from: 'them', text: 'Jeg er klar til å bestille! Fikse i morgen?😆', time: '13. juni 2026 00:37' },
+          { from: 'them', text: 'Blir kjempebra. Får fikse litt god stemning blant oss franskmenn🤗 vi blir vel sånn 20 stk', time: '13. juni 2026 00:37' },
+          { from: 'them', text: 'Hvor mye utestenging av ikke-franskmenn kan jeg gjøre?', time: '13. juni 2026 00:38' },
+          { from: 'them', text: 'Masse! Men savner jo deg da🫣 blir godt å se dere alle igjen', time: '13. juni 2026 00:38' },
+          { from: 'me', text: 'Aw det blir fint å se deg igjen!! Gleder meg til å komme på besøk i Adamstua😎', time: '14. juni 2026 22:10' },
+          { from: 'me', text: 'Jaa herregud, vi er helt sjukt mange!!!', time: '14. juni 2026 22:10' },
+          { from: 'me', text: 'Du får lese hva som står om utestening av ikke-franskmenn i vedtektene:))', time: '14. juni 2026 22:11' },
+          { from: 'me', text: 'Jeg er veldig klar for å bestille flybilletter i morgen🥰', time: '14. juni 2026 22:11' },
+          { from: 'them', text: 'Ingenting sist jeg sjekket😇', time: '15. juni 2026 00:44' },
+          { from: 'them', text: 'Supert! Jeg kan ringe deg en gang på ettermiddagen?', time: '15. juni 2026 00:45' },
+          { from: 'them', text: 'Husker du forresten om vi skulle leie Airbnb eller om vi kunne låne leilighet osv.?', time: '15. juni 2026 00:45' },
+          { from: 'me', text: 'Maia og Wiktor skulle se på Airbnb!', time: '15. juni 2026 14:55' },
+          { from: 'me', text: 'Ja, bare å gjøre det!', time: '15. juni 2026 14:55' },
+          { from: 'them', text: 'Supert! Spiser om litt også ringer jeg deg etter det🤗', time: '15. juni 2026 17:18' },
+          { from: 'me', text: 'Nice!', time: '15. juni 2026 17:38' },
         ],
       },
       {
         id: 'wa-gruppe-toulouse',
-        name: 'Les Norvégiennes de Toulouse 🇳🇴',
+        name: 'Kremen av promo 60',
         avatar: '👥',
-        subtitle: 'Maia, Claire, Alice, deg',
+        subtitle: 'Maia, Brage, Andreas, Aleksander, Wiktor, Svea, Oskar, deg',
         messages: [
-          { from: 'them', author: 'Maia (Toulouse) 🏠', text: 'Apéro fredag? Vi tar med brunost 🧀', time: '15. juli 17:20' },
-          { from: 'them', author: 'Claire', text: 'ouiii !! 🙌', time: '15. juli 17:22' },
-          { from: 'them', author: 'Alice', text: 'Angela tu viens ??', time: '15. juli 17:31', unread: true },
-          { from: 'them', author: 'Maia (Toulouse) 🏠', text: 'Hun leser ikke meldinger, dere vet det 😂', time: '15. juli 17:33', unread: true },
-        ],
-      },
-      {
-        id: 'wa-gruppe-apero',
-        name: 'Apéro du jeudi 🍷',
-        avatar: '🍷',
-        subtitle: 'Claire, Carole, Paul +3',
-        messages: [
-          { from: 'them', author: 'Paul', text: 'jeudi 19h, comme d’hab ?', time: '24. juli 14:10' },
-          { from: 'them', author: 'Carole 🏃‍♀️', text: 'Je peux pas avant 20h !', time: '24. juli 14:18', unread: true },
-          { from: 'them', author: 'Claire', text: '20h alors. Angela, on sait que tu lis pas, mais t’es invitée quand même 💅', time: '24. juli 14:25', unread: true },
-        ],
-      },
-      {
-        id: 'wa-gruppe-coloc',
-        name: 'Coloc 🏠🔥',
-        avatar: '🏠',
-        subtitle: 'Maia, Paul Rohel, deg',
-        messages: [
-          { from: 'them', author: 'Paul Rohel', text: 'QUI a fini le lait ??', time: '26. juli 08:31' },
-          { from: 'them', author: 'Maia (Toulouse) 🏠', text: 'Ikke meg. Angela er i Norge. Så … deg? 🤨', time: '26. juli 08:45', unread: true },
-          { from: 'them', author: 'Paul Rohel', text: 'ah oui. pardon', time: '26. juli 08:46', unread: true },
+          { from: 'them', author: 'Maia Vejlgaard Evensen', text: 'Nach hos oss Angela?', time: '17.10.2025 23:26' },
+          { from: 'me', text: 'Vi kommer!', time: '17.10.2025 23:29' },
+          { from: 'them', author: 'Brage Flønæs Johnsen', text: 'Besteforeldre på tur her', time: '17.10.2025 23:30' },
+          { from: 'me', text: 'Sure😜❤️', time: '17.10.2025 23:32' },
+          { from: 'me', text: 'Er det rett på nach?', time: '17.10.2025 23:33' },
+          { from: 'them', author: 'Maia Vejlgaard Evensen', text: 'Tror vi tenkte oss litt ut først…', time: '17.10.2025 23:33' },
+          { from: 'me', text: 'Where to?', time: '17.10.2025 23:54' },
+          { from: 'them', author: 'Andreas Holmsen', text: 'Café oz!', time: '17.10.2025 23:55' },
+          { from: 'them', author: 'Brage Flønæs Johnsen', text: 'Branle-nach hos Angela!', time: '17.10.2025 23:55' },
+          { from: 'me', text: 'Ait rett over gata', time: '17.10.2025 23:56' },
+          { from: 'me', text: 'Vi sitt å jobbe rævva av oss for én ECTS.', time: '17.12.2025 19:27' },
+          { from: 'them', author: 'Aleksander Victor Taban', text: 'prosjektet e 20% av ein ECTS 🤡🤡🤡', time: '17.12.2025 19:28' },
+          { from: 'them', author: 'Wiktor Jankowski', text: 'Hahahha hva søøøren', time: '17.12.2025 19:40' },
+          { from: 'me', text: 'Lykke til gutter!!🔥', time: '17.12.2025 20:10' },
+          { from: 'me', text: 'Jeg turer østover nå🛫🇨🇳. Fikk dessverre ikke sagt hade til alle😔Ønsker dere noen fine siste dager i Toulouse beste gjengen❤️', time: '17.12.2025 20:15' },
+          { from: 'them', author: 'Aleksander Victor Taban', text: 'God tur Angela og god jul! ❤️', time: '17.12.2025 20:49' },
+          { from: 'them', author: 'Svea Hedda Marie König', text: 'kom godt fram Angela! kos deg masse💕', time: '17.12.2025 20:52' },
+          { from: 'them', author: 'Maia Vejlgaard Evensen', text: 'Lykke til gutter, sender varme tanker!', time: '17.12.2025 21:23' },
+          { from: 'them', author: 'Aleksander Victor Taban', text: 'Baggislunsj på maille idag? 😁', time: '15.4.2026 10:47', unread: true},
+          { from: 'them', author: 'Andreas Holmsen', text: 'Jeg er down', time: '15.4.2026 11:32', unread: true},
+          { from: 'them', author: 'Svea Hedda Marie König', text: 'maia og jeg går til butikken nå, skal vi ta med til dere andre?', time: '15.4.2026 12:02', unread: true },
+          { from: 'them', author: 'Andreas Holmsen', text: 'Æ tar metroen fra St. Mich nå. Stopper på Rang!', time: '15.4.2026 12:04', unread: true },
+          { from: 'them', author: 'Svea Hedda Marie König', text: 'vi er på carrefour:)', time: '15.4.2026 12:09', unread: true },
+          { from: 'them', author: 'Svea Hedda Marie König', text: 'vi har fiksa masse mat', time: '15.4.2026 12:21', unread: true },
+          { from: 'them', author: 'Oskar Orvik', text: 'Sitter på maille', time: '15.4.2026 12:23', unread: true },
+          { from: 'them', author: 'Aleksander Victor Taban', text: 'brage og meg går mod butikken nå', time: '15.4.2026 12:25', unread: true },
+          { from: 'them', author: 'Andreas Holmsen', text: 'Vi har alt fikset masse mat', time: '15.4.2026 12:25', unread: true },
+          { from: 'them', author: 'Wiktor Jankowski', text: 'Er maille pk?', time: '15.4.2026 12:36', unread: true },
         ],
       },
     ],
@@ -1307,6 +1332,35 @@ export const CASE: CaseManifest = {
           'Neida det var bare hypotetisk... Jeg sier ifra hvis noe sånt ville skjedd. ' +
           'Men har en liten mistanke, snakker først med vedkommende og tar det opp med deg ' +
           'på GF hvis det blir et problem',
+      },
+      // Pop-up-bar-forespørselen (27.–28. juli) — Aleksander svarer på siddis.
+      {
+        id: 'ep-aleksander-1',
+        folder: 'sendt',
+        from: 'Angela',
+        to: 'aleksander@notail.no',
+        subject: 'Pop-up bar på GF? 🍸',
+        date: 'man. 27. juli, 13:22',
+        body:
+          'Hei Aleksander!\n\n' +
+          'GF nærmer seg med stormskritt — og folk spør allerede: er det NOEN mulighet for ' +
+          'at dere kan sette opp en av deres legendariske pop-up-barer igjen i år? Den i ' +
+          'Toulouse har fortsatt buzzzin (med 3 z-er) status.\n\n' +
+          'Si ja. 🙏\n\n' +
+          'Hilsen Angela',
+      },
+      {
+        id: 'ep-aleksander-2',
+        from: 'Aleksander <aleksander@notail.no>',
+        to: 'angela@epost.no',
+        subject: 'SV: Pop-up bar på GF? 🍸',
+        date: 'tir. 28. juli, 10:48',
+        body:
+          'Halla Angela!\n\n' +
+          'løye at du spør, det varme ett gammalt bartenderhjerta. Men eg må nok ' +
+          'skuffa deg — kalenderen min e HEILT sprengt.\n\n' +
+          'Ses på GF!\n\n' +
+          'Aleksander 🍹',
       },
       {
         id: 'ep-styret',
@@ -1581,7 +1635,6 @@ export const CASE: CaseManifest = {
       'Per Haug løy om telefonsamtalen. Den fant aldri sted — telefonloggen viser ingenting kl. 22. ' +
       'Det ukjente stoffet i blodet stammet fra et legemiddel kun Per hadde tilgang til.\n\n' +
       'Angela ble forgiftet, ikke et naturlig dødsfall. Brevet var Pers forsøk på å skremme henne til taushet.\n\n' +
-      '**Takk for at du etterforsket med oss!** Se hvordan gjetningene fordelte seg nedenfor.',
-    wink: 'P.S. Andreas visste svaret hele tiden. Han sier alltid «ja». 😉',
+      '**Takk for at du etterforsket med oss!**',
   },
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { CASE, type CaseDoc } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
 import { useScrollMemory } from '../lib/useScrollMemory'
@@ -28,21 +28,10 @@ const GLYPH: Record<CaseDoc['kind'], string> = {
 
 type PhoneAppId = 'whatsapp' | 'mail' | 'slack' | 'files'
 
-// Klokka i statuslinjen (oppdateres hvert halvminutt).
-function useClock() {
-  const [now, setNow] = useState(() => new Date())
-  useEffect(() => {
-    const t = window.setInterval(() => setNow(new Date()), 30_000)
-    return () => window.clearInterval(t)
-  }, [])
-  return now.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' })
-}
-
 export default function AngelaFiles() {
   const files = CASE.angelaFiles ?? []
   const phone = CASE.angelaPhone
   const { isUnlocked } = useUnlock()
-  const clock = useClock()
   const [openApp, setOpenApp] = useState<PhoneAppId | null>(null)
   const [openDoc, setOpenDoc] = useState<CaseDoc | null>(null)
   const [unlocked, setUnlocked] = useState(() => {
@@ -176,7 +165,7 @@ export default function AngelaFiles() {
     content = waHacked ? (
       <WhatsAppApp chats={waChats} visible={visible} onBack={() => setOpenApp(null)} />
     ) : (
-      <div className="ph-hackwrap">
+      <div className="ph-hackwrap" data-scroll>
         <PhoneHeader
           color="#0b3d2e"
           title="WhatsApp — sikkerhetslås"
@@ -201,7 +190,7 @@ export default function AngelaFiles() {
     content = emailHacked ? (
       <MailApp mails={mails} onBack={() => setOpenApp(null)} />
     ) : (
-      <div className="ph-hackwrap">
+      <div className="ph-hackwrap" data-scroll>
         <PhoneHeader
           color="#1c2540"
           title="E-post — sikkerhetslås"
@@ -225,14 +214,14 @@ export default function AngelaFiles() {
     content = openDoc ? (
       <div className="ph-files">
         <PhoneHeader color="#ffd6e8" dark title={openDoc.title} onBack={() => setOpenDoc(null)} />
-        <div className="ph-files__view">
+        <div className="ph-files__view" data-scroll>
           <DocView doc={openDoc} />
         </div>
       </div>
     ) : (
       <div className="ph-files">
         <PhoneHeader color="#ffd6e8" dark title="Filer" onBack={() => setOpenApp(null)} />
-        <div className="ph-files__grid doc-list">
+        <div className="ph-files__grid doc-list" data-scroll>
           {files.map((doc) => (
             <button key={doc.id} className="doc-tile" onClick={() => setOpenDoc(doc)}>
               <span className="doc-tile__glyph" aria-hidden>
@@ -247,7 +236,7 @@ export default function AngelaFiles() {
   } else {
     // Hjemskjerm
     content = (
-      <div className="ph-home">
+      <div className="ph-home" data-scroll>
         {apps.length === 0 ? (
           <p className="ph-empty">Telefonen er tom.</p>
         ) : (
@@ -291,16 +280,7 @@ export default function AngelaFiles() {
   return (
     <AppWindow title="Offerets filer" icon="🌸" variant="angela">
       <div className="phone" ref={anchor}>
-        <div className="phone__screen">
-          <div className="ph-status">
-            <span className="ph-status__time">{clock}</span>
-            <span className="ph-status__right">
-              <span aria-hidden>▂▄▆█</span>
-              <span className="ph-status__batt">🪫 9 %</span>
-            </span>
-          </div>
-          {content}
-        </div>
+        <div className="phone__screen">{content}</div>
       </div>
     </AppWindow>
   )

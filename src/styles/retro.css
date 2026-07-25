@@ -226,6 +226,96 @@ textarea.field {
   object-fit: cover;
   image-rendering: pixelated;
 }
+/* «Sosiale medier»-mappe: 2×2 miniatur-fliser, som en app-mappe på telefon */
+.social-glyph {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.28);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  padding: 5px;
+  box-sizing: border-box;
+}
+.social-glyph span {
+  border-radius: 4px;
+}
+/* Lett popup-meny (IKKE fullskjermvindu som dag-mappene) */
+.social-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(0, 0, 0, 0.4);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.social-menu {
+  background: var(--surface-light, #d7d7d7);
+  box-shadow: var(--bevel-out), 0 10px 30px rgba(0, 0, 0, 0.45);
+  padding: 14px 16px 16px;
+  min-width: min(320px, 92vw);
+  animation: social-pop 0.16s ease-out both;
+}
+@keyframes social-pop {
+  from {
+    transform: scale(0.88);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.social-menu__title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+.social-menu__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+@media (max-width: 420px) {
+  .social-menu__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.social-menu__item {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 4px;
+  font: inherit;
+}
+.social-menu__item:active {
+  background: rgba(0, 0, 0, 0.08);
+}
+.social-menu__label {
+  font-size: 0.7rem;
+}
+
+/* Romansaiansa: rund ramme som klipper bort kant-artefaktene i png-en */
+.romansa-glyph {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-block;
+}
+.romansa-glyph img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.18);
+}
 /* Instagram-logo-ikon */
 .ig-glyph {
   width: 40px;
@@ -502,6 +592,17 @@ textarea.field {
 }
 .markdown img {
   max-width: 100%;
+}
+/* I POLITI-vinduet (mørk terminal) blir hvitt «papir» grelt og vanskelig å
+   lese — bruk mørk panel-variant med terminal-grønn tekst i stedet. */
+.window--police .markdown {
+  background: #0d130d;
+  color: #c8ffd4;
+  box-shadow: none;
+  border: 1px solid #1f4a2a;
+}
+.window--police .markdown a {
+  color: #5cff8a;
 }
 
 /* ===========================================================================
@@ -2063,26 +2164,13 @@ textarea.field {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  min-height: min(72vh, 640px);
+  /* FAST høyde — telefonen vokser ikke med innholdet; innholdet ruller inni */
+  height: min(72vh, 640px);
   color: #1a1a1a;
 }
-.ph-status {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #111;
-  color: #fff;
-  font-size: 0.72rem;
-  padding: 4px 12px;
-  letter-spacing: 1px;
-}
-.ph-status__right {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.ph-status__batt {
-  color: #ff6b6b;
+/* Appene fyller skjermen; de indre listene/trådene ([data-scroll]) ruller. */
+.phone__screen > * {
+  min-height: 0;
 }
 .ph-empty {
   padding: 24px 16px;
@@ -2092,6 +2180,8 @@ textarea.field {
 
 /* Hjemskjerm */
 .ph-home {
+  overflow-y: auto;
+  min-height: 0;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -2191,6 +2281,8 @@ textarea.field {
 }
 /* Signal box-hacket (e-post): mørkt kretskort med glødende displayer */
 .ph-hackwrap {
+  overflow-y: auto;
+  min-height: 0;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -2558,9 +2650,15 @@ textarea.field {
   background: #fff5fa;
 }
 .ph-files__grid {
+  overflow-y: auto;
+  min-height: 0;
+  flex: 1;
   padding: 12px;
 }
 .ph-files__view {
+  overflow-y: auto;
+  min-height: 0;
+  flex: 1;
   padding: 12px;
 }
 
@@ -2572,6 +2670,8 @@ textarea.field {
   background: #efe7dd;
 }
 .wa-chatlist {
+  overflow-y: auto;
+  min-height: 0;
   flex: 1;
   background: #fff;
 }
@@ -2665,6 +2765,8 @@ textarea.field {
   place-items: center;
 }
 .wa-thread {
+  overflow-y: auto;
+  min-height: 0;
   flex: 1;
   padding: 12px 10px;
   display: flex;
@@ -2672,6 +2774,23 @@ textarea.field {
   gap: 6px;
   /* klassisk WhatsApp-«doodle»-bakgrunn, forenklet */
   background: #efe7dd;
+}
+/* Wrapper per melding (trengs for dato-pillene); bevarer boble-justeringen */
+.wa-thread__item {
+  display: flex;
+  flex-direction: column;
+}
+/* Dato-pille mellom dager, som ekte WhatsApp */
+.wa-daysep {
+  align-self: center;
+  background: #fff;
+  color: #667781;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  margin: 14px 0 8px;
 }
 .wa-msg {
   position: relative;
@@ -2780,6 +2899,8 @@ textarea.field {
   color: #fff;
 }
 .pmail-list {
+  overflow-y: auto;
+  min-height: 0;
   flex: 1;
   padding: 8px 0;
 }
@@ -2836,6 +2957,8 @@ textarea.field {
   background: #3478f6;
 }
 .pmail-read {
+  overflow-y: auto;
+  min-height: 0;
   flex: 1;
   padding: 14px;
   background: #fff;
@@ -2894,6 +3017,8 @@ textarea.field {
   background: #e4eaf4;
 }
 .pmail-attachment-view {
+  overflow-y: auto;
+  min-height: 0;
   padding: 12px;
   background: #fff;
   flex: 1;
@@ -2907,6 +3032,8 @@ textarea.field {
   background: #fff;
 }
 .pslack-list {
+  overflow-y: auto;
+  min-height: 0;
   flex: 1;
 }
 .pslack-section {
@@ -2943,6 +3070,8 @@ textarea.field {
   font-size: 0.88rem;
 }
 .pslack-thread {
+  overflow-y: auto;
+  min-height: 0;
   flex: 1;
   padding: 10px 12px;
   display: flex;
@@ -2952,6 +3081,22 @@ textarea.field {
 .pslack-msg {
   display: flex;
   gap: 8px;
+}
+/* Dato-skille mellom dager i tråden (linje — tekst — linje, som ekte Slack) */
+.pslack-daysep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #7a7a85;
+  margin: 12px 0 2px;
+}
+.pslack-daysep::before,
+.pslack-daysep::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid #e8e8ee;
 }
 .pslack-msg__avatar {
   flex: none;
@@ -3029,6 +3174,33 @@ textarea.field {
   padding: 8px 12px;
   font-size: 0.78rem;
   color: #7a7a85;
+}
+
+/* Stengt avstemning (POLITI): umulig å overse at dagen er passert */
+.vote-closed {
+  border: 2px dashed #e3c14b;
+  background: rgba(227, 193, 75, 0.08);
+  padding: 22px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.vote-closed__lock {
+  font-size: 2.2rem;
+}
+.vote-closed__title {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #e3c14b;
+  text-transform: uppercase;
+}
+.vote-closed__answer,
+.vote-closed__now {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
 /* ===========================================================================

@@ -4,7 +4,6 @@ import { assetUrl } from '../lib/assets'
 import { getMyVote } from '../lib/votes'
 import { sfx } from '../lib/sfx'
 import Markdown from './Markdown'
-import ResultsView from './ResultsView'
 
 type Phase = 'sealed' | 'decrypt' | 'lineup' | 'verdict' | 'dossier'
 
@@ -250,18 +249,7 @@ function Dossier({ day3 }: { day3?: DayContent }) {
         <p className="reveal__personal">Du avga ingen stemme på dette spørsmålet.</p>
       )}
 
-      <hr style={{ margin: '20px 0', borderColor: 'var(--shadow)' }} />
-      <h3>Slik gjettet dere</h3>
-      {CASE.days
-        .filter((d) => d.question)
-        .map((d) => (
-          <div key={d.day} style={{ marginBottom: 18 }}>
-            <p style={{ fontWeight: 'bold', marginBottom: 6 }}>
-              {d.title}: {d.question!.prompt}
-            </p>
-            <ResultsView day={d} />
-          </div>
-        ))}
+      {/* Stemmestatistikken vises IKKE her — den ligger i Excel-appen. */}
 
       {solution.wink && <p className="reveal__wink">{solution.wink}</p>}
     </div>

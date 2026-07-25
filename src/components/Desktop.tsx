@@ -25,6 +25,25 @@ const LarryGlyph = () => (
   <img className="larry-glyph" src={assetUrl('case/memes/larry.gif')} alt="" aria-hidden />
 )
 
+// «Sosiale medier»-mappe: fire miniatur-fliser (IG/LinkedIn/WeChat/album),
+// som en app-mappe på en telefon.
+const SocialFolderGlyph = () => (
+  <span className="social-glyph" aria-hidden>
+    <span style={{ background: 'linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7)' }} />
+    <span style={{ background: '#0a66c2' }} />
+    <span style={{ background: '#2dc100' }} />
+    <span style={{ background: '#ffd6e8' }} />
+  </span>
+)
+
+// Romansaiansa-ikon: eget bilde i stedet for 🔥. Bildet har stygge kant-
+// artefakter — zoomes derfor litt inn i en rund, klippende ramme.
+const RomansaiansaGlyph = () => (
+  <span className="romansa-glyph" aria-hidden>
+    <img src={assetUrl('case/memes/romansaiansa.png')} alt="" />
+  </span>
+)
+
 // Instagram-logo som CSS-ikon (gradient + kameralinse).
 const IgGlyph = () => <span className="ig-glyph" aria-hidden />
 
@@ -112,8 +131,11 @@ type DialogKind = 'about' | 'recycle' | 'locked' | null
 
 export default function Desktop() {
   const { isUnlocked, demo, refresh } = useUnlock()
+  const navigate = useNavigate()
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null)
   const [dialog, setDialog] = useState<DialogKind>(null)
+  // «Sosiale medier»-mappen: lett popup-meny (ikke et fullskjermvindu).
+  const [socialOpen, setSocialOpen] = useState(false)
 
   // Larry-ikonet vises når easter egget er funnet. Lytt på 'larry:found' så
   // ikonet dukker opp umiddelbart hvis han trigges mens man står på skrivebordet.
@@ -143,12 +165,24 @@ export default function Desktop() {
       to: `/dag/${d.day}`,
     }))
 
-  const appIcons: IconDef[] = [
+  // Sosiale medier-apper — samlet i en liten popup-mappe på skrivebordet.
+  const socialApps: IconDef[] = [
     { label: 'Instagram', glyph: '📷', node: <IgGlyph />, to: '/instagram' },
+    { label: 'LinkedIn', glyph: '💼', node: <LinkedInGlyph />, to: '/linkedin' },
+    { label: 'WeChat', glyph: '💬', node: <WeChatGlyph />, to: '/wechat' },
+    { label: 'Minnealbum', glyph: '📸', to: '/album' },
+  ]
+
+  const appIcons: IconDef[] = [
+    {
+      label: 'Sosiale medier',
+      glyph: '🌐',
+      node: <SocialFolderGlyph />,
+      onClick: () => setSocialOpen(true),
+    },
     { label: 'POLITI', glyph: '🚓', to: '/politi' },
     // TODO: skjules senere — viser live stemmetall (kamuflert som Excel).
     { label: 'Excel', glyph: '📊', node: <ExcelGlyph />, to: '/resultater' },
-    { label: 'WeChat', glyph: '💬', node: <WeChatGlyph />, to: '/wechat' },
   ]
   // «Mistenkte»-tavla nås nå via en knapp inne i POLITI-appen (ikke eget ikon).
   if (CASE.angelaFiles && CASE.angelaFiles.length > 0) {
@@ -158,15 +192,13 @@ export default function Desktop() {
     appIcons.push({ label: 'Radio France', glyph: '📻', node: <RadioGlyph />, to: '/spotify' })
   }
   appIcons.push({ label: 'Minesveiper', glyph: '💣', to: '/spill/minesveiper' })
-  appIcons.push({
-    label: 'LinkedIn',
-    glyph: '💼',
-    node: <LinkedInGlyph />,
-    to: '/linkedin',
-  })
-  appIcons.push({ label: 'Minnealbum', glyph: '📸', to: '/album' })
   if (CASE.romance) {
-    appIcons.push({ label: 'Romansaiansa', glyph: '🔥', to: '/romansaiansa' })
+    appIcons.push({
+      label: 'Romansaiansa',
+      glyph: '🔥',
+      node: <RomansaiansaGlyph />,
+      to: '/romansaiansa',
+    })
   }
   // Låst opp etter at Larry er sett minst én gang — klikk spiller ham av igjen.
   if (foundLarry) {
@@ -227,6 +259,32 @@ export default function Desktop() {
 
       {menu && (
         <ContextMenu x={menu.x} y={menu.y} items={menuItems} onClose={() => setMenu(null)} />
+      )}
+
+      {socialOpen && (
+        <div className="social-overlay" onClick={() => setSocialOpen(false)}>
+          <div className="social-menu" onClick={(e) => e.stopPropagation()}>
+            <div className="social-menu__title">Sosiale medier</div>
+            <div className="social-menu__grid">
+              {socialApps.map((a) => (
+                <button
+                  key={a.label}
+                  className="social-menu__item"
+                  onClick={() => {
+                    sfx.click()
+                    setSocialOpen(false)
+                    if (a.to) navigate(a.to)
+                  }}
+                >
+                  <span className="desktop-icon__glyph" aria-hidden>
+                    {a.node ?? a.glyph}
+                  </span>
+                  <span className="social-menu__label">{a.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
 
       {dialog === 'about' && (
