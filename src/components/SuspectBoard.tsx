@@ -2,7 +2,7 @@ import { CASE } from '../case/manifest'
 import type { Suspect } from '../case/manifest'
 import { assetUrl } from '../lib/assets'
 import AppWindow from './AppWindow'
-import Markdown from './Markdown'
+import PixelPortrait from './PixelPortrait'
 
 const STATUS_LABEL: Record<NonNullable<Suspect['status']>, string> = {
   mistenkt: 'MISTENKT',
@@ -24,7 +24,9 @@ function SuspectCard({ s }: { s: Suspect }) {
     <article className={`suspect suspect--${status}`}>
       <span className="suspect__pin" aria-hidden />
       <div className="suspect__photo">
-        {s.img ? (
+        {s.pixel ? (
+          <PixelPortrait data={s.pixel} className="suspect__pixel" />
+        ) : s.img ? (
           <img src={assetUrl(s.img)} alt={s.name} />
         ) : (
           <span className="suspect__initials" aria-hidden>
@@ -35,11 +37,6 @@ function SuspectCard({ s }: { s: Suspect }) {
       </div>
       <h2 className="suspect__name">{s.name}</h2>
       <p className="suspect__role">{s.role}</p>
-      {s.notes && (
-        <div className="suspect__notes">
-          <Markdown source={s.notes} />
-        </div>
-      )}
     </article>
   )
 }

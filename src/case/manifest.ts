@@ -85,14 +85,22 @@ export type Question =
     }
 
 /** En person i saken — vises på «Mistenkte»-tavla. */
+/** 8-bit-portrett tegnet som piksel-grid (samme stil som intro-cinematicen).
+ *  `palette` mapper tegn → farge; tegn uten farge (f.eks. '.') er bakgrunn.
+ *  `rows` er like lange rader med tegn fra paletten. */
+export interface PixelPortraitData {
+  palette: Record<string, string>
+  rows: string[]
+}
+
 export interface Suspect {
   id: string
   name: string
   role: string // 'Nabo', 'Eks-kjæreste', …
   img?: string // 'case/mistenkte/per.jpg' (valgfritt — initialer vises ellers)
+  /** 8-bit-portrett (valgfritt) — vinner over `img` hvis begge er satt. */
+  pixel?: PixelPortraitData
   status?: 'mistenkt' | 'renvasket' | 'ukjent'
-  /** Korte etterforskningsnotater (markdown). */
-  notes?: string
 }
 
 export interface DayContent {
@@ -413,29 +421,499 @@ export const CASE: CaseManifest = {
   // dag 4-avsløringen (line-up + SKYLDIG-stempel) skal fungere.
   suspects: [
     {
-      id: 'kari',
-      name: 'Kari Lund',
-      role: 'Nabo',
-      status: 'mistenkt',
-      notes:
-        'Hevder hun la seg kl. 23.30 og ikke hørte noe. Bor vegg-i-vegg — burde ha hørt mer. ' +
-        'Hadde en uoppgjort konflikt med Angela om et felles gjerde.',
-    },
-    {
-      id: 'per',
-      name: 'Per Haug',
-      role: 'Eks-kjæreste',
-      status: 'mistenkt',
-      notes:
-        'Sier han snakket med Angela på telefon kl. 22. Telefonloggen er ikke sjekket ennå. ' +
-        'Arbeider i helsevesenet — tilgang til legemidler.',
-    },
-    {
-      id: 'thomas',
-      name: 'Thomas Berg',
-      role: 'Bror',
+      id: 'andreas',
+      name: 'Andreas',
+      role: 'Mystisk fyr',
       status: 'ukjent',
-      notes: 'Skal ha vært på hytta, men ingen kan bekrefte det. Arvet huset etter Angela.',
+      // 8-bit-portrett (tegnet for hånd — palett + piksel-grid, se PixelPortraitData)
+      pixel: {
+        palette: {
+          _: '#b9c8d2', // bakgrunn (glassfasade)
+          d: '#6e5233', // hår, mørkt (sider/skygge)
+          h: '#8a6a45', // hår
+          H: '#a98c5f', // hår, lyst (topp/tufser)
+          s: '#eec39a', // hud
+          S: '#d8a67c', // hud, skygge
+          e: '#3a4a56', // øyne (gråblå)
+          m: '#b06a52', // munn
+          w: '#e8eef6', // skjorte, lys blå-hvit
+          W: '#c6d4e6', // skjorte, skygge
+          n: '#2a3550', // genser, marineblå
+          N: '#1d2538', // genser, mørk skygge
+        },
+        rows: [
+          '________HhH_Hh__________',
+          '______HhhHhhhHhH________',
+          '____HhhhhhHhhhhhHh______',
+          '___HhhhhhhhhhhhhhhhH____',
+          '__HhhhhhhhhhhhhhhhhhhH__',
+          '__dhhhhhhhhhhhhhhhhhhd__',
+          '__dhhhhhhhhhhhhhhhhhhd__',
+          '__dhhhhHhhhhhhhhhhhhhd__',
+          '__dhhhhsshhssssshhhhhd__',
+          '__dhhssssssssssssshhd___',
+          '__dhsssshhssshhsssshd___',
+          '__dhsssseessseesssshd___',
+          '__dhssssssSsssssssshd___',
+          '__dhsssssSSsssssssshd___',
+          '___dsssssmmmSsssssd_____',
+          '____dssssssssssssd______',
+          '_____Sssssssssssd_______',
+          '________SssssS__________',
+          '______ww_ssss_ww________',
+          '__nnnnwwWssssWwwnnnn____',
+          '_nnnnnnwWwwwwWwnnnnnnn__',
+          'nnnnnnnnwWWwnnnnnnnnnn__',
+          'nnnnnnnnnwWwnnnnnnnnnnn_',
+          'NnnnnnnnnnWnnnnnnnnnnnN_',
+        ],
+      },
+    },
+    {
+      id: 'maud',
+      name: 'Maud',
+      role: 'Mystisk dame',
+      status: 'ukjent',
+      pixel: {
+        palette: {
+          _: '#7ba06f', // bakgrunn (grønt løvverk)
+          d: '#a06334', // hår, mørkt (skygge)
+          h: '#c9884a', // hår, rødblond
+          H: '#e0aa6e', // hår, lyst (topp)
+          s: '#f2c8a2', // hud
+          S: '#d9a87e', // hud, skygge
+          e: '#4a5d55', // øyne (grågrønne)
+          m: '#c27661', // munn
+          w: '#f0efe9', // hvit t-skjorte
+          k: '#26262b', // jakke, svart
+          K: '#17171b', // jakke, mørk skygge
+          z: '#8f939d', // glidelås
+        },
+        rows: [
+          '________hHHHHh__________',
+          '______hHHHHHHHHh________',
+          '_____hHhhhhdhhHHh_______',
+          '____hhhhhhhdhhhhHh______',
+          '___dhhhhhhhhdhhhhhh_____',
+          '___dhhhssssssssshhhh____',
+          '__dhhhssssssssssshhhd___',
+          '__dhhhsshhsssshhshhhd___',
+          '__dhhhsseesssseeshhhd___',
+          '__dhhhsssssSssssshhhd___',
+          '__dhhhssssSSssssshhhd___',
+          '__dhhhsssmmmSsssshhhd___',
+          '__dhhhhSsssssssShhhhd___',
+          '__dhhhhhSssssShhhhhd____',
+          '_dhhhhhhssssshhhhhhd____',
+          '_dhhhhhhssssshhhhhhd____',
+          '_dhhhhhhkwwwwkhhhhhd____',
+          '_dhhhhhkkkwwwkkkhhhhd___',
+          '__dhhhhkkkwzwkkkhhhd____',
+          '_Kkkkkkkkkwzwkkkkkkkkk__',
+          'Kkkkkkkkkkkzkkkkkkkkkkk_',
+          'Kkkkkkkkkkkzkkkkkkkkkkk_',
+          'KKkkkkkkkkkzkkkkkkkkkKK_',
+          'KKkkkkkkkkkzkkkkkkkkkKK_',
+        ],
+      },
+    },
+    {
+      id: 'erik',
+      name: 'Erik',
+      role: 'Blomsterelsker',
+      status: 'ukjent',
+      pixel: {
+        palette: {
+          B: '#5f9bd8', // himmel
+          P: '#f2cfdc', // kirsebærblomst, lys
+          p: '#e5aec6', // kirsebærblomst
+          v: '#6f9a63', // grøntanlegg
+          d: '#8a6b42', // hår, mørkt
+          h: '#a8874f', // hår
+          H: '#c9a869', // hår, lyst
+          s: '#eec49c', // hud
+          S: '#d8a87c', // hud, skygge
+          e: '#3f4a52', // øyne
+          m: '#b06a52', // munn (bredt smil)
+          g: '#4a3524', // brilleinnfatning (skilpaddemønster)
+          w: '#efe9dc', // kremhvit strikkegenser
+          n: '#2b3245', // blazer, marineblå
+          N: '#1c2233', // blazer, mørk skygge
+          z: '#8b8f99', // glidelås
+        },
+        rows: [
+          'BBBBpPBBBBBBBBBBBBpBBBBB',
+          'BBBpPPpBBBBBBBBBBpPpBBBB',
+          'BpPPpPPBBBBBBBBBpPPPpBBB',
+          'pPPpPPpBhhhhhhhBpPPpPPpP',
+          'PpPPpPhHHhhhhHhhhpPPpPPp',
+          'pPPpPhhHhhhhhhhhhhPpPPpP',
+          'PpPpdhhhhhhhhhhhhhdpPPpP',
+          'pPpPdhhhHhhhhhhhhhdPpPpP',
+          'pPpPdhhhhhhhhhhhshdPpPpP',
+          'pPpPdhsgggggggggshdpPpPP',
+          'pPpPdsggsegsgesggsdPpPpP',
+          'pPpPdSsggggsggggsSdPpPpP',
+          'pPpPpSsssssSsssssSPpPpPp',
+          'pPpPpSsssmmmmmsssSPpPpPp',
+          'pPpPpPSsssssssSpPpPpPPpP',
+          'pvPpPpPvSssssSvpPpPpPpPv',
+          'vvPpvPpwwwwzwwwwvPpvvPpv',
+          'vvpvnnwwwwwzwwwwwnnvpvvv',
+          'vvnnnnnwwwwzwwwnnnnnvvvv',
+          'vnnnnnnwwwwzwwwnnnnnnvvv',
+          'nnnnnnnwwwwzwwwnnnnnnnnv',
+          'Nnnnnnnnwwwzwwwnnnnnnnnn',
+          'NNnnnnnnwwwzwwnnnnnnnnNN',
+          'NNnnnnnnwwwzwwnnnnnnnnNN',
+        ],
+      },
+    },
+    {
+      id: 'oskar',
+      name: 'Oskar',
+      role: 'Overraskende velkledd',
+      status: 'ukjent',
+      pixel: {
+        palette: {
+          _: '#d9cfc0', // bakgrunn (varm beige vegg)
+          d: '#7a5c38', // hår, mørkt
+          h: '#9a7a4c', // hår
+          H: '#bd9c64', // hår, lyst (sveipen)
+          s: '#eec49c', // hud
+          S: '#d8a87c', // hud, skygge
+          e: '#4a5a68', // øyne (blågrå)
+          m: '#b06a52', // munn
+          f: '#c8a97a', // skjeggstubb/fippskjegg (sandfarget)
+          w: '#f2f4f6', // skjorte, hvit
+          t: '#7e2634', // slips, burgunder
+          j: '#6b6f6e', // blazer, grå tweed
+          J: '#54585a', // blazer, mørk (jakkeslag)
+          l: '#8a8e8c', // tweed-prikker
+        },
+        rows: [
+          '________________________',
+          '________________________',
+          '_______hHhh_____________',
+          '____hhhhhHhhhhhh________',
+          '___dhhhhhhHHhhhhhh______',
+          '___dhhhhhhhhHHhhhhh_____',
+          '__dhhhhhhhhhhhHhhhhd____',
+          '__dhhhhhhhhssssssshd____',
+          '__dhhhsssssssssssshd____',
+          '__dhhsshhsssshhssshd____',
+          '__dhhsseesssseessshd____',
+          '__dhhssssssSsssssshd____',
+          '__dhhssssffffssssshd____',
+          '_____ssssSmmmSssss______',
+          '______SsssffffssS_______',
+          '_______SsssssS__________',
+          '________Sssss___________',
+          '_____wwSssssSww_________',
+          '__jjjJwwwtttwwwJjjj_____',
+          '_jjljjJwwtttwwJjjljj____',
+          'jjjjljjJwtttwJjjjljjj___',
+          'jjljjjjjJtttJjjjjjljjj__',
+          'Jjjjjljjjjttjjjjjljjjjj_',
+          'JJjjjjjljjttjjjjjljjJJ__',
+        ],
+      },
+    },
+    {
+      id: 'runill',
+      name: 'Runill',
+      role: 'Fra en annen tid',
+      status: 'ukjent',
+      pixel: {
+        palette: {
+          _: '#d5c9b6', // bakgrunn (varm greige vegg)
+          d: '#7d5c3a', // hår, mørkt (midtskill/skygge)
+          h: '#9c7a4e', // hår
+          H: '#c09a62', // hår, lyst
+          s: '#f0c8a2', // hud
+          S: '#dcac82', // hud, skygge
+          e: '#4a6f92', // øyne (blå)
+          m: '#b5644f', // lepper
+          T: '#f6f1e6', // tenner (bredt smil)
+          w: '#f6f0e3', // blondebluse, kremhvit
+          W: '#ded2b8', // bluse, skygge/blonder/knapper
+        },
+        rows: [
+          '________________________',
+          '________________________',
+          '________hhdhh___________',
+          '______hhhHdhHhhh________',
+          '_____hhhhhdhhhhhh_______',
+          '____dhhhhsssshhhhd______',
+          '_____dhsssssssssshd_____',
+          '_____dhshhsssshhshd_____',
+          '_____dhseessseesshd_____',
+          '_____dhssssSssssshd_____',
+          '____hdhssssSSsssshdh____',
+          '____hdhssmTTTmssshdh____',
+          '____hdhsssssssssshdh____',
+          '_____dSssssssSd_________',
+          '________SssssS__________',
+          '______wWwWwWwWwWw_______',
+          '____wwwWwwwwwWwwwww_____',
+          '__wWwwwwWwwWwwWwwwwWw___',
+          '_wWwwwwWwwwWwwwWwwwWww__',
+          'wwWwwwwWwwwWwwwWwwwwWww_',
+          'WwwwWwwwwwwWwwwwwWwwwWww',
+          'wwwwwwWwwwwWwwwWwwwwwwww',
+          'WwWwwwwwwwwWwwwwwwwwWwWw',
+          'wwwwWwwwwwwWwwwwwwWwwwww',
+        ],
+      },
+    },
+    {
+      id: 'hedvig',
+      name: 'Hedvig',
+      role: 'Strikkeentusiast',
+      status: 'ukjent',
+      pixel: {
+        palette: {
+          _: '#eae3d4', // vinterhimmel, blek
+          v: '#5a6a52', // grantrær (uskarpe)
+          q: '#f4f1e8', // snø
+          c: '#a84028', // rød låve
+          C: '#7e2e1c', // låvedør
+          d: '#4e3a28', // hår, mørkt brunt
+          h: '#6a5138', // hår
+          s: '#f0c49e', // hud
+          S: '#d9a87a', // hud, skygge
+          f: '#cf9a6e', // fregner
+          e: '#5a7488', // øyne (blågrå)
+          m: '#b5644f', // munn
+          g: '#c9a24a', // gullsmykke
+          k: '#c14e2a', // genser, rødoransje
+          K: '#9c3a1e', // genser, mørk (ribb)
+          p: '#e5ded0', // strikkemønster, hvitt
+        },
+        rows: [
+          '________________________',
+          'vv______hhh_____________',
+          'v_____hhhhhhhh______qqqq',
+          '_____hhhhhhhhhhh___qqqqq',
+          'v___dhhhhhhhhhhhh__ccccc',
+          'v___dhssssssssssshdccccc',
+          'v___dhssssssssssshdccCCc',
+          '____dhsdddsssdddshdccCCc',
+          '____dhsseessseesshdccCCc',
+          '___hdhsfsssSsssfshdccCCc',
+          '___hdhsfssSSsssfshdccccc',
+          'q___dhssSmmmmSssshd_qqqq',
+          'qq___dSsssssssSd____qqqq',
+          'qqq___SssssssS______qqqq',
+          'qqqq____SssssS____qqqqqq',
+          'qqqqq__gssssg____qqqqqqq',
+          'qq__KKKKKKgKKKKKK___qqqq',
+          'qq_kpkpkpkpkpkpkpk__qqqq',
+          'q_kkpkkkpkkkpkkkpkk__qqq',
+          '_kppkppkppkppkppkppkp_qq',
+          'kkkkkkkkkkkkkkkkkkkkkkkk',
+          'kkpkkkkpkkkkpkkkkpkkkkpk',
+          'kkkkkkkkkkkkkkkkkkkkkkkk',
+          'KkkkkkkkkkkkkkkkkkkkkkkK',
+        ],
+      },
+    },
+    {
+      id: 'ane',
+      name: 'Ane',
+      role: 'Smilende vitne',
+      status: 'ukjent',
+      pixel: {
+        palette: {
+          _: '#b5b5ae', // bakgrunn (betongvegg)
+          d: '#a87f45', // hår, mørk blond (midtskill/skygge)
+          h: '#d4ab62', // hår, blond
+          H: '#e8c987', // hår, lys blond
+          s: '#f2c8a0', // hud
+          S: '#dcaa7e', // hud, skygge
+          e: '#4f7396', // øyne (blå)
+          m: '#c26557', // lepper
+          T: '#f6f1e8', // tenner (stort smil)
+          g: '#c9a24a', // gullsmykker (øredobber + kjede)
+          b: '#9db8e2', // bluse, lyseblå
+          B: '#7e9cc9', // bluse, skygge/krage
+          w: '#f0f2f5', // knapper, hvite
+        },
+        rows: [
+          '________________________',
+          '________________________',
+          '________hhdhh___________',
+          '______hhhHdHhhhh________',
+          '_____hhhhhdhhhhhh_______',
+          '____dhhhhsssshhhhd______',
+          '_____dhsssssssssshd_____',
+          '_____dhsddssssddshd_____',
+          '_____dhseessseesshd_____',
+          '_____dhssssSssssshd_____',
+          '____hdhssssSSsssshdh____',
+          '____hdhssmTTTTmsshdh____',
+          '____hdhsssSmmSssshdh____',
+          '____gdSssssssSdg________',
+          '________SssssS__________',
+          '_______gSssssSg_________',
+          '____bbssssgsssssbb______',
+          '___bbbbBssssssBbbbb_____',
+          '__bbbbbbBssssBbbbbbb____',
+          '_bbbbbbbbBssBbbbbbbbb___',
+          'bbbbbbbbbBwBbbbbbbbbbb__',
+          'bbbbbbbbbbwbbbbbbbbbbb__',
+          'Bbbbbbbbbbwbbbbbbbbbbb__',
+          'BBbbbbbbbbwbbbbbbbbbBB__',
+        ],
+      },
+    },
+    {
+      id: 'sverre',
+      name: 'Sverre',
+      role: 'Den voksne i rommet',
+      status: 'ukjent',
+      pixel: {
+        palette: {
+          _: '#e8e4dc', // bakgrunn (lys vegg)
+          h: '#8a7a5e', // hår, gråbrunt (tynt på toppen)
+          d: '#6e6048', // hår/bryn, mørkt
+          s: '#eec09a', // hud
+          S: '#d8a276', // hud, skygge
+          e: '#4f7396', // øyne (blå)
+          b: '#93836a', // skjegg, gråmelert
+          B: '#77684f', // skjegg, mørkt
+          T: '#f6f1e6', // tenner (bredt smil)
+          w: '#f2f2ec', // skjorte, hvit
+          W: '#d8d8cc', // knapper/skygge
+          v: '#b8d4b0', // rutemønster, grønt
+          c: '#b0c4d8', // rutemønster, blått
+        },
+        rows: [
+          '________________________',
+          '________________________',
+          '_________hh_h___________',
+          '______hssssssssh________',
+          '_____hhssssssssshh______',
+          '____hhssssssssssshh_____',
+          '____hhssssssssssshh_____',
+          '___dhhssssssssssshhd____',
+          '___dhhssddsssddsshhd____',
+          '___dhhsseessseesshhd____',
+          '___dhbssssSSsssssbhd____',
+          '___dhbsbBBBBBBBbsbhd____',
+          '___dhbbbBTTTTTBbbbhd____',
+          '___dhbbbbbBBBbbbbbhd____',
+          '____hbbbbBBBbbbbh_______',
+          '______bbbBBBbbb_________',
+          '________SsssS___________',
+          '_____wwSsssSww__________',
+          '__wwvwwwSssSwwvwww______',
+          '_wwwvwwwwSswwwwvwwww____',
+          '_ccccccccccWcccccccccc__',
+          'wwwvwwwwwwwWwwwwvwwwwww_',
+          'cccccccccccWccccccccccc_',
+          'wwvwwwwwwwwWwwwwwvwwwww_',
+        ],
+      },
+    },
+    {
+      id: 'anna',
+      name: 'Anna',
+      role: 'Stirrer tilbake',
+      status: 'ukjent',
+      pixel: {
+        palette: {
+          _: '#7d8490', // bakgrunn (gråblå studiovegg)
+          d: '#241d18', // hår, mørkest (midtskill) + bryn
+          h: '#3a2f26', // hår, mørkebrunt
+          s: '#edc19b', // hud
+          S: '#d6a276', // hud, skygge
+          e: '#5e4028', // øyne (brune)
+          m: '#c08573', // lepper (lukket, dempet rosa)
+          g: '#c9a24a', // gullringer (øredobber)
+          P: '#f2efe8', // perler
+          n: '#c8ccd2', // sølvkjede
+          k: '#1d1d20', // bluse, svart
+          K: '#2e2e33', // bluse, tekstur
+        },
+        rows: [
+          '________________________',
+          '________hhdhh___________',
+          '______hhhhdhhhh_________',
+          '_____hhhhhdhhhhhh_______',
+          '____hhhhhssshhhhhh______',
+          '___hhhhssssssshhhhh_____',
+          '___hhhhsssssssssshhhh___',
+          '___hhhhsdddssdddshhhh___',
+          '___hhhhseessseesshhhh___',
+          '___hhhhssssSSsssshhhh___',
+          '___hhhgssssSSssssghhh___',
+          '___hhhPssssSsssssPhhh___',
+          '___hhhhsssmmmmssshhhh___',
+          '___hhhhSssssssssShhhh___',
+          '____hhhhSssssssShhhh____',
+          '____hhhhhSssssShhhhh____',
+          '____hhhhhnssssnhhhhh____',
+          '____hhhkkkSssSkkkhhh____',
+          '___hhhkkkksnnskkkkhhh___',
+          '___hhhkkkkkkkkkkkkhhh___',
+          '__hhhkkkkkKkkkkkkkkhh___',
+          '__hhkkkkkkkkkkKkkkkkhh__',
+          '__hhkkkKkkkkkkkkkkkkhh__',
+          '_hhkkkkkkkkkKkkkkkkkkhh_',
+        ],
+      },
+    },
+    {
+      id: 'pia',
+      name: 'Pia',
+      role: 'Verdensvant',
+      status: 'ukjent',
+      pixel: {
+        palette: {
+          _: '#c3c9cf', // disig himmel (Shanghai)
+          t: '#9aa5b0', // skyskrapere
+          T: '#7e8a98', // skyskrapere, mørke
+          r: '#b07878', // Oriental Pearl Tower
+          q: '#9fb5ae', // elven
+          d: '#4e3a2a', // hår, mørkt (midtskill)
+          h: '#6e5138', // hår, brunt
+          H: '#a5825a', // hår, lyse tupper (balayage)
+          s: '#f0c6a0', // hud
+          S: '#dcaa80', // hud, skygge
+          e: '#5f7568', // øyne (grågrønne)
+          m: '#c67a6e', // lepper (mykt smil)
+          g: '#c9a24a', // øredobber
+          k: '#1f1f22', // skjorte, svart
+          K: '#303036', // skjorte, knapper/tekstur
+        },
+        rows: [
+          '________________________',
+          '________________________',
+          '_______hhdhh____________',
+          '_____hhhhdhhhhh_________',
+          '____hhhhhdhhhhhh________',
+          '___hhhhhsssshhhhhh__tt__',
+          '__hhhhhsssssssssshhhhhtt',
+          'tthhhhhsddsssddsshhhhhtt',
+          'tThhhhhseessseesshhhhhTt',
+          'tthhhhhssssSSsssshhhhhrt',
+          'TthhhhgssssSSssssghhhhrt',
+          'tthhhhhssSmmmmSsshhhhhrt',
+          'qqhhhhhSssssssssShhhhhqq',
+          'qqhhhhhhSssssssShhhhhhqq',
+          '__hhhhhhhSssssShhhhhhh__',
+          '__hhhhhhhkSssSkhhhhhhh__',
+          '_hhhhhhhkkksskkkhhhhhhh_',
+          '_hhhhhhkkkkKkkkkhhhhhhh_',
+          'hHhhhhhkkkkKkkkkhhhhhHhh',
+          'HhhHhhhkkkkkkkkkhhHhhHhH',
+          'HhHhhHhkkkkKkkkkHhhHhHHh',
+          'HHhHhHhkkkkkkkkkhHhHHHHH',
+          'HHHhHHhkkkkKkkkkHhHHHHHH',
+          'HHHHHHhkkkkkkkkkHHHHHHHH',
+        ],
+      },
     },
   ],
 

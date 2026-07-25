@@ -197,6 +197,8 @@ skjer når neste dag slippes.
   galleri-reserve; brukes av `StoryComposer` (story) og `RomansaiansaApp` (selfie).
 - `src/components/RomansaiansaApp.tsx` — Tinder-modus: profil-oppsett, swiping, match/avlys.
 - `src/components/SuspectBoard.tsx` — «Mistenkte»-korktavle (vises kun når `suspects` finnes).
+- `src/components/PixelPortrait.tsx` — 8-bit-portrett fra piksel-grid i manifestet
+  (`Suspect.pixel`: palett + tegn-rader; vinner over `img`). Eksempel: «Andreas»-kortet.
 - `src/components/PhoneLock.tsx` + `FingerprintHack.tsx` — låseskjerm for Angelas mobil
   (kode fra `CASE.phonePin`) og politi-hack-minigamet som omgår den.
 - `src/components/Minesveiper.tsx` — lite frittstående minesveiper-spill (påskeegg).

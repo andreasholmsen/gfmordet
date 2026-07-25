@@ -3091,13 +3091,6 @@ textarea.field {
   font-size: 0.8rem;
   color: var(--shadow);
 }
-.suspect__notes {
-  font-size: 0.8rem;
-}
-.suspect__notes p {
-  margin: 0;
-}
-
 /* ===========================================================================
    Minesveiper
    =========================================================================== */
@@ -3684,4 +3677,12 @@ textarea.field {
   border-color: #a33;
   color: #ff9d9d;
   background: #210606;
+}
+
+/* 8-bit-portrett på mistenkte-tavla (SVG-rekter, nearest-neighbor-preg) */
+.suspect__pixel {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #b9c8d2; /* samme som portrettets bakgrunnsfarge */
 }
