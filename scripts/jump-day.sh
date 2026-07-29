@@ -11,7 +11,7 @@
 # Bruk:
 #   ./scripts/jump-day.sh 1      # spillet står i dag 1
 #   ./scripts/jump-day.sh 2      # dag 2 (dag 1 resultater avslørt)
-#   ./scripts/jump-day.sh 3      # dag 3 (husk: kjør assign_matches() etterpå)
+#   ./scripts/jump-day.sh 3      # dag 3
 #   ./scripts/jump-day.sh 4      # dag 4 (fasit)
 #   ./scripts/jump-day.sh reset  # tilbake til ekte datoer (31.7–2.8 2026)
 #   ./scripts/jump-day.sh 3 --print   # bare skriv ut SQL-en (ikke kjør)
@@ -92,8 +92,4 @@ if [[ "$MODE" == "reset" ]]; then
   echo "✓ case_config satt tilbake til ekte lanseringsdatoer."
 else
   echo "✓ Hoppet til dag $MODE."
-  if [[ "$MODE" == "3" || "$MODE" == "4" ]]; then
-    echo "  ↪ Husk: kjør «select assign_matches();» i SQL Editor for å låse opp dag 3."
-    echo "     (Vil du teste matchmaking-låsen på nytt: «update romance_state set assigned_at=null; delete from romance_matches;».)"
-  fi
 fi

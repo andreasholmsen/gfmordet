@@ -86,7 +86,6 @@ async function main() {
     ['0003 live results', 'get_live_results', { p_day: 1 }],
     ['0004 auth', 'get_my_votes', {}],
     ['0005 stories', 'get_active_stories', {}],
-    ['0006 romance', 'get_romance_assigned', {}],
   ]
   for (const [migration, rpc, args] of rpcChecks) {
     const r = await rpcExists(rpc, args)
@@ -96,7 +95,7 @@ async function main() {
 
   // --- Storage-bucketer -----------------------------------------------------
   console.log('\nStorage-bucketer:')
-  for (const bucket of ['stories', 'profiles']) {
+  for (const bucket of ['stories']) {
     const { error } = await supabase.storage.from(bucket).createSignedUrl('preflight/__none__.jpg', 60)
     const msg = (error?.message ?? '').toLowerCase()
     if (!error || msg.includes('not found') && !msg.includes('bucket')) {

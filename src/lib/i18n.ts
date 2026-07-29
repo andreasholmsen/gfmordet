@@ -1,0 +1,134 @@
+import { useSettings } from './SettingsContext'
+
+// ---------------------------------------------------------------------------
+//  Nynorsk-modus for MENYENE (ikke sakens innhold — det skrives i manifestet).
+//  Kun UI-kromet oversettes: oppgavelinje, dialoger, mappe-chrome, prompts og
+//  Innstillinger-appen. `{x}`-plassholdere fylles inn via t(key, { x: ... }).
+// ---------------------------------------------------------------------------
+
+export type Lang = 'nb' | 'nn'
+
+const nb = {
+  // felles
+  cancel: 'Avbryt',
+  backToFolder: '← Tilbake til mappen',
+  backTo: '← Tilbake til {name}',
+
+  // oppgavelinjen
+  countdownLong: 'Dag {d} åpner om {h}t {m}m {s}s',
+  countdownShort: 'Dag {d} åpner om {m}:{s}',
+  dayStatus: 'Dag {n} av {total} åpen',
+  soundOn: 'Slå på lyd',
+  soundOff: 'Slå av lyd',
+  logout: 'Logg ut',
+  logoutConfirm: 'Er du sikker på at du vil logge ut, {name}?',
+  logoutNote: 'Stemmene dine er trygt lagret — du kan logge inn igjen når som helst.',
+
+  // lyd-prompt (førstegang)
+  soundTitle: 'Lyd',
+  soundQuestion: 'Spillet er best med lyd — vil du skru den på?',
+  soundHint: 'Du kan når som helst endre dette i ⚙️ Innstillinger eller med 🔊-knappen på oppgavelinjen.',
+  soundYes: '🔊 Ja takk (anbefalt)',
+  soundNo: '🔇 Uten lyd',
+
+  // skrivebordet
+  socialFolder: 'Sosiale medier',
+  victimFiles: 'Offerets filer',
+  minesweeper: 'Minesveiper',
+  memAlbum: 'Minnealbum',
+  menuRefresh: 'Oppdater',
+  menuTrash: 'Tøm papirkurv',
+  menuAbout: 'Om denne PC-en',
+  trashTitle: 'Papirkurv',
+  trashEmpty: 'Papirkurven er allerede tom.',
+  trashNote: '(Bevis kastes aldri i denne saken — alt kan bli viktig.)',
+  lockedTitle: 'Låst',
+  lockedBody1: 'Etterforskningen har ikke startet ennå.',
+  lockedBody2: 'Åpne 📨 START HER først.',
+  aboutLine1: 'Sikkert terminalmiljø for etterforskning. Bevismateriale slippes dag for dag. Alle handlinger logges (på liksom 😉).',
+  aboutLine2: 'Bygget med kaffe og altfor lite søvn. Lykke til, etterforsker.',
+
+  // dag-mapper
+  unknownFolder: 'Ukjent mappe',
+  folderNotExist: 'Denne mappen finnes ikke.',
+  checkingAccess: 'Sjekker tilgang …',
+  notOpenYet: 'er ikke åpnet ennå.',
+  comeBack: 'Kom tilbake når dagens dokumenter slippes.',
+  emptyFolder: 'Ingen dokumenter i denne mappen.',
+  docCount1: '{n} dokument',
+  docCountN: '{n} dokumenter',
+
+  // Innstillinger-appen (på Angelas mobil)
+  settingsApp: 'Innstillinger',
+  settingsLang: 'Språk i menyene',
+  settingsLangNote: 'Gjelder bare menyene — sakens innhold er som det er.',
+  settingsSound: 'Lyd',
+  on: 'På',
+  off: 'Av',
+}
+
+const nn: typeof nb = {
+  cancel: 'Avbryt',
+  backToFolder: '← Tilbake til mappa',
+  backTo: '← Tilbake til {name}',
+
+  countdownLong: 'Dag {d} opnar om {h}t {m}m {s}s',
+  countdownShort: 'Dag {d} opnar om {m}:{s}',
+  dayStatus: 'Dag {n} av {total} open',
+  soundOn: 'Slå på lyd',
+  soundOff: 'Slå av lyd',
+  logout: 'Logg ut',
+  logoutConfirm: 'Er du sikker på at du vil logge ut, {name}?',
+  logoutNote: 'Stemmene dine er trygt lagra — du kan logge inn att når som helst.',
+
+  soundTitle: 'Lyd',
+  soundQuestion: 'Spelet er best med lyd — vil du skru han på?',
+  soundHint: 'Du kan når som helst endre dette i ⚙️ Innstillingar eller med 🔊-knappen på oppgåvelinja.',
+  soundYes: '🔊 Ja takk (tilrådd)',
+  soundNo: '🔇 Utan lyd',
+
+  socialFolder: 'Sosiale medium',
+  victimFiles: 'Offeret sine filer',
+  minesweeper: 'Minesveipar',
+  memAlbum: 'Minnealbum',
+  menuRefresh: 'Oppdater',
+  menuTrash: 'Tøm papirkorga',
+  menuAbout: 'Om denne PC-en',
+  trashTitle: 'Papirkorg',
+  trashEmpty: 'Papirkorga er allereie tom.',
+  trashNote: '(Bevis blir aldri kasta i denne saka — alt kan bli viktig.)',
+  lockedTitle: 'Låst',
+  lockedBody1: 'Etterforskinga har ikkje starta enno.',
+  lockedBody2: 'Opne 📨 START HER først.',
+  aboutLine1: 'Sikkert terminalmiljø for etterforsking. Bevismateriale blir sleppt dag for dag. Alle handlingar blir logga (på liksom 😉).',
+  aboutLine2: 'Bygd med kaffi og altfor lite svevn. Lykke til, etterforskar.',
+
+  unknownFolder: 'Ukjend mappe',
+  folderNotExist: 'Denne mappa finst ikkje.',
+  checkingAccess: 'Sjekkar tilgang …',
+  notOpenYet: 'er ikkje opna enno.',
+  comeBack: 'Kom tilbake når dokumenta for dagen blir sleppte.',
+  emptyFolder: 'Ingen dokument i denne mappa.',
+  docCount1: '{n} dokument',
+  docCountN: '{n} dokument',
+
+  settingsApp: 'Innstillingar',
+  settingsLang: 'Språk i menyane',
+  settingsLangNote: 'Gjeld berre menyane — innhaldet i saka er som det er.',
+  settingsSound: 'Lyd',
+  on: 'På',
+  off: 'Av',
+}
+
+export type StringKey = keyof typeof nb
+const STRINGS: Record<Lang, typeof nb> = { nb, nn }
+
+/** Oversetter-hook: `const t = useT()` → `t('logout')`, `t('backTo', { name })`. */
+export function useT() {
+  const { lang } = useSettings()
+  return (key: StringKey, vars?: Record<string, string | number>): string => {
+    let s: string = STRINGS[lang][key] ?? STRINGS.nb[key]
+    if (vars) for (const [k, v] of Object.entries(vars)) s = s.split(`{${k}}`).join(String(v))
+    return s
+  }
+}

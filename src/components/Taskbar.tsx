@@ -6,6 +6,7 @@ import { useSettings } from '../lib/SettingsContext'
 import { useAuth } from '../lib/AuthContext'
 import { getSchedule, type Schedule } from '../lib/supabase'
 import { sfx } from '../lib/sfx'
+import { useT } from '../lib/i18n'
 import Dialog from './Dialog'
 
 function two(n: number): string {
@@ -26,6 +27,7 @@ export default function Taskbar() {
   const { unlockedDays, refresh, demo } = useUnlock()
   const { muted, toggleMuted } = useSettings()
   const { user, signOut } = useAuth()
+  const t = useT()
   const [schedule, setSchedule] = useState<Schedule | null>(null)
   const [now, setNow] = useState(() => Date.now())
   const [confirmLogout, setConfirmLogout] = useState(false)
@@ -70,8 +72,8 @@ export default function Taskbar() {
     const sec = s % 60
     countdown =
       h > 0
-        ? `Dag ${next.day} åpner om ${h}t ${two(m)}m ${two(sec)}s`
-        : `Dag ${next.day} åpner om ${two(m)}:${two(sec)}`
+        ? t('countdownLong', { d: next.day, h, m: two(m), s: two(sec) })
+        : t('countdownShort', { d: next.day, m: two(m), s: two(sec) })
   }
 
   const openCount = unlockedDays.length
@@ -93,7 +95,7 @@ export default function Taskbar() {
           <span className="taskbar__countdown">{countdown}</span>
         ) : (
           <span>
-            {demo ? 'Demo' : `Dag ${openCount} av ${CASE.days.length} åpen`}
+            {demo ? 'Demo' : t('dayStatus', { n: openCount, total: CASE.days.length })}
           </span>
         )}
       </div>
@@ -102,8 +104,7 @@ export default function Taskbar() {
         className="taskbar__mute"
         onClick={toggleMuted}
         aria-pressed={muted}
-        aria-label={muted ? 'Slå på lyd' : 'Slå av lyd'}
-        title={muted ? 'Slå på lyd' : 'Slå av lyd'}
+        aria-label={muted ? t('soundOn') : t('soundOff')}
       >
         {muted ? '🔇' : '🔊'}
       </button>
@@ -115,22 +116,21 @@ export default function Taskbar() {
             sfx.click()
             setConfirmLogout(true) // bekreft først — ett klikk skal ikke logge ut
           }}
-          title="Logg ut"
         >
           <span aria-hidden>👤</span> {user.displayName}
-          <span className="taskbar__logout"> · Logg ut</span>
+          <span className="taskbar__logout"> · {t('logout')}</span>
         </button>
       )}
 
       {confirmLogout && user && (
         <Dialog
-          title="Logg ut"
+          title={t('logout')}
           icon="👤"
           onClose={() => setConfirmLogout(false)}
           actions={
             <>
               <button className="btn" onClick={() => setConfirmLogout(false)}>
-                Avbryt
+                {t('cancel')}
               </button>
               <button
                 className="btn btn--primary"
@@ -139,17 +139,13 @@ export default function Taskbar() {
                   void signOut()
                 }}
               >
-                Logg ut
+                {t('logout')}
               </button>
             </>
           }
         >
-          <p style={{ marginTop: 0 }}>
-            Er du sikker på at du vil logge ut, <strong>{user.displayName}</strong>?
-          </p>
-          <p style={{ fontSize: '0.8rem', opacity: 0.8, marginBottom: 0 }}>
-            Stemmene dine er trygt lagret — du kan logge inn igjen når som helst.
-          </p>
+          <p style={{ marginTop: 0 }}>{t('logoutConfirm', { name: user.displayName })}</p>
+          <p style={{ fontSize: '0.8rem', opacity: 0.8, marginBottom: 0 }}>{t('logoutNote')}</p>
         </Dialog>
       )}
 

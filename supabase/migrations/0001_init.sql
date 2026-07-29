@@ -168,10 +168,10 @@ grant execute on function public.get_free_text(int) to anon;
 --  tilgjengelig med en gang. Men resultatene for dag 1 vises først når dag 2
 --  slippes (results_at = 31. juli), og dag 1-avstemningen stenger samtidig.
 -- ============================================================================
---   Dag 1: alltid åpen · Dag 2: fredag 31. juli · Dag 3: lørdag 1. august · Dag 4: søndag 2. august
+--   Dag 1: alltid åpen · Dag 2: fredag 31. juli 18:00 · Dag 3: lørdag 1. august · Dag 4: søndag 2. august
 insert into public.case_config (day, question_type, release_at, closes_at, results_at) values
-  (1, 'multiple_choice', timestamptz '2020-01-01 00:00 Europe/Oslo', timestamptz '2026-07-31 09:00 Europe/Oslo', timestamptz '2026-07-31 09:00 Europe/Oslo'),
-  (2, 'free_text',       timestamptz '2026-07-31 09:00 Europe/Oslo', timestamptz '2026-08-01 09:00 Europe/Oslo', timestamptz '2026-08-01 09:00 Europe/Oslo'),
+  (1, 'multiple_choice', timestamptz '2020-01-01 00:00 Europe/Oslo', timestamptz '2026-07-31 18:00 Europe/Oslo', timestamptz '2026-07-31 18:00 Europe/Oslo'),
+  (2, 'free_text',       timestamptz '2026-07-31 18:00 Europe/Oslo', timestamptz '2026-08-01 09:00 Europe/Oslo', timestamptz '2026-08-01 09:00 Europe/Oslo'),
   (3, 'mc_with_other',   timestamptz '2026-08-01 09:00 Europe/Oslo', timestamptz '2026-08-02 09:00 Europe/Oslo', timestamptz '2026-08-02 09:00 Europe/Oslo'),
   (4, 'none',            timestamptz '2026-08-02 09:00 Europe/Oslo', null,                                       timestamptz '2026-08-02 09:00 Europe/Oslo')
 on conflict (day) do update

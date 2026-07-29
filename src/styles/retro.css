@@ -302,20 +302,6 @@ textarea.field {
   font-size: 0.7rem;
 }
 
-/* Romansaiansa: rund ramme som klipper bort kant-artefaktene i png-en */
-.romansa-glyph {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: inline-block;
-}
-.romansa-glyph img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.18);
-}
 /* Instagram-logo-ikon */
 .ig-glyph {
   width: 40px;
@@ -998,235 +984,6 @@ textarea.field {
   left: 16px;
   right: 16px;
   text-align: center;
-}
-
-/* ===========================================================================
-   Romansaiansa (Tinder-modus)
-   =========================================================================== */
-.romance {
-  min-height: 100%;
-  background: #fff;
-  color: #111;
-  padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
-  font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  text-align: center;
-}
-.romance__brand {
-  font-weight: 800;
-  font-size: 1.3rem;
-  background: linear-gradient(45deg, #ff512f, #dd2476);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  margin-bottom: 12px;
-}
-.romance__h {
-  margin: 8px 0 6px;
-  font-size: 1.15rem;
-}
-.romance__lead {
-  font-size: 0.85rem;
-  color: #555;
-  margin: 0 0 14px;
-}
-.romance__label {
-  font-weight: 600;
-  font-size: 0.85rem;
-  margin: 12px 0 6px;
-}
-.romance__setup {
-  max-width: 420px;
-  margin: 0 auto;
-}
-.romance__setup .btn {
-  margin: 6px 4px 0;
-}
-.romance__nav {
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
-  margin-top: 18px;
-}
-.romance__selfie {
-  width: 180px;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 14px;
-  margin: 0 auto 12px;
-  display: block;
-  border: 3px solid #dd2476;
-}
-.romance__selfie--empty {
-  display: grid;
-  place-items: center;
-  background: #f2f2f2;
-  color: #999;
-  font-size: 0.8rem;
-  border-style: dashed;
-}
-.romance__opts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
-.romance__chip {
-  background: #f2f2f2;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-.romance__chip--on {
-  background: linear-gradient(45deg, #ff512f, #dd2476);
-  color: #fff;
-  border-color: transparent;
-}
-.romance__q {
-  margin-bottom: 8px;
-}
-/* Swipe */
-.romance__progress {
-  font-size: 0.78rem;
-  color: #888;
-  margin: 0 0 8px;
-}
-.romance__card {
-  position: relative;
-  max-width: 340px;
-  margin: 0 auto;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
-  background: #000;
-}
-.romance__card-img {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  display: block;
-}
-.romance__card-info {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 24px 14px 12px;
-  text-align: left;
-  color: #fff;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
-}
-.romance__card-name {
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-.romance__card-quiz {
-  font-size: 0.8rem;
-  opacity: 0.9;
-}
-.romance__swipe-actions {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  margin-top: 16px;
-}
-.romance__nope,
-.romance__like {
-  width: 62px;
-  height: 62px;
-  border-radius: 50%;
-  border: 2px solid #eee;
-  background: #fff;
-  font-size: 1.6rem;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-.romance__nope {
-  color: #ff3b30;
-}
-.romance__like {
-  color: #ff2d78;
-}
-.romance__nope:active,
-.romance__like:active {
-  transform: scale(0.92);
-}
-.romance__done,
-.romance__match {
-  max-width: 420px;
-  margin: 18px auto 0;
-}
-.romance__match-head {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: #dd2476;
-}
-
-/* Fullskjerm matchmaking-laster (blokkerer hele appen på dag 3 før assign) */
-.matchmaking {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 24px;
-  text-align: center;
-  background: linear-gradient(160deg, #2a0a1e, #4a0f2e 55%, #1a0512);
-  color: #fff;
-}
-.matchmaking__brand {
-  font-size: 2rem;
-  font-weight: 900;
-  letter-spacing: 0.5px;
-}
-.matchmaking__ansa {
-  background: linear-gradient(45deg, #ff512f, #ffd1e0);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.matchmaking__spinner {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  border: 5px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #ff4d8d;
-  animation: mmSpin 0.9s linear infinite;
-}
-.matchmaking__text {
-  font-size: 1.05rem;
-  font-weight: 600;
-  margin: 0;
-}
-.matchmaking__dots::after {
-  content: '';
-  animation: mmDots 1.4s steps(4, end) infinite;
-}
-.matchmaking__sub {
-  font-size: 0.85rem;
-  opacity: 0.75;
-  max-width: 320px;
-  margin: 0;
-}
-@keyframes mmSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes mmDots {
-  0% { content: ''; }
-  25% { content: '.'; }
-  50% { content: '..'; }
-  75% { content: '...'; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .matchmaking__spinner {
-    animation-duration: 2.4s;
-  }
 }
 
 /* Feed */
@@ -4066,6 +3823,119 @@ textarea.field {
 /* Lyd-spørsmålet vises FØR boot — gi dialogen helsvart bakgrunn (ingen app bak). */
 .sound-prompt .dialog-overlay {
   background: #000;
+}
+
+/* Språkvalg (aller første skjerm): to STORE knapper, bokmål/nynorsk */
+.lang-prompt {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  background: #000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.lang-prompt__box {
+  text-align: center;
+  color: #d7e0d7;
+  font-family: 'Courier New', monospace;
+  max-width: 440px;
+  width: 100%;
+}
+.lang-prompt__q {
+  margin: 0 0 4px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.lang-prompt__q--nn {
+  opacity: 0.8;
+  margin-bottom: 24px;
+}
+.lang-prompt__buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.lang-prompt__btn {
+  font: inherit;
+  font-size: 1.3rem;
+  font-weight: 700;
+  padding: 26px 10px;
+  cursor: pointer;
+  background: #101810;
+  color: #5cff8a;
+  border: 2px solid #2a5a38;
+}
+.lang-prompt__btn:hover,
+.lang-prompt__btn:focus-visible {
+  border-color: #5cff8a;
+  box-shadow: 0 0 14px rgba(92, 255, 138, 0.35);
+}
+.lang-prompt__btn:active {
+  transform: scale(0.97);
+}
+.lang-prompt__note {
+  margin-top: 18px;
+  font-size: 0.72rem;
+  opacity: 0.6;
+}
+
+/* ⚙️ Innstillinger-appen på telefonen */
+.ph-settings {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f2f2f7;
+  min-height: 0;
+}
+.ph-settings__body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.ph-settings__group {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.ph-settings__label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #111;
+  margin-bottom: 10px;
+}
+.ph-settings__seg {
+  display: flex;
+  background: #e9e9ee;
+  border-radius: 9px;
+  padding: 3px;
+  gap: 3px;
+}
+.ph-settings__opt {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 8px 6px;
+  border-radius: 7px;
+  cursor: pointer;
+  color: #333;
+}
+.ph-settings__opt--active {
+  background: #fff;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+.ph-settings__note {
+  margin: 8px 0 0;
+  font-size: 0.72rem;
+  color: #8e8e93;
 }
 .dialog {
   width: 100%;

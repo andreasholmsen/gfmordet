@@ -20,10 +20,6 @@ export interface CaseDoc {
   src?: string
   /** For 'markdown'/'html': skriv innholdet rett her i stedet for en fil. */
   inline?: string
-  /** DAG 3-BEVIS-DELING (Romansaiansa): merk dokumentet 'A' eller 'B' for å dele
-   *  det mellom matchede partnere. Umerkede dokumenter vises til begge. Solo-
-   *  spillere (uparet/avlyst romanse) ser alt uansett. */
-  group?: 'A' | 'B'
   /** Legger dokumentet i en undermappe i dag-mappen. Verdien er `id`-en til en
    *  mappe i dagens `folders`-liste. Utelates ⇒ dokumentet ligger løst i dagen. */
   folder?: string
@@ -130,18 +126,6 @@ export interface DayContent {
   docs: CaseDoc[]
   /** Dagens spørsmål i POLITI-appen. La stå udefinert for dag 4 (ingen stemming). */
   question?: Question
-}
-
-/** «Romansaiansa» (Tinder-modus). Valgfri — utelates for å skru av feature-en.
- *  Alternativene her fyller nedtrekk/valg i profil-oppsettet. `quiz` er rene
- *  flavor-spørsmål som vises på swipe-kortene. */
-export interface RomanceConfig {
-  /** Kjønnsalternativer man velger for seg selv (id lagres, label vises). */
-  genders: { id: string; label: string }[]
-  /** «Interessert i» — hvilke kjønn-id-er man kan krysse av for. */
-  interestedIn: { id: string; label: string }[]
-  /** Mini-quiz om romantiske preferanser (flavor). Vises på kortene. */
-  quiz: { id: string; prompt: string; options: string[] }[]
 }
 
 // ---------------------------------------------------------------------------
@@ -253,8 +237,6 @@ export interface CaseManifest {
   /** Kort velkomsttekst på skrivebordet / i POLITI-appen. */
   intro: string
   days: DayContent[]
-  /** Romansaiansa-config (valgfritt). */
-  romance?: RomanceConfig
   instagram: InstagramPost[]
   linkedin: LinkedInPost[]
   /** Personene i saken (valgfritt) — vises på «Mistenkte»-tavla. */
@@ -291,35 +273,6 @@ export const CASE: CaseManifest = {
   title: 'GF-mordet',
   intro:
     'SWQganVzdCBsaWtlIHRvIGludGVyamVjdCBmb3IgYSBtb21lbnQuIFdoYXQgeW91cmUgcmVmZXJpbmcgdG8gYXMgTGludXgsIGlzIGluIGZhY3QsIEdOVS9MaW51eCwgb3IgYXMgSXZlIHJlY2VudGx5IHRha2VuIHRvIGNhbGxpbmcgaXQsIEdOVSBwbHVzIExpbnV4LiBMaW51eCBpcyBub3QgYW4gb3BlcmF0aW5nIHN5c3RlbSB1bnRvIGl0c2VsZiwgYnV0IHJhdGhlciBhbm90aGVyIGZyZWUgY29tcG9uZW50IG9mIGEgZnVsbHkgZnVuY3Rpb25pbmcgR05VIHN5c3RlbSBtYWRlIHVzZWZ1bCBieSB0aGUgR05VIGNvcmVsaWJzLCBzaGVsbCB1dGlsaXRpZXMgYW5kIHZpdGFsIHN5c3RlbSBjb21wb25lbnRzIGNvbXByaXNpbmcgYSBmdWxsIE9TIGFzIGRlZmluZWQgYnkgUE9TSVgu',
-  romance: {
-    genders: [
-      { id: 'mann', label: 'Mann' },
-      { id: 'kvinne', label: 'Kvinne' },
-      { id: 'annet', label: 'Annet' },
-    ],
-    interestedIn: [
-      { id: 'mann', label: 'Menn' },
-      { id: 'kvinne', label: 'Kvinner' },
-      { id: 'annet', label: 'Andre' },
-    ],
-    quiz: [
-      {
-        id: 'date',
-        prompt: 'Perfekt første date?',
-        options: ['Krimkveld', 'Lang skogstur', 'Utepils', 'Netflix og avhør'],
-      },
-      {
-        id: 'redflag',
-        prompt: 'Ditt største red flag?',
-        options: ['Sier «uansett» for mye', 'Alltid for sen', 'For glad i mord-mysterier', 'Ingen — jeg er perfekt'],
-      },
-      {
-        id: 'weapon',
-        prompt: 'Våpen i Cluedo?',
-        options: ['Lysestaken', 'Tauet', 'Skiftenøkkelen', 'Giften'],
-      },
-    ],
-  },
   days: [
     {
       day: 1,
@@ -338,47 +291,355 @@ export const CASE: CaseManifest = {
       ],
       docs: [
         {
-          id: 'd1-rapport',
-          title: 'Politirapport',
-          kind: 'markdown',
-          inline:
-            '# Politirapport — sak 24-0617\n\n' +
-            '**Avdøde:** Angela Liu (34)\n\n' +
-            '**Funnsted:** Middagslokalet på GF etter bankettmiddag lørdag kveld\n\n' +
-            'Avdøde ble funnet av naboen kl. 23:20. Ingen andre var til stede. ' +
-            'Fire personer var i nærheten kvelden før. Alle har avgitt forklaring (se egne dokumenter).',
-        },
-        {
-          id: 'd1-vitne-1',
-          title: 'Vitneutsagn: Kari',
+          id: 'd1-vitne-sverre',
+          title: 'Vitneutsagn: Sverre',
           kind: 'markdown',
           folder: 'vitner',
           inline:
-            '## Kari Lund (nabo)\n\n' +
-            '«Jeg så lyset i kjøkkenet til Angela slukke rundt 23. ' +
-            'Jeg hørte ingenting etterpå. Jeg la meg klokka halv tolv.»',
+            '## Vitneutsagn — Sverre\n\n' +
+            '**Kan du beskrive denne dagen?**\n\n' +
+            '«Ja vi hadde en temmelig lang dag. Mye møter, foredrag og debatter. Det er alltid ' +
+            'spennende å følge med, men ble nokså slitsomt. Vi hadde også et ekstra møte blant ' +
+            'ansatte og hovedstyret. Det ble veldig slitsomt, så jeg la meg ikke så sent etter ' +
+            'banketten. Jeg var også litt med den ene guttegjengen fra Frankrike på deres ' +
+            'sosiale opplegg. Var morsomt, men ble litt for teknisk for meg.»\n\n' +
+            '**Hvor var du rundt kl. 23 denne kvelden?**\n\n' +
+            '«Hmmm jeg fulgte ikke så mye med på tiden, men jeg stod nok ute med de andre. ' +
+            'Jeg snakket med Maud, Runill og et par andre. Litt tilfeldige samtaleemner — men ' +
+            'blant annet om vi burde forby nattbading eller ikke. Vi har fått klager fra folk ' +
+            'som Brage Johnsen om at det kan være farlig. Ane kom også etterhvert for å snakke ' +
+            'med Runill, og etter at de dro så dro jeg også bare hjem for å sove. På veien hjem ' +
+            'så møtte jeg bare på Erik i den ene gangen egentlig.»\n\n' +
+            '**Vet du om noen som ville ønsket Angela død?**\n\n' +
+            '«Nei Angela er jo helt fantastisk. Vi snakket sammen tidligere den dagen på møtet ' +
+            'vårt, og da virket hun litt irritert på Andreas blant annet. Var visst noe om ' +
+            'vedtekter og at han var forsinket — men det er vel nokså standard.»\n\n' +
+            '**Har du andre kommentarer eller ting vi burde vite?**\n\n' +
+            '«Det er ikke godt å si. Jeg trodde kanskje Ane nevnte Angela i samtalen hennes med ' +
+            'Runill den kvelden, men kan ikke være sikker. De virket hemmelighetsfulle. Runill ' +
+            'og Angela snakket også en del tidligere den dagen på møtet. Angela svarte også på ' +
+            'noen meldinger som var litt «ork».»',
         },
         {
-          id: 'd1-vitne-2',
-          title: 'Vitneutsagn: Per',
+          id: 'd1-vitne-hedvig',
+          title: 'Vitneutsagn: Hedvig',
           kind: 'markdown',
           folder: 'vitner',
           inline:
-            '## Per Haug (eks-kjæreste)\n\n' +
-            '«Vi snakket på telefon rundt 22. Hun hørtes glad ut. ' +
-            'Jeg var hjemme hele kvelden, det kan søsteren min bekrefte.»',
+            '## Vitneutsagn — Hedvig\n\n' +
+            '**Hva gjorde du i løpet av banketten?**\n\n' +
+            '«Jeg var såklart med mine ANSA Madrid-venner. Stemningen var ikke sånn supergod ' +
+            'etter alle prisene ble annonsert, men det er vel livet det... Jeg endte opp med å ' +
+            'gå rundt mye av kvelden, gå litt ute og være ved baren. Når jeg gikk til baren ' +
+            'rundt 22:30-tiden så stod noen av Frankrikegutta der. Oskar og Brage var veldig ' +
+            'pratsomme, men Andreas virket litt mer stille. Nerver kanskje? Brage hjalp meg ' +
+            'hvertfall velge ut en passende drikke, og jeg gikk gjennom salen hvor Angela satt. ' +
+            'Vi snakket litt sammen også gikk jeg videre for å se hvor vennene mine var. En god ' +
+            'stund senere gikk jeg tilbake i salen og der fant jeg Angela på bakken. Når jeg så ' +
+            'henne trodde jeg hun hadde besvimt.»\n\n' +
+            '**Hva gjorde du så?**\n\n' +
+            '«Nei mitt første instinkt var naturligvis å løpe til resepsjonen for å spørre om ' +
+            'hjelp og ringe ambulanse. På veien dultet jeg borti Anna. Etter resepsjonen ble ' +
+            'ringt så løp jeg tilbake. De forstod ikke situasjonen med en gang så det tok ' +
+            'lenger tid enn ønskelig. På veien tilbake klarte jeg å snuble, men innen jeg var ' +
+            'tilbake så hadde andre folk oppdaget henne — og jeg ble bedt om å holde meg unna ' +
+            'åstedet. Jeg husker ikke så mye av kvelden, alt gikk i ett. Det sykeste er hvor ' +
+            'mange som ikke fikk med seg situasjonen før sent om natten. De som nattbadet var ' +
+            'helt fjerne.»\n\n' +
+            '**Du sier du snakket med Angela, hva snakket du med henne om?**\n\n' +
+            '«Mest hva jeg burde forvente av morgendagen. Jeg søker jo inn på hovedstyret, og ' +
+            'ville maksimere sjansene for å holde en relevant og god tale. Det var betryggende ' +
+            'å snakke med Angela, siden hun er prosjektleder for GF. Hun virket litt småsyk, så ' +
+            'jeg lot henne være litt alene. Ville ikke bli forkjølet rett før talen min!»\n\n' +
+            '**Kjenner du noen som ville ønsket Angela vondt?**\n\n' +
+            '«Nei egentlig ikke, dessverre.»',
         },
-        // Eksempel på bilde og PDF (legg filene i /public/case/dag1/):
-        // { id: 'd1-kart', title: 'Åstedsskisse', kind: 'image', src: 'case/dag1/skisse.jpg' },
-        // { id: 'd1-obd', title: 'Obduksjonsrapport', kind: 'pdf', src: 'case/dag1/obduksjon.pdf' },
+        {
+          id: 'd1-vitne-ane',
+          title: 'Vitneutsagn: Ane',
+          kind: 'markdown',
+          folder: 'vitner',
+          inline:
+            '## Vitneutsagn — Ane\n\n' +
+            '**Hva kan du fortelle oss om kvelden?**\n\n' +
+            '«Nei hele kvelden virket egentlig litt rar. Selv fra møtet mellom oss i TRIA, ' +
+            'Hovedstyret, de ansatte og studentprestene virket Angela litt annerledes mot ' +
+            'slutten der. Hun snakket mye med Runill men jeg skjønte ikke om hva. Tror Runill ' +
+            'ga henne noen piller etter møtet, det så ut som ibux. Jeg også hadde trengt det om ' +
+            'jeg skulle organisert hele GF.»\n\n' +
+            '**Senere på kvelden da, hva skjedde?**\n\n' +
+            '«Nei jeg var edruvakt så jeg gikk rundt. På et tidspunkt tok jeg meg en runde også ' +
+            'så jeg Angela sittende alene med en Blue Lagoon-cocktail. Hun så kjempesliten ut, ' +
+            'så jeg fratok henne drinken og gikk ut til Runill for å se. Runill sa hun burde ' +
+            'bli med, så vi gikk sammen først til baren for å legge fra oss drikken og finne ut ' +
+            'av hvordan i alle dager hun fikk tilgang til mer drikke. Køen i baren var noe helt ' +
+            'utrolig lang — spesielt fra ANSA Benelux. Jeg satte drinken i ene vinduskarmen og ' +
+            'måtte løse konflikter der, mens Runill gikk til Angela for å passe på at hun hadde ' +
+            'det bra. Barkøen var vel rundt 23:30? Etter en ti minutter gikk jeg til salen hvor ' +
+            'Angela var, men denne gangen var hun på bakken. Jeg fikk ikke sett ordentlig før ' +
+            'Runill ba meg gå ut av rommet og passe på at ingen andre kunne komme inn. Så kom ' +
+            'endelig dere — sikkert fra telefonsamtalen deres?»\n\n' +
+            '**Hvorfor gikk du og Runill sammen til baren? Ville det ikke vært naturlig å ' +
+            'splitte opp?**\n\n' +
+            '«Jo, kanskje egentlig. Men dette er jo ikke første gangen at en ANSA-student er ' +
+            'sliten. En vanlig dag på jobb da kan man si. Kanskje en dum vurdering av oss, men ' +
+            'det er ikke så altfor ofte jeg får ha koselige samtaler med Runill heller. Det er ' +
+            'litt som de fire gratis psykologtimene man kan få ved å være ANSA-medlem! Man ' +
+            'trenger ikke spesifisere årsaken når man sender mail til sosialveileder@ansa.no, ' +
+            'og psykologtimene er på nett med kort ventetid både i helgen og på kveldstid! ' +
+            'Dessuten er Runill verdens koseligste menneske.»\n\n' +
+            '**Jeg vet ikke hva Runill fortalte deg, men det ser ut som at hun ble slått av et ' +
+            'tungt blunt objekt. Dessverre har vi ikke funnet objektet ennå. Har du forslag?**\n\n' +
+            '«Nei ble hun det?? Det visste jeg ikke. Som sagt vi har ikke rukket å bli så godt ' +
+            'informert om hva som hadde skjedd. Jeg kunne ikke se noe blundt objekt når Runill ' +
+            'var der hvertfall — fra de to sekundene jeg så inn i rommet.»',
+        },
+        {
+          id: 'd1-vitne-runill',
+          title: 'Vitneutsagn: Runill',
+          kind: 'markdown',
+          folder: 'vitner',
+          inline:
+            '## Vitneutsagn — Runill\n\n' +
+            '**Du var en av de som ringte oss. Hva kan du fortelle om åstedet?**\n\n' +
+            '«Nei jeg hadde hørt fra Ane at Angela virket sliten og var inne på salen, så jeg ' +
+            'tenkte meg bort bare for å sjekke at det gikk bra med henne. Jeg hadde snakket en ' +
+            'del med Angela tidligere den dagen så jeg visste at hun begynte å bli sliten. Hun ' +
+            'har jobbet på ekstremt hardt hele tiden, hun er kjempedyktig — akkurat som alle ' +
+            'ANSA-ansatte og tillitsvalgte <3. På slutten av møtet så ga jeg Angela en pille ' +
+            'mot noen milde smerter. Hun nevnte ikke så mye senere den dagen, men tydeligvis ' +
+            'var hun jo mer sliten enn jeg trodde. Jeg fant Angela kl. 23:38. Jeg husker at jeg ' +
+            'sjekket klokken. Etter det gikk jeg litt i sjokk (som er naturlig) og begynte å ' +
+            'ringe og fikse situasjonen.»\n\n' +
+            '**Det står i loggen vår at du ikke ringte før kl. 23:45? Hvorfor tok det så lang ' +
+            'tid?**\n\n' +
+            '«Såklart ville jeg jo hjelpe Angela, men jeg var redd for kaoset som ville blitt ' +
+            'skapt hvis noen andre så henne og alt blodet. Min første tanke var å ikke stresse ' +
+            'alle andre, så jeg passet på å lukke dører og jage vekk folk. Rett utenfor rommet ' +
+            'var Maud og Erik som stod og diskuterte. De skrek litt mot hverandre så jeg ba dem ' +
+            'ta saken et annet sted. Innen folk var borte og rommet sikret så ringte jeg. Den ' +
+            'neste personen som kom var Ane, men jeg prøvde å holde henne unna området også. Et ' +
+            'par minutter kom jo dere — dere kom helt sykt fort, innen et par minutter.»\n\n' +
+            '**Resepsjonen ringte oss også, litt før deg. Det er den samtalen vi reagerte på ' +
+            'først. Så du ikke Hedvig komme tilbake til offeret?**\n\n' +
+            '«Joda det gjorde jeg. Hun hadde et sår på kneet — hun sa hun snublet når hun løp. ' +
+            'Visstnok var det en eller annen idiot som hadde sølt øl på gulvet. Jeg lot ikke ' +
+            'Hedvig gå inn i rommet da, jeg ville holde åstedet intakt.»\n\n' +
+            '**Objektet som ble brukt da, så du det?**\n\n' +
+            '«Nei jeg så ikke noe objekt. Ikke noe som lå igjen på åstedet hvertfall. Dessverre...»',
+        },
+        {
+          id: 'd1-vitne-maud',
+          title: 'Vitneutsagn: Maud',
+          kind: 'markdown',
+          folder: 'vitner',
+          inline:
+            '## Vitneutsagn — Maud\n\n' +
+            '**Hva gjorde du i går?**\n\n' +
+            '«Nei som president og presidentkandidat er det alltid mye å gjøre. Travelt hele ' +
+            'dagen på generalforsamlingen, også hjalp det ikke at vi hadde ekstra møte på ' +
+            'kvelden blant oss ansatte. Heldigvis var folk i godt humør. Spesielt Sverre ' +
+            'faktisk! Han snakket masse om pub quiz, så mye at Angela ble synlig irritert. ' +
+            'Etter det var det bankett, og en del samtaler senere i løpet av kvelden med folk. ' +
+            'Jeg fulgte med på de som nattbadet en god del av kvelden. Jeg snakket med Runill ' +
+            'og Sverre, også kom plutselig Ane. Virket som at de som badet klarte seg, så vi ' +
+            'bare dro. På veien tilbake til baren så møtte jeg på Erik i en korridor. Vi ' +
+            'snakket en del om vedtekter, nynorsk og litt slikt. Jeg ville ta opp litt ting som ' +
+            'Angela hadde fortalt meg tidligere, rundt dette med nynorsk i vedtektene. Det ble ' +
+            'litt debatt, så mye at Runill kom ut og ba oss dra et annet sted. Vi gjorde det, ' +
+            'men ikke visste vi at det var på grunn av et mord!»\n\n' +
+            '**Så du noe mistenkelig, siden du var i nærheten?**\n\n' +
+            '«Nei egentlig ikke. Jeg vet at senere den kvelden så løp Andreas temmelig raskt ' +
+            'med en stor rød flekk på skjorta si. Han ropte «jeg søølte viiiin!» men jeg kan ' +
+            'ikke bekrefte noe. Senere den kvelden fortalte han om at han var sur på Oskar, ' +
+            'men han turte ikke si hvorfor?»\n\n' +
+            '**Virket det seriøst mellom Oskar og Andreas?**\n\n' +
+            '«Nei det virket nokså vanlig. De har bodd sammen og studert sammen lenge, og jeg ' +
+            'er sikker på at Andreas egentlig er veldig glad i Oskar (<3).»\n\n' +
+            '**Andre ting vi burde vite?**\n\n' +
+            '«Jeg så jo en del på folk gå rundt, og Anna ble sett av flere: hun lette etter ' +
+            'Angela hele kvelden. Hun gikk rundt med ANSA-Paris lokallagstrofeet sitt fra 2024. ' +
+            'Hun ville vise det frem til folk — så mye at hun badet med trofeet ved 00:30-tiden. ' +
+            'Tror det var for å fremheve at ANSA Paris var bedre enn ANSA Toulouse — de vant ' +
+            'nemlig årets pris.»',
+        },
+        {
+          id: 'd1-vitne-erik',
+          title: 'Vitneutsagn: Erik',
+          kind: 'markdown',
+          folder: 'vitner',
+          inline:
+            '## Vitneutsagn — Erik\n\n' +
+            '**Du var en av de som var sett utenfor lokalet rundt dødstidspunktet, hvorfor ' +
+            'det?**\n\n' +
+            '«Nei, det var litt tilfeldig. Det vart litt slitsamt med alle desse fulle ANSA ' +
+            'Benelux-folka. Så eg tok meg litt frisk luft og var litt aleine. Passa på at eg ' +
+            'var klar for talen min i dag.»\n\n' +
+            '**Møtte du på noen underveis? Noen som kan bekrefte hvor du var?**\n\n' +
+            '«Eg møtte på Maud, og vi diskuterte nokre vedtektsgreier saman. Vi er kanskje ' +
+            'ikkje alltid samde, men vi jobbar svært godt saman. Sverre burde òg kunne ' +
+            'stadfeste at eg var i gangen! Ho gjekk mykje fram og tilbake heile kvelden for å ' +
+            'passe på dei som bada. Anna enn det såg eg også Hedvig gå inn i den salen eit par ' +
+            'gonger i løpet av kvelden. Ho hadde til og med nokre fancy cocktailar idet ho ' +
+            'gjekk inn i salen for andre gong. Eg såg Pia gå både fram og tilbake, for å hente ' +
+            'kameraet sitt. Ho hadde nettopp vore i Moldova, sa ho, var veldig gøy! Så ho viste ' +
+            'bilete derfrå på kameraet sitt. Etter det gjekk ho ned for å ta bilete av resten ' +
+            'av folka — og den fine månen.»\n\n' +
+            '**Hva skjedde så?**\n\n' +
+            '«Ja nei, eg hugsar ikkje heilt kva som skjedde først av at Pia dukka opp og at ' +
+            'Maud var der. Kanskje Maud si hending skjedde sist? Iallfall då vi snakka, kom ' +
+            'Runill plutseleg ut for å seie at vi måtte dra ein annan stad. Ho verka heilt ' +
+            'forskrekka. Vi drog kvar vår veg. Eg drog til baren, der det var veldig mange ' +
+            'folk. Ane hadde heldigvis kontroll — men så vart alt kaos igjen då Hedvig snubla ' +
+            'på golvet. Eg skulle til å spørje om det gjekk bra, men ho heldt fram som om ' +
+            'ingenting hadde skjedd. Nokon var vel sikkert travle for å bade!\n\n' +
+            'Vidare snakka eg litt med Oskar, iallfall. Vi snakka smått om spelet dei hadde ' +
+            'spelt tidlegare den kvelden med Sverre, og idet han skulle illustrere, kom Andreas ' +
+            'ut frå toalettet og fekk heile vinglaset til Oskar på skjorta si. Men heldigvis ' +
+            'var han ikkje irritert, berre bestemt på at han måtte kjappe seg for å bruke ' +
+            'Vanish. Så han sprang av garde han også. Litt seinare gjekk eg berre tilbake ut ' +
+            'med dei andre og kosa meg resten av kvelden.»\n\n' +
+            '**Vet du hvem som ville vært misfornøyd med Angela?**\n\n' +
+            '«Nei, eigentleg ikkje, ho gjer ein super jobb. Altså, det blir alltid konflikt på ' +
+            'jobb med politikk i bildet, spesielt når ein ikkje kjenner kvarandre så godt. Eg ' +
+            'har òg hatt mine augneblinkar med henne, med alle desse vedtektene og bruk av ' +
+            'nynorsk. Men vi går jo overeins!»',
+        },
+        {
+          id: 'd1-vitne-oskar',
+          title: 'Vitneutsagn: Oskar',
+          kind: 'markdown',
+          folder: 'vitner',
+          inline:
+            '## Vitneutsagn — Oskar\n\n' +
+            '**Hvor var du da mordet skjedde?**\n\n' +
+            '«Nei jeg var nok i baren da? Jeg fikk snakket litt med Angela i løpet av ' +
+            'banketten. Vi hadde noen småting å fikse fra ANSA Frankrike. Jeg er nemlig ' +
+            'økonomiansvarlig der. Maten var hvertfall nyyy-dee-lig! Alle likte vinen også, ' +
+            'utenom skjorta til Andreas — men det var ikke med meningen. Vi stod lenge i baren ' +
+            'og snakket. Spesielt med Brage og slikt. Han hjalp Hedvig velge ut noe drikke. ' +
+            'Jeg fulgte ikke med for jeg snakket med et par andre folk. Underveis gikk Andreas ' +
+            'forbi og på do. Han var borte en stund. Anna kom innom for å lete etter Angela ' +
+            'men uten hell. Hun gned det inn at ANSA Paris hadde vunnet for noen år tilbake — ' +
+            'men det er jo bare tull for hun er jo ANSA Danmark nå!»\n\n' +
+            '**Hvem tror du det var?**\n\n' +
+            '«Nei jeg vet ikke helt jeg. Jeg tenkte jo ikke noe over dette i løpet av kvelden. ' +
+            'Vi så masse politi men skjønte ikke konteksten. Det var ikke før jeg gikk på vei ' +
+            'tilbake til rommet med Brage at vi fikk vite det. Vi møtte på vaktmesteren som ' +
+            'gikk i samme retning, han skulle tydeligvis fikse en ødelagt dør. Typisk ANSA ' +
+            'Benelux som drikker for mye. Kanskje Pia fikk noe smart fra bildene sine? Jeg ' +
+            'fikk ikke sett, men hun virket entusiastisk for å endelig være tilbake fra ' +
+            'Moldova hvertfall.»\n\n' +
+            '**Kunne du estimert noen klokkeslett for kvelden?**\n\n' +
+            '«Tja de andre var ferdige med møtet sitt når banketten begynte rundt kl. 19:30. ' +
+            'Så fortsatte middagen og ANSA Toulouse sin dominante seier av årets lokallag til ' +
+            '21:30. Etter det ble det kaos. Folk dro i mange forskjellige retninger og Angela ' +
+            'måtte rydde en del ting. Anna blant annet gikk for å hente trofeet hun passet på, ' +
+            'på vegne av ANSA Paris, men hun fikk aldri returnert det. Vi gutta gikk på rommet ' +
+            'vårt litt med studentprest Sverre for å ha guttatid, og etter det dro vi til ' +
+            'baren. Innen ikke lenge kom Hedvig som rakk å bestille drikke rett før køen ' +
+            'startet. Rundt 22:30 kanskje? Jeg tror hun forutså at det ble kø, for hun virket ' +
+            'travel. Vi gikk til rommet litt etter midnatt.»',
+        },
+        {
+          id: 'd1-vitne-anna',
+          title: 'Vitneutsagn: Anna',
+          kind: 'markdown',
+          folder: 'vitner',
+          inline:
+            '## Vitneutsagn — Anna\n\n' +
+            '**Hva gjorde du i løpet av kvelden?**\n\n' +
+            '«Nei jeg var jo med ANSA Danmark-gjengen mye av tiden, og litt med Frankrike. De ' +
+            'ble veldig glade når de vant årets lokallag. Jeg ville vise frem trofeet til ANSA ' +
+            'Paris en god stund, og etter det skulle jeg returnere det til Angela siden jeg nå ' +
+            'er del av ANSA Danmark.»\n\n' +
+            '**Du gikk rundt med det trofeet hele kvelden?**\n\n' +
+            '«Jeg hentet det etter bankettmiddagen, og jeg lette overalt etter Angela. Jeg ' +
+            'skjønte ikke hvorfor folk var så stressa hele tiden før det var altfor sent. ' +
+            'Blant annet dultet jeg borti hun ene fra ANSA Madrid, og gikk i baren med folk ' +
+            'da. Jeg snakket litt med Andreas: han virket deppa. Wiktor var det også, og ' +
+            'forklarte at det var fordi han hadde vunnet i dataspillet CIV VII. Uansett, jeg ' +
+            'gikk videre og etterhvert ga jeg bare opp.»\n\n' +
+            '**Hva gjorde du rundt 23:30 til midnatt?**\n\n' +
+            '«Nei jeg hadde jo lett rundt masse, og gjorde det da også. Senere tok jeg et ' +
+            'nattbad derimot. Mange andre folk gjorde det, så jeg slang meg utti. Du vet ' +
+            'hvordan folk glemmer å ta ut mobilen fra lomma før de bader? Jeg glemte å legge ' +
+            'fra meg trofeet. Det gikk heldigvis fint, og da fikk jeg vasket trofeet da!»\n\n' +
+            '**Skjønner... Og hvem andre møtte du på i løpet av kvelden?**\n\n' +
+            '«Ja så og si alle på et tidspunkt? Gikk forbi Maud som diskuterte med de andre om ' +
+            'ANSA-ting. Jeg fikk jo snakket litt med Pia da. Vi gjorde litt det samme den ' +
+            'kvelden, gikk rundt og snakket med alle. Var litt morsomt at hun klarte å ha ' +
+            'hint av jetlag fra Moldova som bare ligger én time foran Norge haha.»',
+        },
+        {
+          id: 'd1-vitne-pia',
+          title: 'Vitneutsagn: Pia',
+          kind: 'markdown',
+          folder: 'vitner',
+          inline:
+            '## Vitneutsagn — Pia\n\n' +
+            '**Hvor befant du deg rundt mordtiden?**\n\n' +
+            '«Mordet var vel litt før midnatt? Jeg hadde gått litt fram og tilbake for å hente ' +
+            'kamera og slik for å vise bilder fra Moldova. Jeg kom så og si direkte fra ' +
+            'Moldova, så hadde mye å vise. Endte opp med en god del bilder som jeg skal sende ' +
+            'til dere. Kanskje klokken 22:30 så møtte jeg på Erik i den ene korridoren. Vi ' +
+            'snakket litt før jeg dro videre. Så tok jeg jo masse bilder av de som badet ' +
+            'såklart — men vet ikke hvor relevant det er. Sender dere hvertfall alle bildene ' +
+            'jeg har så dere kan se selv. Snakket litt med Anna også — koselig jente!»\n\n' +
+            '**Hvilke andre ting burde vi vite?**\n\n' +
+            '«Nei ikke så mye. Jeg hørte gossip fra Andreas om at Oskar har brukt ANSA ' +
+            'Frankrike-penger på masse pils, men det er lowkey rykter.»',
+        },
+        {
+          id: 'd1-vitne-andreas',
+          title: 'Vitneutsagn: Andreas',
+          kind: 'markdown',
+          folder: 'vitner',
+          inline:
+            '## Vitneutsagn — Andreas Holmsen\n\n' +
+            '**Hva gjorde du i løpet av kvelden?**\n\n' +
+            '«Nei jeg følte jeg burde snakke med så mange som mulig. Så utenom en liten pause ' +
+            'på rommet etter banketten stod jeg litt i baren og overalt. Prøvde å holde ' +
+            'humøret oppe. Det var en del vedtektsforslag jeg ikke fikk sendt, så jeg prøvde å ' +
+            'kompensere ved å få folk til å stemme på andre ting slik jeg ville. Det var smart ' +
+            'å sitte i baren da, for det var utrolig mange folk som kom underveis! Var nesten ' +
+            'pub-quiz-stemning uten pub quiz.»\n\n' +
+            '**Og hvor var du når mordet skjedde?**\n\n' +
+            '«Nei jeg må helt ærlig si at jeg ikke husker så godt — minnet mitt er litt dårlig ' +
+            'når jeg er på laserfylla. Muligens at det var da jeg måtte bytte skjorte fordi ' +
+            'jeg hadde vin på den. Det var ikke blod assa, hvis det var det dere tvilte på! ' +
+            'Jeg prøvde mitt beste, og fikk fjernet flekkene heldigvis. Møtte på Pia i gangen ' +
+            'som hadde kameraet sitt så vi snakket litt. Fikset skjorta mi også badet jeg i ' +
+            'løpet av kvelden med en del andre folk. Tror jeg møtte på noen kjentfolk? Husker ' +
+            'ikke hvem, men snudde meg for å si hei. Vent nei eller var det bare en ' +
+            'vaktmester? Uff nei det er ikke lett...»',
+        },
+        {
+          id: 'd1-runill-notater',
+          title: 'Runill notater',
+          kind: 'markdown',
+          inline:
+            '## [RUNILL NOTATER]\n\n' +
+            '11:13 –\n\n' +
+            '18:12 – Ga ibux til Angela, dobbeltsjekke at alt går bra i morgen\n\n' +
+            '18:42 – Hadde samtale med edruvakt Henriette angående tips.\n\n' +
+            '21:02 – Edruvakt måtte byttes, rakk ikke nytt møte',
+        },
       ],
       question: {
         type: 'multiple_choice',
         prompt: 'Hvem lyver i vitneutsagnet sitt?',
         options: [
-          { id: 'kari', label: 'Kari Lund (nabo)' },
-          { id: 'per', label: 'Per Haug (eks-kjæreste)' },
-          { id: 'thomas', label: 'Thomas Berg (bror)' },
+          { id: 'sverre', label: 'Sverre' },
+          { id: 'hedvig', label: 'Hedvig' },
+          { id: 'ane', label: 'Ane' },
+          { id: 'runill', label: 'Runill' },
+          { id: 'maud', label: 'Maud' },
+          { id: 'erik', label: 'Erik' },
+          { id: 'oskar', label: 'Oskar' },
+          { id: 'anna', label: 'Anna' },
+          { id: 'pia', label: 'Pia' },
+          { id: 'andreas', label: 'Andreas' },
           { id: 'ingen', label: 'Ingen av dem lyver' },
         ],
       },
@@ -1129,7 +1390,7 @@ export const CASE: CaseManifest = {
           { from: 'me', text: 'Skjønner, takk! Er du klar for GF da?', time: '29. juli 11:50' },
           {
             from: 'them',
-            text: 'Ja, eg gler meg som ei kyr på vårslepp! 🐄',
+            text: 'Ja, eg gler meg som ei ku på vårslepp! 🐄',
             time: '29. juli 11:52',
           },
         ],

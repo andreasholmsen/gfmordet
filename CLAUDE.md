@@ -73,31 +73,15 @@ felles «Minnealbum» (desktop-ikon 📸 → `/album`). Bilder **komprimeres på
 - Hvis SQL-bucketoppretting feiler: lag bucketen `stories` manuelt i dashbordet (privat), kjør
   resten. Admin kan slette upassende bilder i dashbordet (service_role omgår RLS).
 
-## Romansaiansa (Tinder-modus) + samarbeids-bevis
+## Romansaiansa (Tinder-modus) — FJERNET
 
-Sosial feature koblet til avstemningen som «gulrot» (`RomansaiansaApp`, desktop-ikon 🔥):
-- **Dag 1-stemme** krever en profil: selfie (in-browser kamera, front) + kjønn/interesse + mini-quiz.
-- **Dag 2-stemme** krever at deltakere har **swipet ferdig** på alle kompatible. Uten profil
-  (etternølere) er man unntatt.
-- **Dag 3:** admin kjører `select assign_matches();` i SQL Editor → folk pares (gjensidige «ja»
-  først, så preferanse-respekterende, så vilkårlig). Dag 3-beviset **deles**: dokumenter merket
-  `group: 'A' | 'B'` i manifestet vises kun til rett partner; umerkede vises til begge.
-- **Full-bevis-fallback:** uparet (oddetall) eller «Avlys romanse» ⇒ ser **alt** beviset solo.
-  Avlysning kan gjøres unilateralt (dekker også partner som blir borte) — ingen soft-lock.
-- **Matchmaking-lås:** når dag 3 er åpen men `assign_matches()` ennå ikke er kjørt, blokkeres
-  HELE appen med en fullskjerm «Romansaiansa laster»-skjerm (poller til admin kjører den).
-  Uten dette ville uparede sett begge halvdeler av beviset. Deaktivert i dev (`import.meta.env.DEV`).
-  Fail-open: mangler RPC-en (0006 ikke kjørt) blokkeres ingenting.
-
-Detaljer:
-- **Kjør migrasjon `0006_romance.sql`** (etter 0004): privat bucket `profiles`, tabeller
-  `romance_profiles/_swipes/_matches`, RPC-er (profil/deck/swipe/match/cancel), oppdatert
-  `submit_vote` med dag 1/2-gate, og admin-funksjonen `assign_matches()` (ikke grantet til
-  klient — kjør i SQL Editor).
-- Innhold i `src/case/manifest.ts` → `romance` (kjønn/interesse-valg + quiz-spørsmål) og
-  `group`-merking på dag 3-dokumenter. Utelat `romance` for å skru av feature-en.
-- Profilpool fryses når dag 2 åpner (profil kan kun lages mens dag 1-vinduet er åpent).
-- Selfie kan ikke verifiseres teknisk (soft via UX); admin kan slette bilder i dashbordet.
+Feature-en ble droppet (uferdig). All klientkode er slettet (app, rute, desktop-ikon,
+vote-gates dag 1/2, dag 3 A/B-bevisdeling, matchmaking-låsen, supabase-wrappere, CSS).
+**VIKTIG: hvis `0006_romance.sql` noen gang ble kjørt i Supabase, MÅ
+`0008_remove_romance.sql` kjøres** — 0006 la romanse-gates inn i `submit_vote`
+server-side, så uten rollbacken får ingen stemt på dag 1/2. 0008 er trygg å kjøre
+uansett (idempotent, rører ikke votes). Bucketen `profiles` + evt. bilder slettes
+manuelt i dashbordet. `0006_romance.sql` ligger igjen kun som historikk — ikke kjør den.
 
 ## Undermapper i dag-mappene (med farge-tema)
 
@@ -106,8 +90,7 @@ på dagen i manifestet og sett `folder: '<id>'` på dokumentene som skal inn. `t
 (lys pastellfarge, f.eks. `#d7e9fb`) farger mappe-flisen, dokument-flisene inni OG
 «papiret» når dokumentet åpnes — brukes til å gi dokumenttyper eget utseende (eks:
 lyseblå vitneutsagn i dag 1). Umerkede dokumenter ligger løst i dagen som før.
-Dag 3-delingen (`group: 'A'|'B'`) virker uendret — mapper med null synlige dokumenter
-skjules. Implementert i `DayFolder.tsx`; CSS: `.doc-tile--folder` / `.doc-tinted`.
+Implementert i `DayFolder.tsx`; CSS: `.doc-tile--folder` / `.doc-tinted`.
 
 ## Offerets filer = låst mobil (kode + «POLITI-HACK»)
 
@@ -164,8 +147,8 @@ skjer når neste dag slippes.
 
 | Dag | Spørsmål | Åpner | Resultater vises |
 | --- | --- | --- | --- |
-| 1 | "Hvem lyver …" (flervalg) | **alltid åpen** (release i fortiden) | fre 31. juli 09:00 |
-| 2 | "Hvordan døde …" (fritekst) | fre 31. juli 09:00 | lør 1. aug 09:00 |
+| 1 | "Hvem lyver …" (flervalg) | **alltid åpen** (release i fortiden) | fre 31. juli 18:00 |
+| 2 | "Hvordan døde …" (fritekst) | fre 31. juli 18:00 | lør 1. aug 09:00 |
 | 3 | "Hvem drepte Angela" (flervalg + "Annet") | lør 1. aug 09:00 | søn 2. aug 09:00 |
 | 4 | (ingen stemming) fasit + statistikk | søn 2. aug 09:00 | — |
 
@@ -235,8 +218,7 @@ skjer når neste dag slippes.
   opplaster m/cooldown, fullskjerm-visning, og post-game minnealbum (`/album`).
 - `src/lib/image.ts` — komprimerer bilder på enheten før opplasting.
 - `src/components/CameraCapture.tsx` — gjenbrukbart kamera-i-nettleser (getUserMedia) med
-  galleri-reserve; brukes av `StoryComposer` (story) og `RomansaiansaApp` (selfie).
-- `src/components/RomansaiansaApp.tsx` — Tinder-modus: profil-oppsett, swiping, match/avlys.
+  galleri-reserve; brukes av `StoryComposer` (story).
 - `src/components/SuspectBoard.tsx` — «Mistenkte»-korktavle (vises kun når `suspects` finnes).
   Nås via knapp i POLITI-appen (ikke eget skrivebordsikon); lukking går tilbake til `/politi`.
 - `src/components/PixelPortrait.tsx` — 8-bit-portrett fra piksel-grid i manifestet
@@ -255,7 +237,12 @@ skjer når neste dag slippes.
 - `src/lib/supabase.ts` — klient (persistert sesjon) + auth-wrappere (`signInWithUsername`
   m.fl., brukernavn→syntetisk e-post) + RPC-wrappere (demo-modus uten env), inkl. `getMyVotes`.
 - `src/lib/UnlockContext.tsx` — henter åpne dager fra serveren.
-- `src/lib/SettingsContext.tsx` — lyd-demping (localStorage). `src/lib/sfx.ts` — WebAudio-lyder.
+- `src/lib/SettingsContext.tsx` — lyd-demping + menyspråk (localStorage). `src/lib/sfx.ts` — WebAudio-lyder.
+- **Nynorsk-modus (kun menyer):** `src/lib/i18n.ts` (`useT()`, nb/nn-strengtabell — sakens
+  innhold berøres IKKE). Velges ved første lasting (`LanguagePrompt`, før lyd-prompten og
+  boot) og kan endres i ⚙️ Innstillinger-appen på Angelas mobil (som også har lyd av/på).
+  Oversatt: oppgavelinje, skrivebordsdialoger/-etiketter, dag-mappe-chrome, promptene.
+  Nye UI-strenger: legg nøkkel i BÅDE nb og nn i i18n.ts og bruk `t('nøkkel')`.
 - `src/lib/votes.ts` — spillerens egne stemmer: in-memory cache hydrert fra `get_my_votes`
   (autoritativ, kryssenhet) + localStorage-speil. `getMyVote` er synkron for render.
 - `src/styles/retro.css` — hele retro-temaet (inkl. oppgavelinje, innlogging, tavle, spill).

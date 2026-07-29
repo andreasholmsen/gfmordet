@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { CASE, type CaseDoc } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
+import { useSettings } from '../lib/SettingsContext'
 import { useScrollMemory } from '../lib/useScrollMemory'
+import { useT } from '../lib/i18n'
 import AppWindow from './AppWindow'
 import DocView from './DocView'
 import PhoneLock from './PhoneLock'
@@ -26,12 +28,62 @@ const GLYPH: Record<CaseDoc['kind'], string> = {
   html: '📄',
 }
 
-type PhoneAppId = 'whatsapp' | 'mail' | 'slack' | 'files'
+type PhoneAppId = 'whatsapp' | 'mail' | 'slack' | 'files' | 'settings'
+
+// ⚙️ Innstillinger: menyspråk (bokmål/nynorsk) + lyd av/på. Spillerens EGNE
+// innstillinger — lever på offerets mobil fordi det er spillets kontrollpanel.
+function SettingsApp({ onBack }: { onBack: () => void }) {
+  const { muted, setMuted, lang, setLang } = useSettings()
+  const t = useT()
+  return (
+    <div className="ph-settings">
+      <PhoneHeader color="#8e8e93" title={t('settingsApp')} onBack={onBack} />
+      <div className="ph-settings__body" data-scroll>
+        <div className="ph-settings__group">
+          <div className="ph-settings__label">{t('settingsLang')}</div>
+          <div className="ph-settings__seg">
+            <button
+              className={`ph-settings__opt ${lang === 'nb' ? 'ph-settings__opt--active' : ''}`}
+              onClick={() => setLang('nb')}
+            >
+              Bokmål
+            </button>
+            <button
+              className={`ph-settings__opt ${lang === 'nn' ? 'ph-settings__opt--active' : ''}`}
+              onClick={() => setLang('nn')}
+            >
+              Nynorsk
+            </button>
+          </div>
+          <p className="ph-settings__note">{t('settingsLangNote')}</p>
+        </div>
+        <div className="ph-settings__group">
+          <div className="ph-settings__label">{t('settingsSound')}</div>
+          <div className="ph-settings__seg">
+            <button
+              className={`ph-settings__opt ${!muted ? 'ph-settings__opt--active' : ''}`}
+              onClick={() => setMuted(false)}
+            >
+              🔊 {t('on')}
+            </button>
+            <button
+              className={`ph-settings__opt ${muted ? 'ph-settings__opt--active' : ''}`}
+              onClick={() => setMuted(true)}
+            >
+              🔇 {t('off')}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function AngelaFiles() {
   const files = CASE.angelaFiles ?? []
   const phone = CASE.angelaPhone
   const { isUnlocked } = useUnlock()
+  const t = useT()
   const [openApp, setOpenApp] = useState<PhoneAppId | null>(null)
   const [openDoc, setOpenDoc] = useState<CaseDoc | null>(null)
   const [unlocked, setUnlocked] = useState(() => {
@@ -139,6 +191,8 @@ export default function AngelaFiles() {
   if (slack)
     apps.push({ id: 'slack', label: 'Slack', glyph: '#', bg: '#3f0e40', lockedUntil: appLock('slack') })
   if (files.length > 0) apps.push({ id: 'files', label: 'Filer', glyph: '📁', bg: '#ffd6e8' })
+  // Spillerens egne innstillinger — alltid tilgjengelig, aldri låst.
+  apps.push({ id: 'settings', label: t('settingsApp'), glyph: '⚙️', bg: '#8e8e93' })
 
   const openAppDef = apps.find((a) => a.id === openApp)
 
@@ -210,6 +264,8 @@ export default function AngelaFiles() {
     )
   } else if (openApp === 'slack' && slack) {
     content = <SlackApp slack={slack} visible={visible} onBack={() => setOpenApp(null)} />
+  } else if (openApp === 'settings') {
+    content = <SettingsApp onBack={() => setOpenApp(null)} />
   } else if (openApp === 'files') {
     content = openDoc ? (
       <div className="ph-files">

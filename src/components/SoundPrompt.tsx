@@ -1,4 +1,5 @@
 import { useSettings } from '../lib/SettingsContext'
+import { useT } from '../lib/i18n'
 import Dialog from './Dialog'
 
 // Førstegangsvalg: anbefal lyd før boot-animasjonen starter. Vises kun én gang
@@ -16,6 +17,7 @@ export function needsSoundPrompt(): boolean {
 
 export default function SoundPrompt({ onDone }: { onDone: () => void }) {
   const { setMuted } = useSettings()
+  const t = useT()
 
   function choose(muted: boolean) {
     setMuted(muted)
@@ -30,26 +32,24 @@ export default function SoundPrompt({ onDone }: { onDone: () => void }) {
   return (
     <div className="sound-prompt">
       <Dialog
-        title="Lyd"
+        title={t('soundTitle')}
         icon="🔊"
         onClose={() => choose(true)} // lukker man dialogen ⇒ behold lydløs
         actions={
           <>
             <button className="btn" onClick={() => choose(true)}>
-              🔇 Uten lyd
+              {t('soundNo')}
             </button>
             <button className="btn btn--primary" onClick={() => choose(false)}>
-              🔊 Ja takk (anbefalt)
+              {t('soundYes')}
             </button>
           </>
         }
       >
         <p style={{ marginTop: 0 }}>
-          Spillet er best <strong>med lyd</strong> — vil du skru den på?
+          <strong>{t('soundQuestion')}</strong>
         </p>
-        <p style={{ fontSize: '0.8rem', opacity: 0.8, marginBottom: 0 }}>
-          Du kan når som helst endre dette med 🔊-knappen på oppgavelinjen.
-        </p>
+        <p style={{ fontSize: '0.8rem', opacity: 0.8, marginBottom: 0 }}>{t('soundHint')}</p>
       </Dialog>
     </div>
   )

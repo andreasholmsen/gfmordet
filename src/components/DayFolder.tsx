@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useParams } from 'react-router-dom'
 import { CASE, type CaseDoc, type SubfolderDef } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
 import { useScrollMemory } from '../lib/useScrollMemory'
-import { getMyMatch, type MyMatch } from '../lib/supabase'
+import { useT } from '../lib/i18n'
 import AppWindow from './AppWindow'
 import DocView from './DocView'
 import Markdown from './Markdown'
@@ -26,6 +26,7 @@ export default function DayFolder() {
   const dayNum = Number(day)
   const dayContent = CASE.days.find((d) => d.day === dayNum)
   const { isUnlocked, loading } = useUnlock()
+  const t = useT()
   const [openDoc, setOpenDoc] = useState<CaseDoc | null>(null)
   const [openFolder, setOpenFolder] = useState<SubfolderDef | null>(null)
   // «← Tilbake» skal lande der man var (rot / undermappe / dokument).
@@ -33,27 +34,10 @@ export default function DayFolder() {
     openDoc ? `dok:${openDoc.id}` : openFolder ? `mappe:${openFolder.id}` : 'rot',
   )
 
-  // Dag 3-bevis er delt mellom matchede partnere. Hent egen match for å vite
-  // hvilken halvdel (side) man ser. Uparet/avlyst → alt beviset (solo).
-  const [match, setMatch] = useState<MyMatch | null>(null)
-  const [matchChecked, setMatchChecked] = useState(false)
-  useEffect(() => {
-    if (dayNum !== 3) return
-    let alive = true
-    getMyMatch().then((m) => {
-      if (!alive) return
-      setMatch(m)
-      setMatchChecked(true)
-    })
-    return () => {
-      alive = false
-    }
-  }, [dayNum])
-
   if (!dayContent) {
     return (
-      <AppWindow title="Ukjent mappe" icon="📁">
-        <p>Denne mappen finnes ikke.</p>
+      <AppWindow title={t('unknownFolder')} icon="📁">
+        <p>{t('folderNotExist')}</p>
       </AppWindow>
     )
   }
@@ -63,7 +47,7 @@ export default function DayFolder() {
   if (loading) {
     return (
       <AppWindow title={title} icon="📁">
-        <p className="notice">Sjekker tilgang …</p>
+        <p className="notice">{t('checkingAccess')}</p>
       </AppWindow>
     )
   }
@@ -73,9 +57,9 @@ export default function DayFolder() {
       <AppWindow title={title} icon="🔒">
         <div className="panel">
           <p>
-            <strong>{title}</strong> er ikke åpnet ennå.
+            <strong>{title}</strong> {t('notOpenYet')}
           </p>
-          <p>Kom tilbake når dagens dokumenter slippes.</p>
+          <p>{t('comeBack')}</p>
         </div>
       </AppWindow>
     )
@@ -90,7 +74,7 @@ export default function DayFolder() {
       <AppWindow title={`${title} — ${openDoc.title}`} icon={GLYPH[openDoc.kind]}>
         <div ref={anchor} />
         <button className="btn" onClick={() => setOpenDoc(null)}>
-          ← Tilbake til mappen
+          {t('backToFolder')}
         </button>
         <div
           className={tint ? 'doc-tinted' : undefined}
@@ -104,21 +88,7 @@ export default function DayFolder() {
     )
   }
 
-  // Dag 3: hvis matchet (og ikke avlyst), vis kun min halvdel (+ umerkede docs).
-  // Ellers (solo/avlyst/uparet, eller andre dager) vis alt.
-  const paired = dayNum === 3 && match !== null && !match.cancelled
-  const visibleDocs = paired
-    ? dayContent.docs.filter((d) => !d.group || d.group === match!.side)
-    : dayContent.docs
-
-  // Unngå å lekke den andre halvdelen mens matchen fortsatt lastes.
-  if (dayNum === 3 && !matchChecked) {
-    return (
-      <AppWindow title={title} icon="📁">
-        <p className="notice">Sjekker samarbeid …</p>
-      </AppWindow>
-    )
-  }
+  const visibleDocs = dayContent.docs
 
   // Inne i en undermappe: vis kun dens dokumenter, tintet med mappens farge.
   if (openFolder) {
@@ -127,7 +97,7 @@ export default function DayFolder() {
       <AppWindow title={`${title} — ${openFolder.title}`} icon={openFolder.icon ?? '📁'}>
         <div ref={anchor} />
         <button className="btn" onClick={() => setOpenFolder(null)}>
-          ← Tilbake til {title}
+          {t('backTo', { name: title })}
         </button>
         {openFolder.intro && (
           <div className="intro-note" style={{ marginTop: 14 }}>
@@ -165,14 +135,8 @@ export default function DayFolder() {
           <Markdown source={dayContent.intro} />
         </div>
       )}
-      {paired && (
-        <div className="intro-note">
-          🔥 Din partner <strong>{match!.partnerName}</strong> har resten av beviset — finn
-          hverandre og samarbeid! (Vil du heller spille alene, kan du avlyse i Romansaiansa.)
-        </div>
-      )}
       {looseDocs.length === 0 && visibleFolders.length === 0 ? (
-        <p className="notice">Ingen dokumenter i denne mappen.</p>
+        <p className="notice">{t('emptyFolder')}</p>
       ) : (
         <div className="doc-list">
           {visibleFolders.map((f) => {
@@ -189,7 +153,7 @@ export default function DayFolder() {
                 </span>
                 <span className="doc-tile__title">{f.title}</span>
                 <span className="doc-tile__count">
-                  {count} {count === 1 ? 'dokument' : 'dokumenter'}
+                  {t(count === 1 ? 'docCount1' : 'docCountN', { n: count })}
                 </span>
               </button>
             )

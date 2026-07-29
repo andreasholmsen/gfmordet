@@ -5,6 +5,7 @@ import { useUnlock } from '../lib/UnlockContext'
 import { sfx } from '../lib/sfx'
 import { assetUrl } from '../lib/assets'
 import { markStartSeen, startSeen } from '../lib/intro'
+import { useT } from '../lib/i18n'
 import ContextMenu, { type MenuItem } from './ContextMenu'
 import Dialog from './Dialog'
 import { triggerLarry, larryFound } from './LarryEasterEgg'
@@ -33,14 +34,6 @@ const SocialFolderGlyph = () => (
     <span style={{ background: '#0a66c2' }} />
     <span style={{ background: '#2dc100' }} />
     <span style={{ background: '#ffd6e8' }} />
-  </span>
-)
-
-// Romansaiansa-ikon: eget bilde i stedet for 🔥. Bildet har stygge kant-
-// artefakter — zoomes derfor litt inn i en rund, klippende ramme.
-const RomansaiansaGlyph = () => (
-  <span className="romansa-glyph" aria-hidden>
-    <img src={assetUrl('case/memes/romansaiansa.png')} alt="" />
   </span>
 )
 
@@ -132,6 +125,7 @@ type DialogKind = 'about' | 'recycle' | 'locked' | null
 export default function Desktop() {
   const { isUnlocked, demo, refresh } = useUnlock()
   const navigate = useNavigate()
+  const t = useT()
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null)
   const [dialog, setDialog] = useState<DialogKind>(null)
   // «Sosiale medier»-mappen: lett popup-meny (ikke et fullskjermvindu).
@@ -170,12 +164,12 @@ export default function Desktop() {
     { label: 'Instagram', glyph: '📷', node: <IgGlyph />, to: '/instagram' },
     { label: 'LinkedIn', glyph: '💼', node: <LinkedInGlyph />, to: '/linkedin' },
     { label: 'WeChat', glyph: '💬', node: <WeChatGlyph />, to: '/wechat' },
-    { label: 'Minnealbum', glyph: '📸', to: '/album' },
+    { label: t('memAlbum'), glyph: '📸', to: '/album' },
   ]
 
   const appIcons: IconDef[] = [
     {
-      label: 'Sosiale medier',
+      label: t('socialFolder'),
       glyph: '🌐',
       node: <SocialFolderGlyph />,
       onClick: () => setSocialOpen(true),
@@ -186,35 +180,27 @@ export default function Desktop() {
   ]
   // «Mistenkte»-tavla nås nå via en knapp inne i POLITI-appen (ikke eget ikon).
   if (CASE.angelaFiles && CASE.angelaFiles.length > 0) {
-    appIcons.push({ label: 'Offerets filer', glyph: '📱', node: <PhoneGlyph />, to: '/angela' })
+    appIcons.push({ label: t('victimFiles'), glyph: '📱', node: <PhoneGlyph />, to: '/angela' })
   }
   if (CASE.spotify && CASE.spotify.length > 0) {
     appIcons.push({ label: 'Radio France', glyph: '📻', node: <RadioGlyph />, to: '/spotify' })
   }
-  appIcons.push({ label: 'Minesveiper', glyph: '💣', to: '/spill/minesveiper' })
-  if (CASE.romance) {
-    appIcons.push({
-      label: 'Romansaiansa',
-      glyph: '🔥',
-      node: <RomansaiansaGlyph />,
-      to: '/romansaiansa',
-    })
-  }
+  appIcons.push({ label: t('minesweeper'), glyph: '💣', to: '/spill/minesveiper' })
   // Låst opp etter at Larry er sett minst én gang — klikk spiller ham av igjen.
   if (foundLarry) {
     appIcons.push({ label: 'larry', glyph: '👽', node: <LarryGlyph />, onClick: () => triggerLarry() })
   }
 
   const menuItems: MenuItem[] = [
-    { label: 'Oppdater', onClick: () => refresh() },
+    { label: t('menuRefresh'), onClick: () => refresh() },
     {
-      label: 'Tøm papirkurv',
+      label: t('menuTrash'),
       onClick: () => setDialog('recycle'),
       separator: true,
       // Skjult test-snarvei: hold inne i 3 sek for å tvinge fram Larry-glitchen.
       onHold: () => triggerLarry(),
     },
-    { label: 'Om denne PC-en', onClick: () => setDialog('about'), separator: true },
+    { label: t('menuAbout'), onClick: () => setDialog('about'), separator: true },
   ]
 
   return (
@@ -264,7 +250,7 @@ export default function Desktop() {
       {socialOpen && (
         <div className="social-overlay" onClick={() => setSocialOpen(false)}>
           <div className="social-menu" onClick={(e) => e.stopPropagation()}>
-            <div className="social-menu__title">Sosiale medier</div>
+            <div className="social-menu__title">{t('socialFolder')}</div>
             <div className="social-menu__grid">
               {socialApps.map((a) => (
                 <button
@@ -288,34 +274,29 @@ export default function Desktop() {
       )}
 
       {dialog === 'about' && (
-        <Dialog title="Om denne PC-en" icon="🖥️" onClose={() => setDialog(null)}>
+        <Dialog title={t('menuAbout')} icon="🖥️" onClose={() => setDialog(null)}>
           <p>
             <strong>POLITIET // SAKSSYSTEM v3.7</strong>
           </p>
-          <p>
-            Sikkert terminalmiljø for etterforskning. Bevismateriale slippes dag for dag. Alle
-            handlinger logges (på liksom 😉).
-          </p>
-          <p style={{ color: 'var(--shadow)' }}>
-            Bygget med kaffe og altfor lite søvn. Lykke til, etterforsker.
-          </p>
+          <p>{t('aboutLine1')}</p>
+          <p style={{ color: 'var(--shadow)' }}>{t('aboutLine2')}</p>
         </Dialog>
       )}
 
       {dialog === 'locked' && (
-        <Dialog title="Låst" icon="🔒" onClose={() => setDialog(null)}>
-          <p style={{ marginTop: 0 }}>Etterforskningen har ikke startet ennå.</p>
+        <Dialog title={t('lockedTitle')} icon="🔒" onClose={() => setDialog(null)}>
+          <p style={{ marginTop: 0 }}>{t('lockedBody1')}</p>
           <p style={{ marginBottom: 0 }}>
-            Åpne <strong>📨 START HER</strong> først.
+            <strong>{t('lockedBody2')}</strong>
           </p>
         </Dialog>
       )}
 
       {dialog === 'recycle' && (
-        <Dialog title="Papirkurv" icon="🗑️" onClose={() => setDialog(null)}>
-          <p>Papirkurven er allerede tom.</p>
+        <Dialog title={t('trashTitle')} icon="🗑️" onClose={() => setDialog(null)}>
+          <p>{t('trashEmpty')}</p>
           <p style={{ color: 'var(--shadow)' }}>
-            (Bevis kastes aldri i denne saken — alt kan bli viktig.)
+            {t('trashNote')}
           </p>
         </Dialog>
       )}
