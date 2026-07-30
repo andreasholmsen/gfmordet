@@ -450,6 +450,11 @@ textarea.field {
   background: var(--surface);
   z-index: 10;
   padding-top: env(safe-area-inset-top);
+  /* Brede skjermer: vinduet blir et sentrert panel med skrivebordet synlig på
+     sidene, i stedet for å strekke seg fra kant til kant. Mobil er upåvirket
+     (skjermen er smalere enn taket). Rammen settes i @media (min-width: 760px). */
+  max-width: 900px;
+  margin-inline: auto;
 }
 
 .titlebar {
@@ -1384,6 +1389,16 @@ textarea.field {
   margin: 0;
   font-size: clamp(13px, 3.6vw, 18px);
   line-height: 1.7;
+}
+
+/* Boot-teksten skal ikke strekke seg over hele en bred skjerm — samme tak som
+   vinduene. Bakgrunnen dekker fortsatt alt (kapper innholdet, ikke overlegget). */
+.boot__text,
+.boot__bar,
+.boot__hint {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
 }
 .boot__line::before {
   content: '> ';
@@ -3480,11 +3495,6 @@ textarea.field {
     height: 24px;
   }
 }
-.sp__hint {
-  font-size: 0.7rem;
-  color: #8892b0;
-  font-style: italic;
-}
 /* Pause-knappen skal tåle 5-sek-langtrykket uten tekstmarkering/callout */
 .sp__btn--play {
   user-select: none;
@@ -3493,6 +3503,13 @@ textarea.field {
   touch-action: manipulation;
 }
 /* Hemmelig sendestyring (hold pause i 5 sek) — internt teknikerpanel */
+/* Innholdet følger samme 900px-tak som vinduene (bakgrunnen dekker alt). */
+.sp-override > * {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+}
+
 .sp-override {
   position: fixed;
   inset: 0;
@@ -3881,61 +3898,16 @@ textarea.field {
 }
 
 /* ⚙️ Innstillinger-appen på telefonen */
-.ph-settings {
-  flex: 1;
+/* Innstillinger-dialogen på skrivebordet: to valg side om side. Gjenbruker
+   .choice/.choice--selected fra stemmeskjemaet (bevel-in når valgt). */
+.settings-seg {
   display: flex;
-  flex-direction: column;
-  background: #f2f2f7;
-  min-height: 0;
-}
-.ph-settings__body {
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-.ph-settings__group {
-  background: #fff;
-  border-radius: 12px;
-  padding: 12px 14px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-}
-.ph-settings__label {
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: #111;
+  gap: 8px;
   margin-bottom: 10px;
 }
-.ph-settings__seg {
-  display: flex;
-  background: #e9e9ee;
-  border-radius: 9px;
-  padding: 3px;
-  gap: 3px;
-}
-.ph-settings__opt {
+.settings-seg .choice {
   flex: 1;
-  border: none;
-  background: transparent;
-  font: inherit;
-  font-size: 0.85rem;
-  padding: 8px 6px;
-  border-radius: 7px;
-  cursor: pointer;
-  color: #333;
-}
-.ph-settings__opt--active {
-  background: #fff;
-  font-weight: 700;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-}
-.ph-settings__note {
-  margin: 8px 0 0;
-  font-size: 0.72rem;
-  color: #8e8e93;
+  justify-content: center;
 }
 .dialog {
   width: 100%;

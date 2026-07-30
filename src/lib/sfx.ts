@@ -68,6 +68,27 @@ export const sfx = {
     }
   },
 
+  /** laster en lydfil i forkant og returnerer en spill-funksjon. Bruk denne når
+   *  lyden må starte presist på et gitt tidspunkt — playFile henter fila først
+   *  ved kallet, som gir hakking/forsinkelse. Demping sjekkes ved avspilling
+   *  (så av/på-knappen virker etter at fila er lastet). */
+  prepareFile(src: string, volume = 1): () => void {
+    let audio: HTMLAudioElement | null = null
+    try {
+      audio = new Audio(src)
+      audio.preload = 'auto'
+      audio.volume = volume
+      audio.load()
+    } catch {
+      /* ignorer — lyd er aldri kritisk */
+    }
+    return () => {
+      if (muted || !audio) return
+      audio.currentTime = 0 // kan spilles på nytt (f.eks. ved retry)
+      void audio.play().catch(() => {})
+    }
+  },
+
   /** starter en loopende bakgrunnslyd. Prøver kildene i rekkefølge til én
    *  laster (m4a → mp3-fallback). Returnerer en stopp-funksjon — kall den
    *  når lyden skal av (f.eks. i useEffect-cleanup). Respekterer demping. */

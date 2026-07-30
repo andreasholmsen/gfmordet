@@ -241,7 +241,9 @@ skjer når neste dag slippes.
 - `src/lib/SettingsContext.tsx` — lyd-demping + menyspråk (localStorage). `src/lib/sfx.ts` — WebAudio-lyder.
 - **Nynorsk-modus (kun menyer):** `src/lib/i18n.ts` (`useT()`, nb/nn-strengtabell — sakens
   innhold berøres IKKE). Velges ved første lasting (`LanguagePrompt`, før lyd-prompten og
-  boot) og kan endres i ⚙️ Innstillinger-appen på Angelas mobil (som også har lyd av/på).
+  boot) og kan endres i ⚙️ Innstillinger på skrivebordet (som også har lyd av/på) — et
+  `Dialog` i `Desktop.tsx`, ikke et eget vindu. Ikonet er ALLTID ulåst (i motsetning til
+  sakens apper), så språk/lyd kan endres før «START HER» er åpnet.
   Oversatt: oppgavelinje, skrivebordsdialoger/-etiketter, dag-mappe-chrome, promptene.
   Nye UI-strenger: legg nøkkel i BÅDE nb og nn i i18n.ts og bruk `t('nøkkel')`.
 - `src/lib/votes.ts` — spillerens egne stemmer: in-memory cache hydrert fra `get_my_votes`

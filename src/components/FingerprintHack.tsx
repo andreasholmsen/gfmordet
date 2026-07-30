@@ -147,6 +147,10 @@ export default function FingerprintHack({
   const paths = useMemo(() => printPaths(puzzle.seed), [puzzle.seed])
   const aligned = offsets.filter((o) => o === 0).length
 
+  // «30 sek igjen»-varselet lastes ned med én gang hacket åpnes, så det ligger
+  // klart når klokka krysser 30 (ellers starter nedlastingen først da → hakking).
+  const [play30sec] = useState(() => sfx.prepareFile(assetUrl('sfx/30sec.mp3'), 0.25))
+
   useEffect(() => {
     sfx.glitch()
     // bakgrunnsmusikk så lenge hacket er åpent (valgfri fil — se public/sfx/)
@@ -169,10 +173,8 @@ export default function FingerprintHack({
 
   // «30 sekunder igjen»-lyd — spilles idet klokka krysser 30 (også per retry).
   useEffect(() => {
-    if (timeLeft === 30 && status === 'playing') {
-      sfx.playFile(assetUrl('sfx/30sec.mp3'), 0.5)
-    }
-  }, [timeLeft, status])
+    if (timeLeft === 30 && status === 'playing') play30sec()
+  }, [timeLeft, status, play30sec])
 
   // Alle striper på plass: neste avtrykk (etter et kort blink), eller suksess
   // på det siste. Input er sperret under blinket (se shift), så deps endres

@@ -7,6 +7,11 @@ import AppWindow from './AppWindow'
 // midt i sendeplanen (tilfeldig sang), deretter spilles lista videre i loop.
 // Radio kan ikke hoppes i — eneste knapp er pause/på.
 
+// Geometriske tegn (U+25B6/U+25AE) — ikke «⏸» (U+23F8), som Windows/iOS tegner
+// som farge-emoji og dermed ikke matcher play-trekanten.
+const PLAY = '▶'
+const PAUSE = '▮▮'
+
 function prettyTitle(t: SpotifyTrack): string {
   if (t.title) return t.title
   const base = t.src.split('/').pop() ?? t.src
@@ -110,11 +115,9 @@ export default function SpotifyApp() {
             }}
             aria-label={playing ? 'Pause' : 'Spill'}
           >
-            {playing ? '⏸' : '▶'}
+            {playing ? PAUSE : PLAY}
           </button>
         </div>
-
-        <p className="sp__hint">Radio kan ikke spoles. Det som sendes, sendes.</p>
 
         {override && (
           <div className="sp-override" role="dialog" aria-label="Sendestyring">
@@ -134,7 +137,7 @@ export default function SpotifyApp() {
                   }}
                 >
                   <span className="sp-override__cue" aria-hidden>
-                    {i === idx ? (live ? '▶' : '⏸') : String(i + 1).padStart(2, '0')}
+                    {i === idx ? (live ? PLAY : PAUSE) : String(i + 1).padStart(2, '0')}
                   </span>
                   {prettyTitle(t)}
                   {t.artist && <span className="sp-override__artist"> — {t.artist}</span>}

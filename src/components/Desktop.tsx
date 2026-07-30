@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CASE } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
+import { useSettings } from '../lib/SettingsContext'
 import { sfx } from '../lib/sfx'
 import { assetUrl } from '../lib/assets'
 import { markStartSeen, startSeen } from '../lib/intro'
@@ -120,10 +121,11 @@ function DesktopIcon({ icon, onLockedClick }: { icon: IconDef; onLockedClick?: (
   )
 }
 
-type DialogKind = 'about' | 'recycle' | 'locked' | null
+type DialogKind = 'about' | 'recycle' | 'locked' | 'settings' | null
 
 export default function Desktop() {
   const { isUnlocked, demo, refresh } = useUnlock()
+  const { muted, setMuted, lang, setLang } = useSettings()
   const navigate = useNavigate()
   const t = useT()
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null)
@@ -191,6 +193,14 @@ export default function Desktop() {
     appIcons.push({ label: 'larry', glyph: '👽', node: <LarryGlyph />, onClick: () => triggerLarry() })
   }
 
+  // Spillerens egne innstillinger (språk + lyd) — aldri låst, i motsetning til
+  // sakens apper: man skal kunne bytte språk/skru av lyd før spillet starter.
+  const settingsIcon: IconDef = {
+    label: t('settingsApp'),
+    glyph: '⚙️',
+    onClick: () => setDialog('settings'),
+  }
+
   const menuItems: MenuItem[] = [
     { label: t('menuRefresh'), onClick: () => refresh() },
     {
@@ -229,6 +239,7 @@ export default function Desktop() {
         {[
           startIcon,
           ...[...dayIcons, ...appIcons].map((i) => ({ ...i, locked: i.locked || !started })),
+          settingsIcon,
         ].map((icon) => (
           <DesktopIcon
             key={icon.to ?? icon.href ?? icon.label}
@@ -289,6 +300,48 @@ export default function Desktop() {
           <p style={{ marginBottom: 0 }}>
             <strong>{t('lockedBody2')}</strong>
           </p>
+        </Dialog>
+      )}
+
+      {dialog === 'settings' && (
+        <Dialog title={t('settingsApp')} icon="⚙️" onClose={() => setDialog(null)}>
+          <p style={{ marginTop: 0 }}>
+            <strong>{t('settingsLang')}</strong>
+          </p>
+          <div className="settings-seg">
+            <button
+              className={`choice ${lang === 'nb' ? 'choice--selected' : ''}`}
+              onClick={() => setLang('nb')}
+            >
+              Bokmål
+            </button>
+            <button
+              className={`choice ${lang === 'nn' ? 'choice--selected' : ''}`}
+              onClick={() => setLang('nn')}
+            >
+              Nynorsk
+            </button>
+          </div>
+          {/* Ikke var(--shadow) her — #808080 på #c0c0c0 er ~2.2:1 (under WCAG AA). */}
+          <p style={{ fontSize: '0.8rem' }}>{t('settingsLangNote')}</p>
+
+          <p>
+            <strong>{t('settingsSound')}</strong>
+          </p>
+          <div className="settings-seg">
+            <button
+              className={`choice ${!muted ? 'choice--selected' : ''}`}
+              onClick={() => setMuted(false)}
+            >
+              🔊 {t('on')}
+            </button>
+            <button
+              className={`choice ${muted ? 'choice--selected' : ''}`}
+              onClick={() => setMuted(true)}
+            >
+              🔇 {t('off')}
+            </button>
+          </div>
         </Dialog>
       )}
 
