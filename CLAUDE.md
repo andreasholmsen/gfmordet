@@ -13,7 +13,8 @@ egen retro-CSS. Hostet på GitHub Pages fra det private repoet `andreasholmsen/g
 
 - ✅ Hele appen er bygget, type-sjekker og bygger rent.
 - ✅ Pushet til `main` på det private repoet; GitHub Pages er aktivert (Actions-deploy).
-- ✅ **Live:** https://andreasholmsen.github.io/gfmordet/ (Pages-siden er offentlig, repoet er privat).
+- ✅ **Live:** https://www.gfmordet.no/ (eget domene; github.io-URL-en redirecter hit).
+  Domenet ligger på roten ⇒ `base: '/'` i `vite.config.ts` (var `/gfmordet/` før domenet).
 - ✅ Supabase-prosjektet er opprettet og `0001_init.sql` er kjørt; tilkobling + RLS verifisert.
 - ✅ Lokal `.env` satt opp → `npm run dev` kjører mot ekte Supabase.
 - ⏳ **GJENSTÅR:** repo-secrets på GitHub (se nedenfor) — den deployede siden er fortsatt i
@@ -192,7 +193,7 @@ skjer når neste dag slippes.
 
 - Node ligger i `~/.local/node` (lagt til i `~/.bashrc`; ikke installert system-globalt).
   Hvis `node`/`npm` ikke finnes i en ny shell: `export PATH="$HOME/.local/node/bin:$PATH"`.
-- `npm run dev` (port settes av Vite, base-path `/gfmordet/`) · `npm run build` · `npm run typecheck`.
+- `npm run dev` (port settes av Vite, base-path `/`) · `npm run build` · `npm run typecheck`.
 - `.env` (gitignorert) holder Supabase-verdiene for lokal kjøring.
 
 ## Filkart (de viktigste)
