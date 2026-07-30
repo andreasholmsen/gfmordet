@@ -3,11 +3,11 @@ import { useLocation } from 'react-router-dom'
 import { assetUrl } from '../lib/assets'
 import { sfx } from '../lib/sfx'
 
-// Skjult easter egg: 0.1% sjanse etter hvert klikk PÅ SKRIVEBORDET (eller
+// Skjult easter egg: 1/500 sjanse etter hvert klikk PÅ SKRIVEBORDET (eller
 // manuelt via triggerLarry()) for at «telefonen hackes» — glitch inn,
 // larry.gif spilles, og alt forsvinner igjen uten forklaring. Vises aldri inne
 // i en app (WeChat, minesveiper, …). Rent visuelt (pointer-events: none).
-const CHANCE = 0.001
+const CHANCE = 1 / 500
 const GLITCH_IN_MS = 650 // glitch-inn før gif-en er «på»
 const SHOW_MS = 4200 // hvor lenge larry.gif vises (juster til gif-lengden)
 const GLITCH_OUT_MS = 450 // glitch-ut når den forsvinner

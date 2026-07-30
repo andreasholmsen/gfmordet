@@ -73,7 +73,8 @@ export default function DayFolder() {
     docs.filter((d) => d.folder === f.id || childrenOf(f).some((c) => c.id === d.folder)).length
 
   if (openDoc) {
-    const tint = folderOf(openDoc)?.tint
+    // Dokumentets egen tint vinner over mappens.
+    const tint = openDoc.tint ?? folderOf(openDoc)?.tint
     return (
       <AppWindow title={`${title} — ${openDoc.title}`} icon={GLYPH[openDoc.kind]}>
         <div ref={anchor} />
@@ -136,7 +137,7 @@ export default function DayFolder() {
             <button
               key={doc.id}
               className="doc-tile"
-              style={tintStyle(openFolder.tint)}
+              style={tintStyle(doc.tint ?? openFolder.tint)}
               onClick={() => setOpenDoc(doc)}
             >
               <span className="doc-tile__glyph" aria-hidden>
@@ -187,7 +188,12 @@ export default function DayFolder() {
             )
           })}
           {looseDocs.map((doc) => (
-            <button key={doc.id} className="doc-tile" onClick={() => setOpenDoc(doc)}>
+            <button
+              key={doc.id}
+              className="doc-tile"
+              style={tintStyle(doc.tint)}
+              onClick={() => setOpenDoc(doc)}
+            >
               <span className="doc-tile__glyph" aria-hidden>
                 {GLYPH[doc.kind]}
               </span>

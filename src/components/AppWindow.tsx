@@ -12,6 +12,7 @@ export type WindowVariant =
   | 'excel'
   | 'wechat'
   | 'spotify'
+  | 'larry'
 
 // Lengde på lukke-animasjonen (må matche den lengste .window--closing-animasjonen).
 const CLOSE_MS = 270

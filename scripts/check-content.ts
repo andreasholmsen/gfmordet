@@ -25,6 +25,9 @@ const strict = process.argv.includes('--strict')
 function stripMarkdown(md: string): string {
   return md
     .replace(/```[\s\S]*?```/g, ' ') // kodeblokker
+    // Tabeller (dørlogg, romfordeling) skannes som kodeblokker — de leses ikke
+    // ord for ord, så lesetid-terskelen gir ingen mening for dem.
+    .replace(/^\s{0,3}\|.*\|\s*$/gm, ' ')
     .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ') // bilder
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // lenker -> tekst
     .replace(/^\s{0,3}#{1,6}\s+/gm, '') // overskrifter

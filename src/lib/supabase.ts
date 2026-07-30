@@ -158,6 +158,15 @@ export async function submitVote(args: {
   if (error) throw new Error(error.message)
 }
 
+/** Larry-flagget: noterer at spilleren sa ja til «hjelp» (se 0009_larry.sql).
+ *  Idempotent server-side — gjentatte kall endrer ingenting. Demo-modus og
+ *  manglende migrasjon svelges bevisst: spøken skal aldri kunne krasje appen. */
+export async function flagCheater(): Promise<void> {
+  if (!supabase) return // demo-modus: ingen lagring
+  const { error } = await supabase.rpc('flag_cheater')
+  if (error) throw new Error(error.message)
+}
+
 export interface MyVoteRow {
   day: number
   choice: string | null

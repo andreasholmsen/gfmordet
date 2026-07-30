@@ -65,6 +65,19 @@ const nb = {
   settingsSound: 'Lyd',
   on: 'På',
   off: 'Av',
+
+  // Larry-siden (easter egget). Han tilbyr «hjelp», gjør ingenting, og sier
+  // rett ut at han noterte at du spurte.
+  larryTitle: 'ukjent prosess',
+  larryOffer:
+    'Vil du ha hjelp? Jeg kan fjerne halvparten av vitnene for deg … Vil du det?',
+  larryYes: 'Ja',
+  larryNo: 'Nei',
+  larryDeclined: 'Klokt. Jeg hadde ikke gjort det for deg likevel.',
+  larryReveal1: 'Ha. Je vais te toucher la nuit.',
+  larryReveal2: 'Je te jette une malédiction.',
+  larryReveal3: 'LA MALÉDICTION DE LARRY LE MALICIEUX',
+  larryClose: 'Lukk',
 }
 
 const nn: typeof nb = {
@@ -118,6 +131,16 @@ const nn: typeof nb = {
   settingsSound: 'Lyd',
   on: 'På',
   off: 'Av',
+
+  larryTitle: 'ukjend prosess',
+  larryOffer: 'Vil du ha hjelp? Eg kan fjerne halvparten av vitna for deg … Vil du det?',
+  larryYes: 'Ja',
+  larryNo: 'Nei',
+  larryDeclined: 'Klokt. Eg hadde ikkje gjort det for deg likevel.',
+  larryReveal1: 'Ha. Je vais te toucher la nuit.',
+  larryReveal2: 'Je jette sur toi une malediction.',
+  larryReveal3: 'LA MALÉDICTION DE LARRY LE MALICIEUX',
+  larryClose: 'Lukk',
 }
 
 export type StringKey = keyof typeof nb

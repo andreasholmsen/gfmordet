@@ -23,6 +23,10 @@ export interface CaseDoc {
   /** Legger dokumentet i en undermappe i dag-mappen. Verdien er `id`-en til en
    *  mappe i dagens `folders`-liste. Utelates ⇒ dokumentet ligger løst i dagen. */
   folder?: string
+  /** Egen pastellfarge for KUN dette dokumentet — farger flisa og «papiret» når
+   *  det åpnes, på samme måte som `tint` på en undermappe. Vinner over mappens
+   *  tint. Brukes til å skille ut ett enkelt dokument (eks: Runills notater). */
+  tint?: string
 }
 
 /** Undermappe i en dag-mappe — grupperer dokumenter og gir dem et felles utseende. */
@@ -306,31 +310,6 @@ export const CASE: CaseManifest = {
           title: 'Vitneutsagn',
           icon: '🗣️',
           tint: '#d7e9fb',
-        },
-        // Pias bilder → to under-undermapper (mobil / kamera). Filnavnene ER
-        // dokumenttitlene, så tidsstemplene er synlige i fliselista.
-        {
-          id: 'pia-bilder',
-          title: 'Pias bilder',
-          icon: '📷',
-          tint: '#ffe4cc',
-          intro: 'Bildene Pia sendte inn til politiet. Overført fra to ulike enheter.',
-        },
-        {
-          id: 'pia-mobil',
-          parent: 'pia-bilder',
-          title: 'Mobilbilder',
-          icon: '📱',
-          tint: '#ffe4cc',
-          intro: 'Hentet fra Pias mobiltelefon.',
-        },
-        {
-          id: 'pia-kamera',
-          parent: 'pia-bilder',
-          title: 'Kamerabilder',
-          icon: '📷',
-          tint: '#ffe4cc',
-          intro: 'Hentet fra minnekortet i Pias kamera.',
         },
       ],
       docs: [
@@ -662,152 +641,113 @@ export const CASE: CaseManifest = {
           id: 'd1-runill-notater',
           title: 'Runill notater',
           kind: 'markdown',
+          // Gult notatark — skiller seg fra de lyseblå vitneutsagnene og de
+          // fersken-tintede bildemappene.
+          tint: '#fff3bf',
           inline:
             '## [RUNILL NOTATER]\n\n' +
-            '11:13 –\n\n' +
+            '11:13 – Passet på at alle har kommet seg fra gårsdagen\n\n' +
             '18:12 – Ga ibux til Angela, dobbeltsjekke at alt går bra i morgen\n\n' +
             '18:42 – Hadde samtale med edruvakt Henriette angående tips.\n\n' +
             '21:02 – Edruvakt måtte byttes, rakk ikke nytt møte',
         },
-
-        // ------------------------------------------------------------------
-        // PIAS BILDER. Filnavnet er tittelen, så klokkeslettet er synlig.
-        // Mobilen stilte seg om til norsk tid ved landing; kameraet står
-        // fortsatt på Moldova-tid (én time foran, jf. Anna sitt utsagn). De tre
-        // bildene som finnes på BEGGE enhetene har derfor filnavn som ligger
-        // nøyaktig én time fra hverandre — samme sekund, samme motiv:
-        //   10:46:12 / 11:46:12  ·  19:30:45 / 20:30:45  ·  20:55:12 / 21:55:12
-        // Legg filene i public/case/dag1/pia/ — se README-en der.
-        // ------------------------------------------------------------------
-
-        // --- Mobil (norsk tid — telefonen stilte seg om ved landing) ---
         {
-          id: 'd1-pia-m1',
-          title: 'IMG_20260730_121540.jpg', // Praha, mellomlanding
-          kind: 'image',
-          folder: 'pia-mobil',
-          src: 'case/dag1/pia/moldova5.jpg',
-        },
-        {
-          id: 'd1-pia-m2',
-          title: 'IMG_20260730_181402.jpg', // inne i flyet
-          kind: 'image',
-          folder: 'pia-mobil',
-          src: 'case/dag1/pia/plane.jpg',
-        },
-        {
-          id: 'd1-pia-m3',
-          title: 'IMG_20260730_195133.jpg', // flyvindu, solnedgang
-          kind: 'image',
-          folder: 'pia-mobil',
-          src: 'case/dag1/pia/moldova.jpg',
-        },
-        {
-          id: 'd1-pia-m4',
-          title: 'IMG_20260730_211208.jpg', // Oslo lufthavn
-          kind: 'image',
-          folder: 'pia-mobil',
-          src: 'case/dag1/pia/gardmeon airport.jpg',
-        },
-        {
-          id: 'd1-pia-m5',
-          title: 'IMG_20260731_101547.jpg', // Sørmarka-skiltet
-          kind: 'image',
-          folder: 'pia-mobil',
-          src: 'case/dag1/pia/sørmarka1.jpg',
-        },
-        {
-          // ★ samme fil som kameraets IMG_20260731_114612.jpg (+1 time)
-          id: 'd1-pia-m6',
-          title: 'IMG_20260731_104612.jpg', // Sørmarka over vannet
-          kind: 'image',
-          folder: 'pia-mobil',
-          src: 'case/dag1/pia/sørmarka.jpg',
-        },
-        {
-          id: 'd1-pia-m7',
-          title: 'IMG_20260731_112033.jpg', // hotellrommet
-          kind: 'image',
-          folder: 'pia-mobil',
-          src: 'case/dag1/pia/hotell2.jpg',
-        },
-        {
-          // ★ samme fil som kameraets IMG_20260731_203045.jpg (+1 time)
-          id: 'd1-pia-m8',
-          title: 'IMG_20260731_193045.jpg', // bankettsalen
-          kind: 'image',
-          folder: 'pia-mobil',
-          src: 'case/dag1/pia/sørmarlka3.jpg',
-        },
-        {
-          // ★ samme fil som kameraets IMG_20260731_215512.jpg (+1 time)
-          id: 'd1-pia-m9',
-          title: 'IMG_20260731_205512.jpg', // gjengen
-          kind: 'image',
-          folder: 'pia-mobil',
-          src: 'case/dag1/pia/people1.jpg',
-        },
-
-        // --- Kamera (Moldova-tid). Moldova-bildene er tatt i Moldova, så der er
-        //     klokka riktig; Norge-bildene ligger én time for sent. ---
-        {
-          id: 'd1-pia-k1',
-          title: 'IMG_20260728_201235.jpg', // folkedrakt i solnedgang
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag1/pia/Moldova4.jpg',
-        },
-        {
-          id: 'd1-pia-k2',
-          title: 'IMG_20260729_132408.jpg', // EU-flagg, midt på dagen
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag1/pia/Moldova3.jpg',
-        },
-        {
-          id: 'd1-pia-k3',
-          title: 'IMG_20260729_200317.jpg', // Chișinău ovenfra, gyllen time
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag1/pia/Moldova1.jpg',
-        },
-        {
-          id: 'd1-pia-k4',
-          title: 'IMG_20260729_211842.jpg', // jernbanestasjonen, blå time
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag1/pia/Moldova2.jpg',
-        },
-        {
-          // ★ samme fil som mobilens IMG_20260731_104612.jpg
-          id: 'd1-pia-k5',
-          title: 'IMG_20260731_114612.jpg', // Sørmarka over vannet
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag1/pia/sørmarka.jpg',
-        },
-        {
-          id: 'd1-pia-k6',
-          title: 'IMG_20260731_150318.jpg', // hotellkorridoren
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag1/pia/hotelcorridor.jpg',
-        },
-        {
-          // ★ samme fil som mobilens IMG_20260731_193045.jpg
-          id: 'd1-pia-k7',
-          title: 'IMG_20260731_203045.jpg', // bankettsalen
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag1/pia/sørmarlka3.jpg',
-        },
-        {
-          // ★ samme fil som mobilens IMG_20260731_205512.jpg
-          id: 'd1-pia-k8',
-          title: 'IMG_20260731_215512.jpg', // gjengen
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag1/pia/people1.jpg',
+          id: 'd1-dorlogg',
+          title: 'Dørlogg',
+          kind: 'markdown',
+          // Blekgrønt «hullbånd»-papir — egen farge, så utskriften ikke forveksles
+          // med de lyseblå vitneutsagnene, Pias fersken eller Runills gule ark.
+          tint: '#dde9dd',
+          inline:
+            // Loggen registrerer BARE kortåpninger — ingen dørstatus, ingen
+            // varsler, ingen avviste avlesinger. Det er derfor rom 327 ikke
+            // skiller seg ut i det hele tatt: Sverre har en åpning 23:32 som
+            // ser helt lik alle andres ut, og fordi utgang fra innsiden ikke
+            // logges, sier loggen ingenting om at han gikk ut igjen. Beviset
+            // er fraværet, ikke en rad. Ikke legg inn dørstatus-hendelser her.
+            //
+            // ASCII-blokkene ruller sidelengs på mobil, så MERKNAD-en ligger
+            // BEVISST utenfor dem: den er selve nøkkelen til loggen («utgang fra
+            // innsiden registreres ikke») og må brytes, ikke klippes.
+            '```\n' +
+            '════════════════════════════════════════\n' +
+            '  ADGANGSKONTROLL — ÅPNINGSLOGG\n' +
+            '  Anlegg ...... Sørmarka Oslo\n' +
+            '  Periode ..... fre 31.07.2026 18:00 –\n' +
+            '                lør 01.08.2026 04:00\n' +
+            '  Utskrift .... lør 01.08.2026 09:14\n' +
+            '  Enhet ....... dørkontroll v4.2 / A–C\n' +
+            '════════════════════════════════════════\n' +
+            '```\n\n' +
+            '**MERKNAD:** Systemet registrerer kun godkjent kortåpning — ikke passering, ikke ' +
+            'dørstatus. Utgang fra innsiden registreres ikke.\n\n' +
+            '| DØR | TID |\n' +
+            '| --- | --- |\n' +
+            '| 318 | 17:52 |\n' +
+            '| 305 | 18:04 |\n' +
+            '| 118 | 18:20 |\n' +
+            '| 322 | 18:31 |\n' +
+            '| 311 | 18:47 |\n' +
+            '| 206 | 19:02 |\n' +
+            '| 209 | 19:08 |\n' +
+            '| 404 | 19:11 |\n' +
+            '| 203 | 19:15 |\n' +
+            '| 224 | 19:19 |\n' +
+            '| 107 | 19:22 |\n' +
+            '| 316 | 19:24 |\n' +
+            '| 213 | 19:26 |\n' +
+            '| 221 | 19:26 |\n' +
+            '| 104 | 19:28 |\n' +
+            '| 327 | 19:29 |\n' +
+            '| 112 | 19:33 |\n' +
+            '| 120 | 20:41 |\n' +
+            '| 118 | 21:00 |\n' +
+            '| 308 | 21:19 |\n' +
+            '| 305 | 21:30 |\n' +
+            '| 316 | 21:38 |\n' +
+            '| 221 | 21:41 |\n' +
+            '| 213 | 21:48 |\n' +
+            '| 319 | 21:52 |\n' +
+            '| 410 | 21:55 |\n' +
+            '| 322 | 22:00 |\n' +
+            '| 209 | 22:05 |\n' +
+            '| 224 | 22:12 |\n' +
+            '| 316 | 22:14 |\n' +
+            '| 224 | 22:26 |\n' +
+            '| 206 | 22:33 |\n' +
+            '| 410 | 22:45 |\n' +
+            '| 107 | 23:01 |\n' +
+            '| 120 | 23:04 |\n' +
+            '| 404 | 23:12 |\n' +
+            '| 308 | 23:20 |\n' +
+            '| 327 | 23:32 |\n' +
+            '| 213 | 23:34 |\n' +
+            '| 215 | 23:38 |\n' +
+            '| 213 | 23:51 |\n' +
+            '| 206 | 23:58 |\n' +
+            '| 319 | 00:07 |\n' +
+            '| 104 | 00:16 |\n' +
+            '| 316 | 00:18 |\n' +
+            '| 112 | 00:20 |\n' +
+            '| 410 | 00:31 |\n' +
+            '| 120 | 00:39 |\n' +
+            '| 209 | 00:50 |\n' +
+            '| 203 | 00:55 |\n' +
+            '| 305 | 01:05 |\n' +
+            '| 322 | 01:12 |\n' +
+            '| 221 | 01:20 |\n' +
+            '| 311 | 01:30 |\n' +
+            '| 107 | 01:44 |\n' +
+            '| 404 | 02:02 |\n' +
+            '| 308 | 02:16 |\n' +
+            '| 215 | 02:29 |\n' +
+            '| 118 | 03:04 |\n\n' +
+            '```\n' +
+            '════════════════════════════════════════\n' +
+            '  Antall kortåpninger: 59\n' +
+            '  Antall dører med aktivitet: 22\n' +
+            '════════════════════════════════════════\n' +
+            '```',
         },
       ],
       question: {
@@ -821,6 +761,33 @@ export const CASE: CaseManifest = {
       day: 2,
       title: 'Dag 2',
       intro: 'Obduksjonen er klar, og bildet blir mer komplisert.',
+      folders: [
+        // Pias bilder → to under-undermapper (mobil / kamera). Filnavnene ER
+        // dokumenttitlene, så tidsstemplene er synlige i fliselista.
+        {
+          id: 'pia-bilder',
+          title: 'Pias bilder',
+          icon: '📷',
+          tint: '#ffe4cc',
+          intro: 'Bildene Pia sendte inn til politiet. Overført fra to ulike enheter.',
+        },
+        {
+          id: 'pia-mobil',
+          parent: 'pia-bilder',
+          title: 'Mobilbilder',
+          icon: '📱',
+          tint: '#ffe4cc',
+          intro: 'Hentet fra Pias mobiltelefon.',
+        },
+        {
+          id: 'pia-kamera',
+          parent: 'pia-bilder',
+          title: 'Kamerabilder',
+          icon: '📷',
+          tint: '#ffe4cc',
+          intro: 'Hentet fra minnekortet i Pias kamera.',
+        },
+      ],
       docs: [
         {
           id: 'd2-obd',
@@ -830,6 +797,146 @@ export const CASE: CaseManifest = {
             '## Obduksjon (foreløpig)\n\n' +
             'Dødsårsak først antatt å være hjertestans. Nye prøver tyder på noe annet. ' +
             'Spor av et ukjent stoff i blodet. Ingen ytre skader.',
+        },
+
+        // ------------------------------------------------------------------
+        // PIAS BILDER. Filnavnet er tittelen, så klokkeslettet er synlig.
+        // Mobilen stilte seg om til norsk tid ved landing; kameraet står
+        // fortsatt på Moldova-tid (én time foran, jf. Anna sitt utsagn). De tre
+        // bildene som finnes på BEGGE enhetene har derfor filnavn som ligger
+        // nøyaktig én time fra hverandre — samme sekund, samme motiv:
+        //   10:46:12 / 11:46:12  ·  19:30:45 / 20:30:45  ·  20:55:12 / 21:55:12
+        // Legg filene i public/case/dag2/pia/ — se README-en der.
+        // ------------------------------------------------------------------
+
+        // --- Mobil (norsk tid — telefonen stilte seg om ved landing) ---
+        {
+          id: 'd2-pia-m1',
+          title: 'IMG_20260730_121540.jpg', // Praha, mellomlanding
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag2/pia/moldova5.jpg',
+        },
+        {
+          id: 'd2-pia-m2',
+          title: 'IMG_20260730_181402.jpg', // inne i flyet
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag2/pia/plane.jpg',
+        },
+        {
+          id: 'd2-pia-m3',
+          title: 'IMG_20260730_195133.jpg', // flyvindu, solnedgang
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag2/pia/moldova.jpg',
+        },
+        {
+          id: 'd2-pia-m4',
+          title: 'IMG_20260730_211208.jpg', // Oslo lufthavn
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag2/pia/gardmeon airport.jpg',
+        },
+        {
+          id: 'd2-pia-m5',
+          title: 'IMG_20260731_101547.jpg', // Sørmarka-skiltet
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag2/pia/sørmarka1.jpg',
+        },
+        {
+          // ★ samme fil som kameraets IMG_20260731_114612.jpg (+1 time)
+          id: 'd2-pia-m6',
+          title: 'IMG_20260731_104612.jpg', // Sørmarka over vannet
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag2/pia/sørmarka.jpg',
+        },
+        {
+          id: 'd2-pia-m7',
+          title: 'IMG_20260731_112033.jpg', // hotellrommet
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag2/pia/hotell2.jpg',
+        },
+        {
+          // ★ samme fil som kameraets IMG_20260731_203045.jpg (+1 time)
+          id: 'd2-pia-m8',
+          title: 'IMG_20260731_193045.jpg', // bankettsalen
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag2/pia/sørmarlka3.jpg',
+        },
+        {
+          // ★ samme fil som kameraets IMG_20260731_215512.jpg (+1 time)
+          id: 'd2-pia-m9',
+          title: 'IMG_20260731_205512.jpg', // gjengen
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag2/pia/people1.jpg',
+        },
+
+        // --- Kamera (Moldova-tid). Moldova-bildene er tatt i Moldova, så der er
+        //     klokka riktig; Norge-bildene ligger én time for sent. ---
+        {
+          id: 'd2-pia-k1',
+          title: 'IMG_20260728_201235.jpg', // folkedrakt i solnedgang
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/Moldova4.jpg',
+        },
+        {
+          id: 'd2-pia-k2',
+          title: 'IMG_20260729_132408.jpg', // EU-flagg, midt på dagen
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/Moldova3.jpg',
+        },
+        {
+          id: 'd2-pia-k3',
+          title: 'IMG_20260729_200317.jpg', // Chișinău ovenfra, gyllen time
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/Moldova1.jpg',
+        },
+        {
+          id: 'd2-pia-k4',
+          title: 'IMG_20260729_211842.jpg', // jernbanestasjonen, blå time
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/Moldova2.jpg',
+        },
+        {
+          // ★ samme fil som mobilens IMG_20260731_104612.jpg
+          id: 'd2-pia-k5',
+          title: 'IMG_20260731_114612.jpg', // Sørmarka over vannet
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/sørmarka.jpg',
+        },
+        {
+          id: 'd2-pia-k6',
+          title: 'IMG_20260731_150318.jpg', // hotellkorridoren
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/hotelcorridor.jpg',
+        },
+        {
+          // ★ samme fil som mobilens IMG_20260731_193045.jpg
+          id: 'd2-pia-k7',
+          title: 'IMG_20260731_203045.jpg', // bankettsalen
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/sørmarlka3.jpg',
+        },
+        {
+          // ★ samme fil som mobilens IMG_20260731_205512.jpg
+          id: 'd2-pia-k8',
+          title: 'IMG_20260731_215512.jpg', // gjengen
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/people1.jpg',
         },
       ],
       question: {
@@ -890,34 +997,36 @@ export const CASE: CaseManifest = {
       id: 'ig2',
       img: 'case/instagram/jofridkontakt.png',
       author: 'studentprestjofrid',
-      caption: '🌸Bli kjent med studentpresten Jofrid🌸\n\nJofrid er studentprest for Danmark, Tyskland, Nederland, Luxembourg, Østerrriket, Sverige, Sveits, Italia, Frankrike og Belgia🌎\n\nHun er her for studentene, enten du ønsker støtte eller en samtale om stort og smått i studenthverdagen🤩\n\nFølg henne gjerne på Instagram og ta kontakt dersom du trenger noen å prate med🥰',
+      caption:
+        '🌸Bli kjent med studentpresten Jofrid🌸\n\nJofrid er studentprest for Danmark, Tyskland, Nederland, Luxembourg, Østerrriket, Sverige, Sveits, Italia, Frankrike og Belgia🌎\n\nHun er her for studentene, enten du ønsker støtte eller en samtale om stort og smått i studenthverdagen🤩\n\nFølg henne gjerne på Instagram og ta kontakt dersom du trenger noen å prate med🥰',
       likes: 91725,
       postedLabel: 'for 42 dager siden',
     },
     {
-    id: 'ig3',
-    img: 'case/instagram/pyrra.jpg',
-    caption: 'Pyrra was not ready for the Norwegian takeover⛷️',
-    author: 'henriette.moe',
-    likes: 80182,
-    postedLabel: 'for 21 uker siden',
-  },
+      id: 'ig3',
+      img: 'case/instagram/pyrra.jpg',
+      caption: 'Pyrra was not ready for the Norwegian takeover⛷️',
+      author: 'henriette.moe',
+      likes: 80182,
+      postedLabel: 'for 21 uker siden',
+    },
     {
-    id: 'ig5',
-    img: 'case/instagram/ansamadrid.png',
-    author: 'ansamadrid',
-    caption: '💜Det nye styret er klart!💜\n\nBli kjent med den nye gjengen med å høre deres beste tips om favorittbyen, og ei litta fun fact🔥\n\nGled dere til året som kommer; Det blir bra!🤩',
-    likes: 0,
-    postedLabel: 'for 304 dager siden',
-  },
-  {
-    id: 'ig4',
-    img: 'case/instagram/oljebyen.jpg',
-    caption: 'Tur til Oljebyen🚌🚌🚌🚌',
-    author: 'oskarorvik',
-    likes: 919,
-    postedLabel: 'for 101 uker siden',
-  },
+      id: 'ig5',
+      img: 'case/instagram/ansamadrid.png',
+      author: 'ansamadrid',
+      caption:
+        '💜Det nye styret er klart!💜\n\nBli kjent med den nye gjengen med å høre deres beste tips om favorittbyen, og ei litta fun fact🔥\n\nGled dere til året som kommer; Det blir bra!🤩',
+      likes: 0,
+      postedLabel: 'for 304 dager siden',
+    },
+    {
+      id: 'ig4',
+      img: 'case/instagram/oljebyen.jpg',
+      caption: 'Tur til Oljebyen🚌🚌🚌🚌',
+      author: 'oskarorvik',
+      likes: 919,
+      postedLabel: 'for 101 uker siden',
+    },
   ],
 
   // LinkedIn-feed (falsk plattform). Bytt ut med ekte innhold; legg bilder i
@@ -1480,48 +1589,187 @@ export const CASE: CaseManifest = {
 
   // Angelas egne filer (låst mobil). Ren eksempeldata — bytt ut med ekte
   // innhold. Tekst kan skrives inline; bilder legges i public/case/angela/.
+  // Filene på Angelas mobil. Bevisst ufarlige — de gir farge og småting å lese,
+  // men ingen av dem endrer tidslinjen eller peker på noen. Flere av dem plukker
+  // opp tråder fra Slack (stolene, programversjonene, kvitteringene, CIV VII).
   angelaFiles: [
     {
-      id: 'a-dagbok',
-      title: 'Dagbok',
+      id: 'a-huskeliste',
+      title: 'Huskeliste GF70',
       kind: 'markdown',
       inline:
-        '# Kjære dagbok 🌸\n\n' +
-        '**Onsdag.** I dag var en av de rare dagene. Per ringte igjen — jeg orker nesten ikke ' +
-        'svare lenger. Han sier han bare vil «snakke», men jeg vet ikke om jeg tror på det.\n\n' +
-        'Kari kom bortom med en kake. Snilt av henne, men jeg merker at det fortsatt er litt ' +
-        'stivt mellom oss etter hele gjerde-saken. 🙄\n\n' +
-        'Thomas har ikke ringt på flere uker. Håper alt er bra med ham på hytta.\n\n' +
-        '_Gleder meg til helgen med jentene._ 🍷',
+        '### Huskeliste GF70 📝\n\n' +
+        '- [x] Bordplassering — versjon 4. IKKE versjon 3.\n' +
+        '- [x] Navneskilt. Brage får nytt, hans sa «Bryne Johsen» to år på rad\n' +
+        '- [x] Duker. Litt for korte. Ingen kommer til å merke det\n' +
+        '- [ ] Servietter: mintgrønne. Noen kommer helt sikkert til å merke det\n' +
+        '- [ ] Høre om mikrofon 2 har sluttet å knase\n' +
+        '- [ ] Batteri til klokka jeg gav toastmasteren\n' +
+        '- [ ] Fjorten vanlige stoler. Fjorten. Det er alt de har.\n' +
+        '- [ ] Spørre om kaffemaskinen i 2. etasje er ødelagt eller bare tom hele tiden\n' +
+        '- [ ] Puste\n',
     },
     {
-      id: 'a-brev',
-      title: 'Ulest brev',
+      id: 'a-romfordeling',
+      title: 'Romfordeling GF70',
       kind: 'markdown',
       inline:
-        '## Til Angela\n\n' +
-        'Du kan ikke bare late som ingenting har skjedd. Vi må snakke sammen — før det er for ' +
-        'sent. Du vet hva dette handler om.\n\n' +
-        'Ikke fortell det til noen.\n\n' +
-        '— *(ingen avsender)*',
+        '```\n' +
+        'ANSA — GENERALFORSAMLING 70\n' +
+        'Romfordeling, Hotell Bjørnstad\n' +
+        'Oppdatert 30.07.2026 — v3\n' +
+        'Kontakt ved endringer:\n' +
+        'Angela Liu (prosjektansvarlig)\n' +
+        '```\n\n' +
+        '| Rom | Navn | Merknad |\n' +
+        '| --- | --- | --- |\n' +
+        '| 104 | Brage Flønæs Johnsen | |\n' +
+        '| 107 | _ANSA Benelux (2)_ | dobbeltrom |\n' +
+        '| 112 | Wiktor Jankowski | |\n' +
+        '| 118 | Henriette Moe Schjelderup | |\n' +
+        '| 120 | _ANSA Benelux (2)_ | dobbeltrom |\n' +
+        '| 203 | Ane | |\n' +
+        '| 206 | _ANSA Benelux (2)_ | dobbeltrom |\n' +
+        '| 209 | Hedvig | |\n' +
+        '| 213 | Andreas Holmsen | |\n' +
+        '| 215 | _ANSA Benelux (2)_ | dobbeltrom |\n' +
+        '| 221 | Anna | |\n' +
+        '| 224 | Pia | ~~208~~ flyttet, se merknad |\n' +
+        '| 305 | Erik | |\n' +
+        '| 308 | _ANSA Benelux (2)_ | dobbeltrom |\n' +
+        '| 311 | Runill | nær beredskapsrom |\n' +
+        '| 316 | Oskar Orvik | |\n' +
+        '| 318 | Angela Liu | |\n' +
+        '| 319 | _delegat, ANSA Tyskland_ | |\n' +
+        '| 322 | Maud Alfstad Bjørum | |\n' +
+        '| 327 | Sverre | ankom sent, tildelt ved innsjekk |\n' +
+        '| 404 | _delegat, ANSA Spania_ | |\n' +
+        '| 410 | _ANSA Benelux (2)_ | dobbeltrom |\n\n' +
+        '**MERKNADER**\n\n' +
+        '- 224: flyttet fra 208 grunnet vannlekkasje 30.07.\n' +
+        '- Sone A = 1. etasje, sone B = 2. etasje, sone C = 3.–4. etasje.\n' +
+        '- Nøkkelkort deaktiveres automatisk lør 01.08 kl. 12:00.\n\n' +
+        '_Hvis noen spør om å bytte rom én gang til, si nei. Jeg har sagt ja fire ganger._',
     },
     {
-      id: 'a-handleliste',
-      title: 'Handleliste',
+      id: 'a-tale',
+      title: 'Åpningstale (utkast 4)',
       kind: 'markdown',
       inline:
-        '### Huskeliste 📝\n\n' +
-        '- [ ] Rødvin (til fredag)\n' +
-        '- [ ] Blomster til stua\n' +
-        '- [x] Ringe banken\n' +
-        '- [ ] Bytte lås?? 🔐\n' +
-        '- [ ] Snakke med Kari om gjerdet\n',
+        '## Åpningstale — utkast 4\n\n' +
+        '«Kjære alle sammen, og velkommen til ANSAs 70. generalforsamling.»\n\n' +
+        '~~«Det er en stor ære å stå her.»~~ for stivt\n\n' +
+        '~~«Oi, mange folk!»~~ for lite stivt\n\n' +
+        '«Sytti år. Sytti år med studenter som reiser ut, roter det litt til, finner ut av det, ' +
+        'og kommer hjem med noe de ikke hadde da de dro.»\n\n' +
+        'Her et sted: si at vi er rundt 100, og at halvparten ikke kjenner hverandre ennå. Det ' +
+        'gjør de innen lørdag. Det gjør de alltid.\n\n' +
+        '~~Vits om kylling og ris?~~ **JA.** Behold vitsen om kylling og ris.\n\n' +
+        'Avslutning: «Vi har tre dager. Bruk dem godt, vær greie med hverandre, og les ' +
+        'sakspapirene.»\n\n' +
+        '_Ingen kommer til å lese sakspapirene._\n\n' +
+        '**Skal vare 4 min. Sist jeg øvde brukte jeg 11.**',
     },
     {
-      id: 'a-foto',
-      title: 'Feriebilde',
-      kind: 'image',
-      src: 'case/angela/foto1.jpg',
+      id: 'a-dumplings',
+      title: 'Mormors dumplings',
+      kind: 'markdown',
+      inline:
+        '### Mormors dumplings 🥟\n\n' +
+        '**Deig**\n\n' +
+        '- 300 g hvetemel\n' +
+        '- 1,5 dl lunkent vann, litt om litt\n' +
+        '- 1 klype salt\n\n' +
+        '**Fyll**\n\n' +
+        '- 400 g kvernet svinekjøtt\n' +
+        '- 1/4 kinakål, finhakket og saltet i 10 min — klem ut vannet. IKKE hopp over dette.\n' +
+        '- 3 vårløk\n' +
+        '- 1 ss revet ingefær\n' +
+        '- 2 fedd hvitløk\n' +
+        '- 2 ss soyasaus, 1 ts sesamolje, 1 ts sukker, hvit pepper\n\n' +
+        'Elt deigen glatt, hvil 30 min under et fuktig kjøkkenhåndkle. Rull ut tynne runde ' +
+        'plater. Skje fyll i midten, fukt kanten, brett og klyp.\n\n' +
+        'Kok 6–8 min til de flyter, eller stek dem i panna med litt vann under lokk hvis du vil ' +
+        'ha sprø bunn.\n\n' +
+        '_Mormor lager fjorten fine folder på hver. Mine ser ut som små poser. Hun sier det ' +
+        'ikke betyr noe så lenge de ikke åpner seg i vannet._\n\n' +
+        '_Mine åpner seg i vannet._',
+    },
+    {
+      id: 'a-civ',
+      title: 'CIV VII – resultatliste',
+      kind: 'markdown',
+      inline:
+        '### CIV VII — den evige turneringen 🏆\n\n' +
+        'Jeg fører denne fordi ingen andre gjør det, og fordi Andreas påstår ting.\n\n' +
+        '- **Wiktor — 9 seire.** Sier ingenting. Vinner bare.\n' +
+        '- **Oskar — 4 seire.** Skjønner fortsatt ikke hvorfor man bytter civ mellom tidsaldre. ' +
+        'Har spilt 200 timer.\n' +
+        '- **Aleksander — 3 seire.** Satser alltid på kultur. Taper alltid på kultur.\n' +
+        '- **Brage — 2 seire.** Spiller mest for å være sosial. Respekt for det.\n' +
+        '- **Andreas — 1 seier.** Hevder seks.\n\n' +
+        'Lengste parti: sju timer. Andreas «hadde et tog».',
+    },
+    {
+      id: 'a-nynorsk',
+      title: 'Nynorskord',
+      kind: 'markdown',
+      inline:
+        '### Nynorskord 🇳🇴\n\n' +
+        'Erik retter meg hver eneste gang. Nå lærer jeg dem, og så bruker jeg dem tilbake på ham.\n\n' +
+        '- **kvifor** — hvorfor\n' +
+        '- **korleis** — hvordan\n' +
+        '- **hugs** — husk\n' +
+        '- **røynsle** — erfaring\n' +
+        '- **framlegg** — forslag\n' +
+        '- **føresegn** — bestemmelse\n' +
+        '- **jamvel** — til og med\n\n' +
+        'Mål: én hel setning på nynorsk før helgen er over. Uten å google underveis.',
+    },
+    {
+      id: 'a-kvitteringer',
+      title: 'Kvitteringer (todo)',
+      kind: 'markdown',
+      inline:
+        '### Kvitteringer jeg ikke har levert\n\n' +
+        'Lorenz spør. Lorenz har spurt tre ganger. Lorenz kommer til å spørre igjen.\n\n' +
+        '- Tog Toulouse–Paris: ligger i en konvolutt\n' +
+        '- Fly Paris–Oslo: ligger i en annen konvolutt\n' +
+        '- Taxi: finnes ikke lenger. Den er borte. Jeg har lett overalt.\n' +
+        '- Lunsj på flyplassen: 189 kr for en focaccia. Jeg vil ikke snakke om det.\n' +
+        '- Bagasje: ???\n\n' +
+        'Det holder med bilde av kvitteringen. Det har jeg visst i tre år, og glemmer hvert år.',
+    },
+    {
+      id: 'a-neste-gf',
+      title: 'Til neste GF',
+      kind: 'markdown',
+      inline:
+        '### Til neste GF — les dette, Angela\n\n' +
+        'Skrevet nå mens jeg fortsatt husker hvorfor.\n\n' +
+        '1. Bestill flere vanlige stoler. Fjorten er ikke nok. Det var ikke nok i fjor heller.\n' +
+        '2. Lag ÉN versjon av programmet. Kall den «PROGRAM». Ikke ' +
+        '«programmet_ferdig_FERDIG».\n' +
+        '3. Wifi-passordet må kunne skrives inn av et menneske på første forsøk.\n' +
+        '4. Sett av tid til å spise. Faktisk tid. I kalenderen. Som et møte.\n' +
+        '5. Kaffemaskinen i 2. etasje er ikke vennen vår.\n' +
+        '6. Si ja til pub quiz. Folk spør hvert år, svaret er alltid nei, og de fortsetter å ' +
+        'spørre. Bare si ja neste gang.\n',
+    },
+    {
+      id: 'a-melding-sverre',
+      title: 'Sverre melding',
+      kind: 'markdown',
+      inline:
+        '### Sverre melding\n\n' +
+        'kjære Sverre, jeg har sett en del i økonomisystemene og sett at dine pubquizzer er veldig \n\n' +
+        'Mvh, Angela',
+    },
+    {
+      id: 'a-notat-maia',
+      title: 'Maia notat',
+      kind: 'markdown',
+      inline: 'HUSK: Maia snitchet i fysikktimen til Svetlana!!!',
     },
   ],
 
@@ -1554,7 +1802,11 @@ export const CASE: CaseManifest = {
               'notat fra Gud – jeg var dønn sikker på at leiing ikke var lovlig men etter ' +
               'litt research så fant jeg det i ordboka. The more you know!',
           },
-          { from: 'me', text: 'Skjønner, takk! Er du klar for GF da?', time: '29. juli 11:50' },
+          {
+            from: 'me',
+            text: 'Skjønner, takk! Er du klar for GF da?',
+            time: '29. juli 11:50',
+          },
           {
             from: 'them',
             text: 'Ja, eg gler meg som ei ku på vårslepp! 🐄',
@@ -1568,8 +1820,17 @@ export const CASE: CaseManifest = {
         avatar: '👱‍♀️',
         subtitle: 'sist sett i går 23:12',
         messages: [
-          { from: 'them', text: 'Heeei! Du ville vel ikke hatt lyst til å bli med til Køben i sommer? 🍷', time: '14. mai 18:22' },
-          { from: 'them', text: 'Du la igjen laderen din på kjøkkenet btw', time: '19. mai 10:05', unread: true },
+          {
+            from: 'them',
+            text: 'Heeei! Du ville vel ikke hatt lyst til å bli med til Køben i sommer? 🍷',
+            time: '14. mai 18:22',
+          },
+          {
+            from: 'them',
+            text: 'Du la igjen laderen din på kjøkkenet btw',
+            time: '19. mai 10:05',
+            unread: true,
+          },
         ],
       },
 
@@ -1580,8 +1841,18 @@ export const CASE: CaseManifest = {
         avatar: '👩',
         subtitle: 'sist sett i dag 08:15',
         messages: [
-          { from: 'them', text: '你好！你能帮我做作业吗？', time: '2. juni 19:04', unread: true },
-          { from: 'them', text: 'Angela???', time: '5. juni 12:31', unread: true },
+          {
+            from: 'them',
+            text: '你好！你能帮我做作业吗？',
+            time: '2. juni 19:04',
+            unread: true,
+          },
+          {
+            from: 'them',
+            text: 'Angela???',
+            time: '5. juni 12:31',
+            unread: true,
+          },
         ],
       },
       {
@@ -1590,8 +1861,20 @@ export const CASE: CaseManifest = {
         avatar: '🏠',
         subtitle: 'Maia, Sara, deg',
         messages: [
-          { from: 'them', author: 'Sara', text: 'QUI a fini le lait ??', time: '26. mars 08:31', unread: true },
-          { from: 'them', author: 'Maia 🏠', text: '??', time: '26. mars 09:12', unread: true },
+          {
+            from: 'them',
+            author: 'Sara',
+            text: 'QUI a fini le lait ??',
+            time: '26. mars 08:31',
+            unread: true,
+          },
+          {
+            from: 'them',
+            author: 'Maia 🏠',
+            text: '??',
+            time: '26. mars 09:12',
+            unread: true,
+          },
         ],
       },
       {
@@ -1600,7 +1883,12 @@ export const CASE: CaseManifest = {
         avatar: '⚽',
         subtitle: 'vue le 26 juillet',
         messages: [
-          { from: 'them', text: 'yo, tu viens au reunion de PIR aujourd\'hui ? Perso j\'ai rien fait', time: '10. april 12:50', unread: true },
+          {
+            from: 'them',
+            text: "yo, tu viens au reunion de PIR aujourd'hui ? Perso j'ai rien fait",
+            time: '10. april 12:50',
+            unread: true,
+          },
           { from: 'them', text: '??', time: '10. april 14:19', unread: true },
         ],
       },
@@ -1610,8 +1898,16 @@ export const CASE: CaseManifest = {
         avatar: '🤓',
         subtitle: 'vue hier à 18:33',
         messages: [
-          { from: 'them', text: 'Salut Angela, n\'oublie pas d\'installer l\'appli Hevy', time: '21. november 2025 12:20' },
-                    { from: 'me', text: 'Oui, comme ca je peux voir le 300kg leg press d\'Andreas!', time: '21. november 2025 19:20' },
+          {
+            from: 'them',
+            text: "Salut Angela, n'oublie pas d'installer l'appli Hevy",
+            time: '21. november 2025 12:20',
+          },
+          {
+            from: 'me',
+            text: "Oui, comme ca je peux voir le 300kg leg press d'Andreas!",
+            time: '21. november 2025 19:20',
+          },
         ],
       },
       {
@@ -1620,7 +1916,12 @@ export const CASE: CaseManifest = {
         avatar: '🏃‍♀️',
         subtitle: 'vue aujourd’hui à 07:02',
         messages: [
-          { from: 'them', text: 'Coucou! T\'étais pas en cours aujourd\'hui, est-ce que tout va bien ?', time: '19. mars 20:12', unread: true },
+          {
+            from: 'them',
+            text: "Coucou! T'étais pas en cours aujourd'hui, est-ce que tout va bien ?",
+            time: '19. mars 20:12',
+            unread: true,
+          },
         ],
       },
       {
@@ -1629,7 +1930,12 @@ export const CASE: CaseManifest = {
         avatar: '🧑‍🎨',
         subtitle: 'vue le 20 juillet',
         messages: [
-          { from: 'them', text: 'Si j\'emprunte ton passeport, je pourrai recevoir des tutorats gratuitement??', time: '17. april 16:30', unread: true },
+          {
+            from: 'them',
+            text: "Si j'emprunte ton passeport, je pourrai recevoir des tutorats gratuitement??",
+            time: '17. april 16:30',
+            unread: true,
+          },
         ],
       },
       {
@@ -1638,9 +1944,24 @@ export const CASE: CaseManifest = {
         avatar: '👩‍🦰',
         subtitle: 'vue aujourd’hui à 09:40',
         messages: [
-          { from: 'them', text: 'Coucou ! On se fait un café cette semaine ? ☕', time: '3. mai 11:15', unread: true },
-          { from: 'them', text: 'Angela ?? T’es vivante ?', time: '9. mai 14:02', unread: true },
-          { from: 'them', text: 'Bon. Je prends ça pour un non 😤', time: '16. mai 19:55', unread: true },
+          {
+            from: 'them',
+            text: 'Coucou ! On se fait un café cette semaine ? ☕',
+            time: '3. mai 11:15',
+            unread: true,
+          },
+          {
+            from: 'them',
+            text: 'Angela ?? T’es vivante ?',
+            time: '9. mai 14:02',
+            unread: true,
+          },
+          {
+            from: 'them',
+            text: 'Bon. Je prends ça pour un non 😤',
+            time: '16. mai 19:55',
+            unread: true,
+          },
         ],
       },
       {
@@ -1649,7 +1970,12 @@ export const CASE: CaseManifest = {
         avatar: '👧',
         subtitle: 'vue hier à 22:10',
         messages: [
-          { from: 'them', text: 'Soirée chez moi vendredi, tu viens ? 🎉', time: '10. juli 15:44', unread: true },
+          {
+            from: 'them',
+            text: 'Soirée chez moi vendredi, tu viens ? 🎉',
+            time: '10. juli 15:44',
+            unread: true,
+          },
         ],
       },
       {
@@ -1658,31 +1984,115 @@ export const CASE: CaseManifest = {
         suspectId: 'andreas',
         subtitle: 'sist sett i dag 07:58',
         messages: [
-          { from: 'them', text: 'Jeg fant en komando på git som fikser alt!! Magisk', time: '13. mars 2025 13:37' },
-          { from: 'me', text: 'Ahah hvilken?', time: '13. mars 2025 18:12'},
-          { from: 'them', text: '\"git push origin main --force\"! Men nå fungerer ingenting lenger. Gjorde du noe?', time: '13. mars 2025 18:13' },
-          { from: 'me', text: 'Mais bah tu es idiot, je sais même pas pourquoi t\'es en IR💀', time: '13. mars 2025 19:02'},
-          { from: 'them', text: 'Moi un idiot?? C\'est toi qui a mis des choses dans ma branche!', time: '24. juli 17:26' },
-          { from: 'me', text: 'Vi fikk en A lol, chillern da', time: '22. mars 2025 17:26' },
+          {
+            from: 'them',
+            text: 'Jeg fant en komando på git som fikser alt!! Magisk',
+            time: '13. mars 2025 13:37',
+          },
+          { from: 'me', text: 'Ahah hvilken?', time: '13. mars 2025 18:12' },
+          {
+            from: 'them',
+            text: '\"git push origin main --force\"! Men nå fungerer ingenting lenger. Gjorde du noe?',
+            time: '13. mars 2025 18:13',
+          },
+          {
+            from: 'me',
+            text: "Mais bah tu es idiot, je sais même pas pourquoi t'es en IR💀",
+            time: '13. mars 2025 19:02',
+          },
+          {
+            from: 'them',
+            text: "Moi un idiot?? C'est toi qui a mis des choses dans ma branche!",
+            time: '24. juli 17:26',
+          },
+          {
+            from: 'me',
+            text: 'Vi fikk en A lol, chillern da',
+            time: '22. mars 2025 17:26',
+          },
           { from: 'them', text: 'LETSGOO', time: '22. mars 2025 18:01' },
-          { from: 'them', text: 'Gratulerer med dagen!!', time: '25. mars 2025 18:01' },
+          {
+            from: 'them',
+            text: 'Gratulerer med dagen!!',
+            time: '25. mars 2025 18:01',
+          },
           // Vedtektsforslag-spørsmålet er flyttet til Slack (sl-dm-andreas) — det er
           // en ANSA-sak, og hører hjemme i arbeidskanalen, ikke i privatchatten.
-          { from: 'me', text: 'Håper du koser deg så langt i Noreg', time: '12. juni 2026 14:56' },
-          { from: 'them', text: 'Jeg er klar til å bestille! Fikse i morgen?😆', time: '13. juni 2026 00:37' },
-          { from: 'them', text: 'Blir kjempebra. Får fikse litt god stemning blant oss franskmenn🤗 vi blir vel sånn 20 stk', time: '13. juni 2026 00:37' },
-          { from: 'them', text: 'Hvor mye utestenging av ikke-franskmenn kan jeg gjøre?', time: '13. juni 2026 00:38' },
-          { from: 'them', text: 'Masse! Men savner jo deg da🫣 blir godt å se dere alle igjen', time: '13. juni 2026 00:38' },
-          { from: 'me', text: 'Aw det blir fint å se deg igjen!! Gleder meg til å komme på besøk i Adamstua😎', time: '14. juni 2026 22:10' },
-          { from: 'me', text: 'Jaa herregud, vi er helt sjukt mange!!!', time: '14. juni 2026 22:10' },
-          { from: 'me', text: 'Du får lese hva som står om utestening av ikke-franskmenn i vedtektene:))', time: '14. juni 2026 22:11' },
-          { from: 'me', text: 'Jeg er veldig klar for å bestille flybilletter i morgen🥰', time: '14. juni 2026 22:11' },
-          { from: 'them', text: 'Ingenting sist jeg sjekket😇', time: '15. juni 2026 00:44' },
-          { from: 'them', text: 'Supert! Jeg kan ringe deg en gang på ettermiddagen?', time: '15. juni 2026 00:45' },
-          { from: 'them', text: 'Husker du forresten om vi skulle leie Airbnb eller om vi kunne låne leilighet osv.?', time: '15. juni 2026 00:45' },
-          { from: 'me', text: 'Maia og Wiktor skulle se på Airbnb!', time: '15. juni 2026 14:55' },
-          { from: 'me', text: 'Ja, bare å gjøre det!', time: '15. juni 2026 14:55' },
-          { from: 'them', text: 'Supert! Spiser om litt også ringer jeg deg etter det🤗', time: '15. juni 2026 17:18' },
+          {
+            from: 'me',
+            text: 'Håper du koser deg så langt i Noreg',
+            time: '12. juni 2026 14:56',
+          },
+          {
+            from: 'them',
+            text: 'Jeg er klar til å bestille! Fikse i morgen?😆',
+            time: '13. juni 2026 00:37',
+          },
+          {
+            from: 'them',
+            text: 'Blir kjempebra. Får fikse litt god stemning blant oss franskmenn🤗 vi blir vel sånn 20 stk',
+            time: '13. juni 2026 00:37',
+          },
+          {
+            from: 'them',
+            text: 'Hvor mye utestenging av ikke-franskmenn kan jeg gjøre?',
+            time: '13. juni 2026 00:38',
+          },
+          {
+            from: 'them',
+            text: 'Masse! Men savner jo deg da🫣 blir godt å se dere alle igjen',
+            time: '13. juni 2026 00:38',
+          },
+          {
+            from: 'me',
+            text: 'Aw det blir fint å se deg igjen!! Gleder meg til å komme på besøk i Adamstua😎',
+            time: '14. juni 2026 22:10',
+          },
+          {
+            from: 'me',
+            text: 'Jaa herregud, vi er helt sjukt mange!!!',
+            time: '14. juni 2026 22:10',
+          },
+          {
+            from: 'me',
+            text: 'Du får lese hva som står om utestening av ikke-franskmenn i vedtektene:))',
+            time: '14. juni 2026 22:11',
+          },
+          {
+            from: 'me',
+            text: 'Jeg er veldig klar for å bestille flybilletter i morgen🥰',
+            time: '14. juni 2026 22:11',
+          },
+          {
+            from: 'them',
+            text: 'Ingenting sist jeg sjekket😇',
+            time: '15. juni 2026 00:44',
+          },
+          {
+            from: 'them',
+            text: 'Supert! Jeg kan ringe deg en gang på ettermiddagen?',
+            time: '15. juni 2026 00:45',
+          },
+          {
+            from: 'them',
+            text: 'Husker du forresten om vi skulle leie Airbnb eller om vi kunne låne leilighet osv.?',
+            time: '15. juni 2026 00:45',
+          },
+          {
+            from: 'me',
+            text: 'Maia og Wiktor skulle se på Airbnb!',
+            time: '15. juni 2026 14:55',
+          },
+          {
+            from: 'me',
+            text: 'Ja, bare å gjøre det!',
+            time: '15. juni 2026 14:55',
+          },
+          {
+            from: 'them',
+            text: 'Supert! Spiser om litt også ringer jeg deg etter det🤗',
+            time: '15. juni 2026 17:18',
+          },
           { from: 'me', text: 'Nice!', time: '15. juni 2026 17:38' },
         ],
       },
@@ -1692,34 +2102,160 @@ export const CASE: CaseManifest = {
         avatar: '👥',
         subtitle: 'Maia, Brage, Andreas, Aleksander, Wiktor, Svea, Oskar, deg',
         messages: [
-          { from: 'them', author: 'Maia Vejlgaard Evensen', text: 'Nach hos oss Angela?', time: '17.10.2025 23:26' },
+          {
+            from: 'them',
+            author: 'Maia Vejlgaard Evensen',
+            text: 'Nach hos oss Angela?',
+            time: '17.10.2025 23:26',
+          },
           { from: 'me', text: 'Vi kommer!', time: '17.10.2025 23:29' },
-          { from: 'them', author: 'Brage Flønæs Johnsen', text: 'Besteforeldre på tur her', time: '17.10.2025 23:30' },
+          {
+            from: 'them',
+            author: 'Brage Flønæs Johnsen',
+            text: 'Besteforeldre på tur her',
+            time: '17.10.2025 23:30',
+          },
           { from: 'me', text: 'Sure😜❤️', time: '17.10.2025 23:32' },
-          { from: 'me', text: 'Er det rett på nach?', time: '17.10.2025 23:33' },
-          { from: 'them', author: 'Maia Vejlgaard Evensen', text: 'Tror vi tenkte oss litt ut først…', time: '17.10.2025 23:33' },
+          {
+            from: 'me',
+            text: 'Er det rett på nach?',
+            time: '17.10.2025 23:33',
+          },
+          {
+            from: 'them',
+            author: 'Maia Vejlgaard Evensen',
+            text: 'Tror vi tenkte oss litt ut først…',
+            time: '17.10.2025 23:33',
+          },
           { from: 'me', text: 'Where to?', time: '17.10.2025 23:54' },
-          { from: 'them', author: 'Andreas Holmsen', text: 'Café oz!', time: '17.10.2025 23:55' },
-          { from: 'them', author: 'Brage Flønæs Johnsen', text: 'Branle-nach hos Angela!', time: '17.10.2025 23:55' },
+          {
+            from: 'them',
+            author: 'Andreas Holmsen',
+            text: 'Café oz!',
+            time: '17.10.2025 23:55',
+          },
+          {
+            from: 'them',
+            author: 'Brage Flønæs Johnsen',
+            text: 'Branle-nach hos Angela!',
+            time: '17.10.2025 23:55',
+          },
           { from: 'me', text: 'Ait rett over gata', time: '17.10.2025 23:56' },
-          { from: 'me', text: 'Vi sitt å jobbe rævva av oss for én ECTS.', time: '17.12.2025 19:27' },
-          { from: 'them', author: 'Aleksander Victor Taban', text: 'prosjektet e 20% av ein ECTS 🤡🤡🤡', time: '17.12.2025 19:28' },
-          { from: 'them', author: 'Wiktor Jankowski', text: 'Hahahha hva søøøren', time: '17.12.2025 19:40' },
-          { from: 'me', text: 'Lykke til gutter!!🔥', time: '17.12.2025 20:10' },
-          { from: 'me', text: 'Jeg turer østover nå🛫🇨🇳. Fikk dessverre ikke sagt hade til alle😔Ønsker dere noen fine siste dager i Toulouse beste gjengen❤️', time: '17.12.2025 20:15' },
-          { from: 'them', author: 'Aleksander Victor Taban', text: 'God tur Angela og god jul! ❤️', time: '17.12.2025 20:49' },
-          { from: 'them', author: 'Svea Hedda Marie König', text: 'kom godt fram Angela! kos deg masse💕', time: '17.12.2025 20:52' },
-          { from: 'them', author: 'Maia Vejlgaard Evensen', text: 'Lykke til gutter, sender varme tanker!', time: '17.12.2025 21:23' },
-          { from: 'them', author: 'Aleksander Victor Taban', text: 'Baggislunsj på maille idag? 😁', time: '15.4.2026 10:47', unread: true},
-          { from: 'them', author: 'Andreas Holmsen', text: 'Jeg er down', time: '15.4.2026 11:32', unread: true},
-          { from: 'them', author: 'Svea Hedda Marie König', text: 'maia og jeg går til butikken nå, skal vi ta med til dere andre?', time: '15.4.2026 12:02', unread: true },
-          { from: 'them', author: 'Andreas Holmsen', text: 'Æ tar metroen fra St. Mich nå. Stopper på Rang!', time: '15.4.2026 12:04', unread: true },
-          { from: 'them', author: 'Svea Hedda Marie König', text: 'vi er på carrefour:)', time: '15.4.2026 12:09', unread: true },
-          { from: 'them', author: 'Svea Hedda Marie König', text: 'vi har fiksa masse mat', time: '15.4.2026 12:21', unread: true },
-          { from: 'them', author: 'Oskar Orvik', text: 'Sitter på maille', time: '15.4.2026 12:23', unread: true },
-          { from: 'them', author: 'Aleksander Victor Taban', text: 'brage og meg går mod butikken nå', time: '15.4.2026 12:25', unread: true },
-          { from: 'them', author: 'Andreas Holmsen', text: 'Vi har alt fikset masse mat', time: '15.4.2026 12:25', unread: true },
-          { from: 'them', author: 'Wiktor Jankowski', text: 'Er maille pk?', time: '15.4.2026 12:36', unread: true },
+          {
+            from: 'me',
+            text: 'Vi sitt å jobbe rævva av oss for én ECTS.',
+            time: '17.12.2025 19:27',
+          },
+          {
+            from: 'them',
+            author: 'Aleksander Victor Taban',
+            text: 'prosjektet e 20% av ein ECTS 🤡🤡🤡',
+            time: '17.12.2025 19:28',
+          },
+          {
+            from: 'them',
+            author: 'Wiktor Jankowski',
+            text: 'Hahahha hva søøøren',
+            time: '17.12.2025 19:40',
+          },
+          {
+            from: 'me',
+            text: 'Lykke til gutter!!🔥',
+            time: '17.12.2025 20:10',
+          },
+          {
+            from: 'me',
+            text: 'Jeg turer østover nå🛫🇨🇳. Fikk dessverre ikke sagt hade til alle😔Ønsker dere noen fine siste dager i Toulouse beste gjengen❤️',
+            time: '17.12.2025 20:15',
+          },
+          {
+            from: 'them',
+            author: 'Aleksander Victor Taban',
+            text: 'God tur Angela og god jul! ❤️',
+            time: '17.12.2025 20:49',
+          },
+          {
+            from: 'them',
+            author: 'Svea Hedda Marie König',
+            text: 'kom godt fram Angela! kos deg masse💕',
+            time: '17.12.2025 20:52',
+          },
+          {
+            from: 'them',
+            author: 'Maia Vejlgaard Evensen',
+            text: 'Lykke til gutter, sender varme tanker!',
+            time: '17.12.2025 21:23',
+          },
+          {
+            from: 'them',
+            author: 'Aleksander Victor Taban',
+            text: 'Baggislunsj på maille idag? 😁',
+            time: '15.4.2026 10:47',
+            unread: true,
+          },
+          {
+            from: 'them',
+            author: 'Andreas Holmsen',
+            text: 'Jeg er down',
+            time: '15.4.2026 11:32',
+            unread: true,
+          },
+          {
+            from: 'them',
+            author: 'Svea Hedda Marie König',
+            text: 'maia og jeg går til butikken nå, skal vi ta med til dere andre?',
+            time: '15.4.2026 12:02',
+            unread: true,
+          },
+          {
+            from: 'them',
+            author: 'Andreas Holmsen',
+            text: 'Æ tar metroen fra St. Mich nå. Stopper på Rang!',
+            time: '15.4.2026 12:04',
+            unread: true,
+          },
+          {
+            from: 'them',
+            author: 'Svea Hedda Marie König',
+            text: 'vi er på carrefour:)',
+            time: '15.4.2026 12:09',
+            unread: true,
+          },
+          {
+            from: 'them',
+            author: 'Svea Hedda Marie König',
+            text: 'vi har fiksa masse mat',
+            time: '15.4.2026 12:21',
+            unread: true,
+          },
+          {
+            from: 'them',
+            author: 'Oskar Orvik',
+            text: 'Sitter på maille',
+            time: '15.4.2026 12:23',
+            unread: true,
+          },
+          {
+            from: 'them',
+            author: 'Aleksander Victor Taban',
+            text: 'brage og meg går mod butikken nå',
+            time: '15.4.2026 12:25',
+            unread: true,
+          },
+          {
+            from: 'them',
+            author: 'Andreas Holmsen',
+            text: 'Vi har alt fikset masse mat',
+            time: '15.4.2026 12:25',
+            unread: true,
+          },
+          {
+            from: 'them',
+            author: 'Wiktor Jankowski',
+            text: 'Er maille pk?',
+            time: '15.4.2026 12:36',
+            unread: true,
+          },
         ],
       },
     ],
@@ -1917,8 +2453,7 @@ export const CASE: CaseManifest = {
         to: 'andreash@andreash.no',
         subject: '(uten emne)',
         date: 'lør. 12:13',
-        body:
-          'Var det sånn at Broiler var i slekt med deg og du kunne fått han til å opptre på GF-banketten? Jeg tenkte at ',
+        body: 'Var det sånn at Broiler var i slekt med deg og du kunne fått han til å opptre på GF-banketten? Jeg tenkte at ',
       },
       {
         id: 'ep-spam',
@@ -1937,7 +2472,11 @@ export const CASE: CaseManifest = {
           name: 'festkomiteen',
           topic: 'Bankettmiddag lørdag 🥂',
           messages: [
-            { author: 'Angela', text: 'Bordplasseringen er klar! Ligger i driven.', time: 'fre 14:05' },
+            {
+              author: 'Angela',
+              text: 'Bordplasseringen er klar! Ligger i driven.',
+              time: 'fre 14:05',
+            },
             {
               author: 'Ingeborg Frogner Dahl-Hilstad',
               text: 'Skal hovedstyret sitte samlet, eller spredt utover bordene?',
@@ -1954,7 +2493,11 @@ export const CASE: CaseManifest = {
               text: 'Jeg har kjøpt duker. De er litt for korte, men det ser helt fint ut på bilde.',
               time: 'fre 15:01',
             },
-            { author: 'Jofrid', text: 'Jeg tar med blomster 🌸', time: 'fre 15:14' },
+            {
+              author: 'Jofrid',
+              text: 'Jeg tar med blomster 🌸',
+              time: 'fre 15:14',
+            },
             {
               author: 'Brage Johnsen',
               text: 'Kan vi ha en toastmaster som faktisk holder tiden i år',
@@ -1972,7 +2515,11 @@ export const CASE: CaseManifest = {
                 'merke det.',
               time: 'tor 11:40',
             },
-            { author: 'Angela', text: 'Noen kommer helt sikkert til å merke det.', time: 'tor 11:44' },
+            {
+              author: 'Angela',
+              text: 'Noen kommer helt sikkert til å merke det.',
+              time: 'tor 11:44',
+            },
           ],
         },
         {
@@ -1995,7 +2542,11 @@ export const CASE: CaseManifest = {
               text: 'moi mais je ne joue plus jamais contre Wiktor',
               time: '12. juli 17:44',
             },
-            { author: 'Wiktor Jankowski', text: 'mdrrrr', time: '12. juli 17:45' },
+            {
+              author: 'Wiktor Jankowski',
+              text: 'mdrrrr',
+              time: '12. juli 17:45',
+            },
             {
               author: 'Oskar',
               suspectId: 'oskar',
@@ -2008,13 +2559,17 @@ export const CASE: CaseManifest = {
               text: 'je ne boude pas. je réfléchis à ma stratégie.',
               time: '12. juli 17:53',
             },
-            { author: 'Brage Johnsen', text: 'il boude', time: '12. juli 17:55' },
+            {
+              author: 'Brage Johnsen',
+              text: 'il boude',
+              time: '12. juli 17:55',
+            },
             {
               author: 'Oskar',
               suspectId: 'oskar',
               text:
                 "quelqu'un peut m'expliquer pourquoi on doit changer de civ entre les âges. " +
-                "200 heures de jeu et je ne comprends toujours pas",
+                '200 heures de jeu et je ne comprends toujours pas',
               time: '21. juli 20:12',
             },
             {
@@ -2022,8 +2577,17 @@ export const CASE: CaseManifest = {
               text: "c'est littéralement le principe du jeu Oskar",
               time: '21. juli 20:15',
             },
-            { author: 'Oskar', suspectId: 'oskar', text: "c'est stupide", time: '21. juli 20:16' },
-            { author: 'Brage Johnsen', text: 'il dit ça chaque partie', time: '21. juli 20:18' },
+            {
+              author: 'Oskar',
+              suspectId: 'oskar',
+              text: "c'est stupide",
+              time: '21. juli 20:16',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: 'il dit ça chaque partie',
+              time: '21. juli 20:18',
+            },
             {
               author: 'Aleksander Victor Taban',
               text: 'et il joue quand même chaque soir 🤡',
@@ -2054,7 +2618,11 @@ export const CASE: CaseManifest = {
               text: "j'avais moralement un train",
               time: '27. juli 08:43',
             },
-            { author: 'Aleksander Victor Taban', text: '🤡🤡🤡', time: '27. juli 08:44' },
+            {
+              author: 'Aleksander Victor Taban',
+              text: '🤡🤡🤡',
+              time: '27. juli 08:44',
+            },
             {
               author: 'Andreas',
               suspectId: 'andreas',
@@ -2066,13 +2634,22 @@ export const CASE: CaseManifest = {
               text: 'tu vas porter une tour de 12 kilos dans un avion ??',
               time: '27. juli 09:14',
             },
-            { author: 'Andreas', suspectId: 'andreas', text: 'oui', time: '27. juli 09:15' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'oui',
+              time: '27. juli 09:15',
+            },
             {
               author: 'Angela',
               text: 'Pas dans la salle plénière. Je suis sérieuse.',
               time: '27. juli 09:30',
             },
-            { author: 'Aleksander Victor Taban', text: 'on trouvera une chambre 🫡', time: '27. juli 09:32' },
+            {
+              author: 'Aleksander Victor Taban',
+              text: 'on trouvera une chambre 🫡',
+              time: '27. juli 09:32',
+            },
             {
               author: 'Aleksander Victor Taban',
               text: "quelqu'un sait à quelle heure on part demain ?? 🤡",
@@ -2083,8 +2660,16 @@ export const CASE: CaseManifest = {
               text: '8h30 devant la réception. Je répète : 8h30.',
               time: 'man 21:20',
             },
-            { author: 'Wiktor Jankowski', text: 'mdrrrr personne ne sera là à 8h30', time: 'man 21:22' },
-            { author: 'Maia Vejlgaard Evensen', text: 'Je sais.', time: 'man 21:23' },
+            {
+              author: 'Wiktor Jankowski',
+              text: 'mdrrrr personne ne sera là à 8h30',
+              time: 'man 21:22',
+            },
+            {
+              author: 'Maia Vejlgaard Evensen',
+              text: 'Je sais.',
+              time: 'man 21:23',
+            },
             {
               author: 'Svea Hedda Marie König',
               text: 'moi je viens mais je dors dans le bus 💕',
@@ -2097,11 +2682,15 @@ export const CASE: CaseManifest = {
             },
             {
               author: 'Aleksander Victor Taban',
-              text: "on a raté le train, on prend le suivant, tout va très bien 🤡🤡",
+              text: 'on a raté le train, on prend le suivant, tout va très bien 🤡🤡',
               time: 'tir 10:32',
             },
             { author: 'Angela', text: 'Vous êtes où là ??', time: 'tir 10:40' },
-            { author: 'Aleksander Victor Taban', text: 'dans un kebab', time: 'tir 10:41' },
+            {
+              author: 'Aleksander Victor Taban',
+              text: 'dans un kebab',
+              time: 'tir 10:41',
+            },
             { author: 'Angela', text: 'Bien sûr.', time: 'tir 10:42' },
             {
               author: 'Wiktor Jankowski',
@@ -2118,13 +2707,21 @@ export const CASE: CaseManifest = {
               text: "tu as oublié ton chargeur à paris l'année dernière aussi",
               time: 'ons 18:07',
             },
-            { author: 'Svea Hedda Marie König', text: "c'est ma tradition 💕", time: 'ons 18:09' },
+            {
+              author: 'Svea Hedda Marie König',
+              text: "c'est ma tradition 💕",
+              time: 'ons 18:09',
+            },
             {
               author: 'Brage Johnsen',
               text: "quelqu'un peut m'expliquer pourquoi il fait 11 degrés en juillet ici",
               time: 'tor 08:12',
             },
-            { author: 'Wiktor Jankowski', text: 'bienvenue en Norvège 🇳🇴', time: 'tor 08:15' },
+            {
+              author: 'Wiktor Jankowski',
+              text: 'bienvenue en Norvège 🇳🇴',
+              time: 'tor 08:15',
+            },
             {
               author: 'Aleksander Victor Taban',
               text: "les norvégiens appellent ça l'été ☀️",
@@ -2138,7 +2735,7 @@ export const CASE: CaseManifest = {
             },
             {
               author: 'Brage Johnsen',
-              text: "il y a UN barman pour 100 personnes. préparez-vous psychologiquement",
+              text: 'il y a UN barman pour 100 personnes. préparez-vous psychologiquement',
               time: 'fre 17:30',
             },
             {
@@ -2164,7 +2761,12 @@ export const CASE: CaseManifest = {
               text: "Toulouse a gagné. je n'ai plus rien à prouver ce soir",
               time: 'fre 21:36',
             },
-            { author: 'Andreas', suspectId: 'andreas', text: 'moi si', time: 'fre 21:37' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'moi si',
+              time: 'fre 21:37',
+            },
             {
               author: 'Wiktor Jankowski',
               text: 'le prêtre monte avec nous ??',
@@ -2439,7 +3041,11 @@ export const CASE: CaseManifest = {
           name: 'Erik',
           dm: true,
           messages: [
-            { author: 'Angela', text: 'Erik, husk møtet!', time: '4. juni 11:32' },
+            {
+              author: 'Angela',
+              text: 'Erik, husk møtet!',
+              time: '4. juni 11:32',
+            },
             {
               author: 'Erik',
               suspectId: 'erik',
@@ -2475,7 +3081,12 @@ export const CASE: CaseManifest = {
               text: 'Jada burde ikke være noe problem det. Jeg fikser i systemene våre',
               time: '18. juni 13:20',
             },
-            { author: 'Erik', suspectId: 'erik', text: 'Takk!', time: '18. juni 13:21' },
+            {
+              author: 'Erik',
+              suspectId: 'erik',
+              text: 'Takk!',
+              time: '18. juni 13:21',
+            },
             {
               author: 'Erik',
               suspectId: 'erik',
@@ -2504,8 +3115,7 @@ export const CASE: CaseManifest = {
             {
               author: 'Erik',
               suspectId: 'erik',
-              text:
-                'Nei no har eg sett det òg!',
+              text: 'Nei no har eg sett det òg!',
               time: '22. juni 10:13',
             },
             {
@@ -2533,22 +3143,39 @@ export const CASE: CaseManifest = {
               text: 'Er det wifi i plenumssalen?',
               time: '2. juni 10:14',
             },
-            { author: 'Angela', text: 'Ja. Passordet står i #generelt.', time: '2. juni 10:40' },
+            {
+              author: 'Angela',
+              text: 'Ja. Passordet står i #generelt.',
+              time: '2. juni 10:40',
+            },
             {
               author: 'Andreas',
               suspectId: 'andreas',
               text: 'Jeg finner ikke #generelt',
               time: '2. juni 10:41',
             },
-            { author: 'Angela', text: 'Det er en kanal. Du er med i den.', time: '2. juni 10:44' },
-            { author: 'Andreas', suspectId: 'andreas', text: 'Åh', time: '2. juni 10:45' },
+            {
+              author: 'Angela',
+              text: 'Det er en kanal. Du er med i den.',
+              time: '2. juni 10:44',
+            },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Åh',
+              time: '2. juni 10:45',
+            },
             {
               author: 'Andreas',
               suspectId: 'andreas',
               text: 'Er det dresskode på banketten??',
               time: '5. juni 21:02',
             },
-            { author: 'Angela', text: 'Pent. Ikke smoking, ikke joggebukse.', time: '5. juni 21:30' },
+            {
+              author: 'Angela',
+              text: 'Pent. Ikke smoking, ikke joggebukse.',
+              time: '5. juni 21:30',
+            },
             {
               author: 'Andreas',
               suspectId: 'andreas',
@@ -2556,7 +3183,12 @@ export const CASE: CaseManifest = {
               time: '5. juni 21:31',
             },
             { author: 'Angela', text: 'Nei.', time: '5. juni 21:33' },
-            { author: 'Andreas', suspectId: 'andreas', text: 'Noteres 🫡', time: '5. juni 21:34' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Noteres 🫡',
+              time: '5. juni 21:34',
+            },
             {
               author: 'Andreas',
               suspectId: 'andreas',
@@ -2577,7 +3209,11 @@ export const CASE: CaseManifest = {
               text: 'Blir det pub quiz på GF i år?',
               time: '20. juni 19:12',
             },
-            { author: 'Angela', text: 'Det står ikke i tidsplanen nei.', time: '20. juni 19:40' },
+            {
+              author: 'Angela',
+              text: 'Det står ikke i tidsplanen nei.',
+              time: '20. juni 19:40',
+            },
             {
               author: 'Andreas',
               suspectId: 'andreas',
@@ -2591,14 +3227,22 @@ export const CASE: CaseManifest = {
               text: 'Hvem er møteleder i år?',
               time: '9. juli 12:30',
             },
-            { author: 'Angela', text: 'Står i sakspapirene.', time: '9. juli 13:05' },
+            {
+              author: 'Angela',
+              text: 'Står i sakspapirene.',
+              time: '9. juli 13:05',
+            },
             {
               author: 'Andreas',
               suspectId: 'andreas',
               text: 'Har lest sakspapirene',
               time: '9. juli 13:06',
             },
-            { author: 'Angela', text: 'Tydeligvis ikke da.', time: '9. juli 13:07' },
+            {
+              author: 'Angela',
+              text: 'Tydeligvis ikke da.',
+              time: '9. juli 13:07',
+            },
             {
               author: 'Andreas',
               suspectId: 'andreas',
@@ -2613,20 +3257,24 @@ export const CASE: CaseManifest = {
               text: 'Tar du med Vanish? Sånn i tilfelle',
               time: '24. juli 23:40',
             },
-            { author: 'Angela', text: 'Hvorfor i alle dager', time: '25. juli 08:02' },
+            {
+              author: 'Angela',
+              text: 'Hvorfor i alle dager',
+              time: '25. juli 08:02',
+            },
             {
               author: 'Andreas',
               suspectId: 'andreas',
               text: 'Bare i tilfelle 🙂',
               time: '25. juli 08:15',
             },
-             {
+            {
               author: 'Andreas',
               suspectId: 'andreas',
               text: 'Viktige saker: https://kunde.byggekamera.no/?p=1171&c=1579',
               time: '27. juli 08:15',
             },
-             {
+            {
               author: 'Andreas',
               suspectId: 'andreas',
               text: 'Byggekameraet til NOS (Nye Oslo Spektrum). Eneste vi gjør på jobb',
@@ -2664,7 +3312,11 @@ export const CASE: CaseManifest = {
               text: 'Er det lov å ta med gitar? Spør for gjengen.',
               time: '21. juli 20:11',
             },
-            { author: 'Angela', text: 'Ta med. Men ikke etter midnatt.', time: '21. juli 20:30' },
+            {
+              author: 'Angela',
+              text: 'Ta med. Men ikke etter midnatt.',
+              time: '21. juli 20:30',
+            },
             {
               author: 'Brage Johnsen',
               // ↳ bekrefter Sverre: «Vi har fått klager fra folk som Brage Johnsen om at
@@ -2682,7 +3334,11 @@ export const CASE: CaseManifest = {
                 'men jeg kan ikke love noe — folk elsker det jo. Vi har hvertfall edruvakt.',
               time: 'tor 07:52',
             },
-            { author: 'Brage Johnsen', text: 'Det er det jeg sier hvert år og', time: 'tor 07:58' },
+            {
+              author: 'Brage Johnsen',
+              text: 'Det er det jeg sier hvert år og',
+              time: 'tor 07:58',
+            },
             {
               author: 'Angela',
               text: 'Og hvert år hører jeg på deg og gjør ingenting. Konsekvent hvertfall!',
@@ -2700,19 +3356,31 @@ export const CASE: CaseManifest = {
               text: 'Har du malen for saksframlegg? Den gamle har fortsatt logoen fra 2019.',
               time: '18. juli 10:15',
             },
-            { author: 'Angela', text: 'Ligger i driven under «Maler_NY». Ikke «Maler».', time: '18. juli 10:31' },
+            {
+              author: 'Angela',
+              text: 'Ligger i driven under «Maler_NY». Ikke «Maler».',
+              time: '18. juli 10:31',
+            },
             {
               author: 'Ingeborg Frogner Dahl-Hilstad',
               text: 'Det er to mapper som heter «Maler_NY».',
               time: '18. juli 10:36',
             },
-            { author: 'Angela', text: 'Den med emoji i navnet.', time: '18. juli 10:38' },
+            {
+              author: 'Angela',
+              text: 'Den med emoji i navnet.',
+              time: '18. juli 10:38',
+            },
             {
               author: 'Ingeborg Frogner Dahl-Hilstad',
               text: 'Begge har emoji.',
               time: '18. juli 10:39',
             },
-            { author: 'Angela', text: 'Jeg ringer deg.', time: '18. juli 10:40' },
+            {
+              author: 'Angela',
+              text: 'Jeg ringer deg.',
+              time: '18. juli 10:40',
+            },
             {
               author: 'Ingeborg Frogner Dahl-Hilstad',
               // ↳ bekrefter vedtekt/nynorsk-tråden (Erik-DM-en, e-posten, og det Maud,
@@ -2746,7 +3414,11 @@ export const CASE: CaseManifest = {
               text: 'Jeg kan ta edruvakt fredag hvis ingen andre gidder. Har gjort det før, går helt fint.',
               time: 'man 19:40',
             },
-            { author: 'Angela', text: 'Du er gull <3 Jeg setter deg opp.', time: 'man 19:52' },
+            {
+              author: 'Angela',
+              text: 'Du er gull <3 Jeg setter deg opp.',
+              time: 'man 19:52',
+            },
             {
               author: 'Henriette Moe Schjelderup',
               // ↳ bekrefter Runills notater: «18:42 – Hadde samtale med edruvakt Henriette
@@ -2756,7 +3428,11 @@ export const CASE: CaseManifest = {
                 '18:30 sa hun. Skal jeg si det videre til de andre?',
               time: 'tor 15:20',
             },
-            { author: 'Angela', text: 'Ja gjør det. Runill er kjempegod på sånt.', time: 'tor 15:26' },
+            {
+              author: 'Angela',
+              text: 'Ja gjør det. Runill er kjempegod på sånt.',
+              time: 'tor 15:26',
+            },
             {
               author: 'Henriette Moe Schjelderup',
               // ↳ bekrefter Runills notater: «21:02 – Edruvakt måtte byttes, rakk ikke nytt møte.»
@@ -2789,13 +3465,21 @@ export const CASE: CaseManifest = {
               text: 'Jada jeg spiser! Jeg har til og med laget GitHub Issues for måltidene. Funker fett.',
               time: '24. juli 12:30',
             },
-            { author: 'Jofrid', text: 'Det var ikke helt svaret jeg håpet på 😄', time: '24. juli 12:41' },
+            {
+              author: 'Jofrid',
+              text: 'Det var ikke helt svaret jeg håpet på 😄',
+              time: '24. juli 12:41',
+            },
             {
               author: 'Jofrid',
               text: 'Jeg tar med kakao og pledd til stillerommet i tilfelle noen trenger en pause 🌸',
               time: 'tor 09:05',
             },
-            { author: 'Angela', text: 'Du er grunnen til at folk kommer tilbake hvert år <3', time: 'tor 09:20' },
+            {
+              author: 'Angela',
+              text: 'Du er grunnen til at folk kommer tilbake hvert år <3',
+              time: 'tor 09:20',
+            },
           ],
         },
         {
@@ -2810,16 +3494,36 @@ export const CASE: CaseManifest = {
               text: 'ANGELA. Jeg vant i CIV mot Andreas. Han tar det ikke særlig bra.',
               time: '26. juli 23:48',
             },
-            { author: 'Angela', text: 'HAHAHA. Hvor lang tid tok den runden?', time: '27. juli 08:14' },
-            { author: 'Wiktor Jankowski', text: 'Sju timer? Vi begynte rett etter middag.', time: '27. juli 08:20' },
-            { author: 'Angela', text: 'Sju TIMER. Skaff dere liv.', time: '27. juli 08:22' },
+            {
+              author: 'Angela',
+              text: 'HAHAHA. Hvor lang tid tok den runden?',
+              time: '27. juli 08:14',
+            },
+            {
+              author: 'Wiktor Jankowski',
+              text: 'Sju timer? Vi begynte rett etter middag.',
+              time: '27. juli 08:20',
+            },
+            {
+              author: 'Angela',
+              text: 'Sju TIMER. Skaff dere liv.',
+              time: '27. juli 08:22',
+            },
             {
               author: 'Wiktor Jankowski',
               text: 'Dette ER livene våre. Andreas krever omkamp på GF forresten, så det blir en laaang helg',
               time: '27. juli 08:31',
             },
-            { author: 'Angela', text: 'Men hva faen da', time: '27. juli 08:35' },
-            { author: 'Wiktor Jankowski', text: 'Vi finner et rom 🫡', time: '27. juli 08:36' },
+            {
+              author: 'Angela',
+              text: 'Men hva faen da',
+              time: '27. juli 08:35',
+            },
+            {
+              author: 'Wiktor Jankowski',
+              text: 'Vi finner et rom 🫡',
+              time: '27. juli 08:36',
+            },
           ],
         },
         {
@@ -2839,10 +3543,22 @@ export const CASE: CaseManifest = {
               text: 'Det er én bar og én bartender. Så nei 😅 Kom tidlig, eller kom med tålmodighet.',
               time: '20. juli 16:20',
             },
-            { author: 'Hidde Bakker', text: 'Vi tar med tålmodighet og masse lægs', time: '20. juli 16:24' },
-            { author: 'Hidde Bakker', text: 'Kan vi ta med egen høyttaler til nach?', time: 'tir 21:33' },
+            {
+              author: 'Hidde Bakker',
+              text: 'Vi tar med tålmodighet og masse lægs',
+              time: '20. juli 16:24',
+            },
+            {
+              author: 'Hidde Bakker',
+              text: 'Kan vi ta med egen høyttaler til nach?',
+              time: 'tir 21:33',
+            },
             { author: 'Angela', text: 'Bro', time: 'tir 21:40' },
-            { author: 'Hidde Bakker', text: 'Verdt et forsøk 🙏', time: 'tir 21:41' },
+            {
+              author: 'Hidde Bakker',
+              text: 'Verdt et forsøk 🙏',
+              time: 'tir 21:41',
+            },
           ],
         },
         {
@@ -2879,7 +3595,11 @@ export const CASE: CaseManifest = {
               text: 'Så jeg trenger ikke lese det?',
               time: '14. juli 20:53',
             },
-            { author: 'Angela', text: 'Du BØR lese det. Du kommer ikke til å lese det.', time: '14. juli 20:55' },
+            {
+              author: 'Angela',
+              text: 'Du BØR lese det. Du kommer ikke til å lese det.',
+              time: '14. juli 20:55',
+            },
             {
               author: 'Jonathan Nagelgaard',
               text: 'Nei det er nok riktig det 😅',
@@ -2904,9 +3624,17 @@ export const CASE: CaseManifest = {
               text: 'Fint. Hvor mange er det egentlig der?',
               time: '19. juli 12:05',
             },
-            { author: 'Angela', text: 'Rundt 200.', time: '19. juli 12:11' },
-            { author: 'Jonathan Nagelgaard', text: '200???', time: '19. juli 12:11' },
-            { author: 'Jonathan Nagelgaard', text: 'Jeg kjenner jo ingen assa', time: '19. juli 12:12' },
+            { author: 'Angela', text: 'Rundt 100.', time: '19. juli 12:11' },
+            {
+              author: 'Jonathan Nagelgaard',
+              text: '100???',
+              time: '19. juli 12:11',
+            },
+            {
+              author: 'Jonathan Nagelgaard',
+              text: 'Jeg kjenner jo ingen assa',
+              time: '19. juli 12:12',
+            },
             {
               author: 'Angela',
               text:
@@ -2929,8 +3657,16 @@ export const CASE: CaseManifest = {
               text: 'Er det gratis mat?',
               time: '27. juli 08:21',
             },
-            { author: 'Angela', text: 'Ja. Kylling og ris. Mye kylling og ris.', time: '27. juli 08:24' },
-            { author: 'Jonathan Nagelgaard', text: 'Elsker kylling og ris 🙏', time: '27. juli 08:25' },
+            {
+              author: 'Angela',
+              text: 'Ja. Kylling og ris. Mye kylling og ris.',
+              time: '27. juli 08:24',
+            },
+            {
+              author: 'Jonathan Nagelgaard',
+              text: 'Elsker kylling og ris 🙏',
+              time: '27. juli 08:25',
+            },
             {
               author: 'Jonathan Nagelgaard',
               text: 'Siste spørsmål lover: er det noen som sjekker om man har lest sakspapirene',
@@ -2961,8 +3697,16 @@ export const CASE: CaseManifest = {
               text: 'Sender på nytt i kveld. Jeg har dem i en konvolutt et eller annet sted.',
               time: '15. juli 12:05',
             },
-            { author: 'Lorenz Strohe', text: 'Bilde av kvitteringen holder. Trenger ikke originalen.', time: '15. juli 12:09' },
-            { author: 'Angela', text: 'Det burde jeg visst for tre år siden assa', time: '15. juli 12:11' },
+            {
+              author: 'Lorenz Strohe',
+              text: 'Bilde av kvitteringen holder. Trenger ikke originalen.',
+              time: '15. juli 12:09',
+            },
+            {
+              author: 'Angela',
+              text: 'Det burde jeg visst for tre år siden assa',
+              time: '15. juli 12:11',
+            },
             {
               author: 'Lorenz Strohe',
               text: 'Det står i rutinen. Som ingen leser. Jeg har lagt meg til ro med det.',
@@ -2978,16 +3722,52 @@ export const CASE: CaseManifest = {
   // Sendeplan til «Radio France»-appen. Legg .mp3-filene i public/case/spotify/
   // og pek på dem her. `title`/`artist` er valgfritt (utledes ellers fra filnavnet).
   spotify: [
-    { src: 'case/spotify/chanson_1.m4a', title: 'On va s\'aimer', artist: 'Gilbert Montagné' },
-    { src: 'case/spotify/chanson_2.m4a', title: 'Nuit de folie', artist: 'Début De Soirée' },
-    { src: 'case/spotify/chanson_3.m4a', title: 'Les démons de minuit', artist: 'Images' },
-    { src: 'case/spotify/chanson_4.m4a', title: 'Emmenez-moi', artist: 'Charles Aznavour' },
-    { src: 'case/spotify/chanson_5.m4a', title: 'Dans les yeux d\'Émilie', artist: 'Joe Dassin' },
-    { src: 'case/spotify/chanson_6.m4a', title: 'Destinée', artist: 'Vladimir Cosma, Guy Marchand' },
-    { src: 'case/spotify/chanson_7.m4a', title: 'Les lacs du Connemara', artist: 'Michel   Sardou' },
-    { src: 'case/spotify/chanson_8.m4a', title: 'Partenaire Particulier', artist: 'Partenaire Particulier' },
+    {
+      src: 'case/spotify/chanson_1.m4a',
+      title: "On va s'aimer",
+      artist: 'Gilbert Montagné',
+    },
+    {
+      src: 'case/spotify/chanson_2.m4a',
+      title: 'Nuit de folie',
+      artist: 'Début De Soirée',
+    },
+    {
+      src: 'case/spotify/chanson_3.m4a',
+      title: 'Les démons de minuit',
+      artist: 'Images',
+    },
+    {
+      src: 'case/spotify/chanson_4.m4a',
+      title: 'Emmenez-moi',
+      artist: 'Charles Aznavour',
+    },
+    {
+      src: 'case/spotify/chanson_5.m4a',
+      title: "Dans les yeux d'Émilie",
+      artist: 'Joe Dassin',
+    },
+    {
+      src: 'case/spotify/chanson_6.m4a',
+      title: 'Destinée',
+      artist: 'Vladimir Cosma, Guy Marchand',
+    },
+    {
+      src: 'case/spotify/chanson_7.m4a',
+      title: 'Les lacs du Connemara',
+      artist: 'Michel   Sardou',
+    },
+    {
+      src: 'case/spotify/chanson_8.m4a',
+      title: 'Partenaire Particulier',
+      artist: 'Partenaire Particulier',
+    },
     { src: 'case/spotify/chanson_9.m4a', title: 'Aline', artist: 'Christophe' },
-    { src: 'case/spotify/chanson_10.m4a', title: 'Hier encore', artist: 'Charles Aznavour' },
+    {
+      src: 'case/spotify/chanson_10.m4a',
+      title: 'Hier encore',
+      artist: 'Charles Aznavour',
+    },
   ],
 
   solution: {

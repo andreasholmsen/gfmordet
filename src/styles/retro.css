@@ -544,6 +544,12 @@ textarea.field {
 .doc-tinted .markdown {
   background: var(--doc-tint, #fff);
 }
+/* GFM-oppgavelister (`- [x]`): dropp kulepunktet når linja har en avkrysningsboks,
+   ellers får man både bullet OG boks foran hvert punkt. */
+.markdown li:has(> input[type='checkbox']) {
+  list-style: none;
+  margin-left: -1.1em;
+}
 .doc-tinted .doc-view img,
 .doc-tinted .doc-view iframe {
   background: var(--doc-tint, #fff);
@@ -584,6 +590,40 @@ textarea.field {
 .markdown img {
   max-width: 100%;
 }
+/* Tabeller + «systemutskrifter» (dørlogg, romfordeling). Begge kan bli bredere
+   enn en mobilskjerm, så de ruller i sin egen boks — ellers ruller hele sida. */
+.markdown table {
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 0.9rem;
+}
+/* Telefon-«papiret» er smalere enn en dag-mappe, så navn som «Henriette Moe
+   Schjelderup» brekker til ett ord per linje uten dette. */
+.window--angela .markdown table {
+  font-size: 0.72rem;
+}
+.markdown th,
+.markdown td {
+  border: 1px solid #c4c4c4;
+  padding: 4px 9px;
+  text-align: left;
+}
+/* Romnummer/klokkeslett skal aldri brekke — de er nøklene i tabellene. */
+.markdown td:first-child {
+  white-space: nowrap;
+}
+.markdown th {
+  background: rgba(0, 0, 0, 0.06);
+}
+.markdown pre {
+  overflow-x: auto;
+  margin: 12px 0;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid #c4c4c4;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
 /* I POLITI-vinduet (mørk terminal) blir hvitt «papir» grelt og vanskelig å
    lese — bruk mørk panel-variant med terminal-grønn tekst i stedet. */
 .window--police .markdown {
@@ -594,6 +634,16 @@ textarea.field {
 }
 .window--police .markdown a {
   color: #5cff8a;
+}
+/* Lyse rammer/bakgrunner over forsvinner mot det mørke panelet. */
+.window--police .markdown th,
+.window--police .markdown td,
+.window--police .markdown pre {
+  border-color: #1f4a2a;
+}
+.window--police .markdown th,
+.window--police .markdown pre {
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* ===========================================================================
@@ -1766,6 +1816,91 @@ textarea.field {
 .window--police hr {
   border: none !important;
   border-top: 1px dashed #2f7d46 !important;
+}
+
+/* ===========================================================================
+   Larry-siden (easter egg): helt svart vindu som ikke ser ut som noe annet i
+   systemet. Gjenbruker CRT-animasjonen fra POLITI-vinduet.
+   =========================================================================== */
+.window--larry {
+  background: #000;
+  color: #d8d8d8;
+  animation: winCrtOn 0.38s ease-out both;
+}
+.window--larry.window--closing {
+  animation: winCrtOff 0.27s ease-in both;
+}
+.window--larry .titlebar {
+  background: #101010;
+  color: #999;
+  border-bottom: 1px solid #262626;
+}
+.window--larry .titlebar__close {
+  background: #1a1a1a;
+  color: #bbb;
+  box-shadow: none;
+  border: 1px solid #333;
+  border-radius: 3px;
+}
+.window--larry .window__body {
+  background: #000;
+  display: flex;
+  flex-direction: column;
+}
+
+/* margin:auto (ikke justify-content) — auto-marger spiser bare POSITIV ledig
+   plass, så på lave skjermer blir de 0 og innholdet kan fortsatt rulles. */
+.larrypage {
+  margin: auto;
+  max-width: 460px;
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+.larrypage__img {
+  width: min(220px, 62%);
+  height: auto;
+}
+.larrypage__line {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.larrypage__line--dots {
+  letter-spacing: 0.5em;
+  opacity: 0.65;
+  animation: larryDots 1s steps(2) infinite;
+}
+@keyframes larryDots {
+  50% {
+    opacity: 0.2;
+  }
+}
+/* Poenget: grønn som resten av «systemet», så det leses som en logglinje. */
+.larrypage__line--noted {
+  color: #6dff8e;
+}
+.larrypage__btns {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+.larrypage__btn {
+  min-width: 104px;
+  min-height: 44px;
+  padding: 10px 18px;
+  background: #151515;
+  color: #eaeaea;
+  border: 1px solid #383838;
+  font: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.larrypage__btn:active {
+  background: #262626;
 }
 
 /* Knapper / faner som "terminal-knapper" — avrundet, glød ved hover */

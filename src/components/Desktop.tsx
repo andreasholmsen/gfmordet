@@ -188,9 +188,11 @@ export default function Desktop() {
     appIcons.push({ label: 'Radio France', glyph: '📻', node: <RadioGlyph />, to: '/spotify' })
   }
   appIcons.push({ label: t('minesweeper'), glyph: '💣', to: '/spill/minesveiper' })
-  // Låst opp etter at Larry er sett minst én gang — klikk spiller ham av igjen.
+  // Låst opp etter at Larry er sett minst én gang. Klikk åpner Larry-siden
+  // (gif-en spilles inne i vinduet). Høyreklikk-menyens hold-snarvei bruker
+  // fortsatt triggerLarry() for å teste selve glitchen.
   if (foundLarry) {
-    appIcons.push({ label: 'larry', glyph: '👽', node: <LarryGlyph />, onClick: () => triggerLarry() })
+    appIcons.push({ label: 'larry', glyph: '👽', node: <LarryGlyph />, to: '/larry' })
   }
 
   // Spillerens egne innstillinger (språk + lyd) — aldri låst, i motsetning til

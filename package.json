@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "check:content": "tsx scripts/check-content.ts",
+    "check:dorlogg": "tsx scripts/check-dorlogg.ts",
     "preflight": "tsx scripts/preflight.ts"
   },
   "dependencies": {

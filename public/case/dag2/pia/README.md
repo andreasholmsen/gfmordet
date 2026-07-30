@@ -1,6 +1,6 @@
 # Pias bilder
 
-Bildene her er ferdig koblet opp i `src/case/manifest.ts` (dag 1, mappene `pia-mobil` og
+Bildene her er ferdig koblet opp i `src/case/manifest.ts` (dag 2, mappene `pia-mobil` og
 `pia-kamera`). Filnavnene på disk beholdes som de er — det er **dokumenttittelen** i
 manifestet som vises til spillerne, og den er et `IMG_2026…`-navn med klokkeslett i.
 

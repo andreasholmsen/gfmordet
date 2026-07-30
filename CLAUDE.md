@@ -93,17 +93,52 @@ på dagen i manifestet og sett `folder: '<id>'` på dokumentene som skal inn. `t
 lyseblå vitneutsagn i dag 1). Umerkede dokumenter ligger løst i dagen som før.
 Implementert i `DayFolder.tsx`; CSS: `.doc-tile--folder` / `.doc-tinted`.
 
+`tint` kan også settes på ET ENKELT dokument (`CaseDoc.tint`) — da farges kun den flisa
+og det dokumentets «papir», og dokumentets tint vinner over mappens. Virker også på løse
+dokumenter utenfor mapper. Brukt av «Runill notater» (gult notatark, `#fff3bf`).
+
 `parent: '<mappe-id>'` gir ÉN nivå nesting (mappe → mappe → dokument): mappen vises
 inne i foreldremappen i stedet for på dagens rot, «tilbake» går til forelderen, og
 flis-telleren på forelderen summerer dokumentene i alle barna. Brukt av «Pias bilder»
-(dag 1) → `Mobilbilder` / `Kamerabilder`.
+(dag 2) → `Mobilbilder` / `Kamerabilder`.
 
-**Pias bilder = tidssone-sporet.** Dokumenttitlene ER filnavnene (`IMG_20260731_104612.jpg`),
-så klokkeslettet er synlig på flisene. Mobilen stilte seg om til norsk tid ved landing;
-kameraet står fortsatt på Moldova-tid (én time foran, jf. Anna sitt utsagn). Tre motiv
-finnes på begge enhetene med identiske sekunder og én times forskjell. Filene legges i
-`public/case/dag1/pia/` — se `README.md` der for hvilket bilde som skal ha hvilket navn.
-Endrer du et tidspunkt må BÅDE `title` og `src` endres.
+**Pias bilder = tidssone-sporet.** Ligger på **dag 2** (Pia sier i dag 1-utsagnet sitt at hun
+skal sende dem, så de dukker opp dagen etter). Dokumenttitlene ER filnavnene
+(`IMG_20260731_104612.jpg`), så klokkeslettet er synlig på flisene. Mobilen stilte seg om til
+norsk tid ved landing; kameraet står fortsatt på Moldova-tid (én time foran, jf. Anna sitt
+utsagn). Tre motiv finnes på begge enhetene med identiske sekunder og én times forskjell.
+Filene ligger i `public/case/dag2/pia/` — se `README.md` der for hvilket bilde som skal ha
+hvilket navn. Endrer du et tidspunkt må BÅDE `title` og `src` endres.
+
+## Dørlogg + romfordeling = adgangskontroll-sporet
+
+To dokumenter som bare betyr noe SAMMEN, og som derfor ligger på hver sin side av spillet:
+
+- **`d1-dorlogg`** (dag 1, løs flis, blekgrønn `tint`) — 59 kortåpninger natt til 1. aug, kun
+  romnummer og klokkeslett. Ingen navn.
+- **`a-romfordeling`** (Angelas filer) — hvilket romnummer som hører til hvem.
+
+Nøkkelen er **MERKNAD-en** øverst i dørloggen: systemet logger *kun godkjent kortåpning* —
+ikke passering, ikke dørstatus — og *utgang fra innsiden registreres ikke*. Den ligger BEVISST
+utenfor ASCII-blokken, fordi `pre` ruller sidelengs på mobil og teksten ville blitt klippet.
+
+**Loggen skal BARE inneholde kortåpninger.** Ingen dørstatus, ingen varsler, ingen avviste
+avlesinger, ingen servicekort. Det er hele poenget: rom **327** (Sverre) har en åpning 23:32
+som ser identisk ut med alle andres, og fordi utgang ikke logges sier loggen ingenting om at
+han gikk ut igjen. Beviset er *fraværet*, ikke en rad — så snart én rad handler om noe annet
+enn en åpning, blir den raden det spillerne ser først. Sjekkskriptet håndhever dette.
+
+327 skiller seg heller ikke ut statistisk: to åpninger (som sju andre rom), og siste åpning
+før midnatt (som 318, 206, 224 og 213). Falskt spor med vilje: 213 (Andreas) åpner 23:34 rett
+etter — det er skjortebyttet. Vaktmesteren Oskar og Brage møter på vei til rommene sine (104 @
+00:16, 316 @ 00:18) står bare i Oskars vitneutsagn; loggen kan ikke bekrefte den runden, og
+skal ikke prøve.
+
+Rører du én av filene, kjør **`npm run check:dorlogg`**: den sjekker at loggen bare inneholder
+kortåpninger, at hver dør finnes i romfordelingen, at tidene er kronologiske over midnatt, at
+fottellingen (59/22) stemmer med tabellen, og at alle mistenkte + offeret har et rom. Merk at
+de sju mistenkte som ikke har etternavn i manifestet står med **fornavn** i romfordelingen —
+bytt inn etternavn der du har dem, ikke dikt opp nye.
 
 ## Offerets filer = låst mobil (kode + «POLITI-HACK»)
 
@@ -241,6 +276,15 @@ skjer når neste dag slippes.
 - `src/components/AngelaFiles.tsx` + `src/components/phone/` (`PhoneHeader`, `WhatsAppApp`,
   `MailApp`, `SlackApp`) — telefon-hjemskjerm + appene på Angelas mobil (`CASE.angelaPhone`).
 - `src/components/Minesveiper.tsx` — lite frittstående minesveiper-spill (påskeegg).
+- `src/components/LarryEasterEgg.tsx` + `LarryPage.tsx` — Larry: 0.1 % sjanse per klikk på
+  skrivebordet for at `larry.gif` glitcher inn. Etter første gang låses et Larry-ikon opp
+  (`localStorage: gf-mordet.larry-found.v1`) → ruta `/larry` (svart vindu, `variant="larry"`).
+  Larry tilbyr å «fjerne halvparten av vitnene»; sier man ja kalles RPC-en `flag_cheater()`
+  (se `0009_larry.sql`) og han innrømmer med en gang at han ikke kan noe og at han skrev det
+  ned — ingen skjult logging, og puslespillet endres ikke. Svaret huskes per enhet
+  (`gfm:larry-answer`), flagget er idempotent server-side. Se «hvem prøvde å jukse?» i
+  Supabase-dashbordet: `select player_name, created_at from public.cheat_flags order by created_at;`
+  (bevisst ingen lese-RPC, så spillerne ikke kan spolere avsløringen).
 - `src/components/Dialog.tsx` + `ContextMenu.tsx` — gjenbrukbar modal + høyreklikk-meny.
 - `src/components/PoliceApp.tsx` + `VoteForm.tsx` + `ResultsView.tsx` — POLITI-app. Identitet
   hentes fra `useAuth()`. `ResultsView` animerer barene og viser «du stemte som X %».
@@ -267,6 +311,9 @@ skjer når neste dag slippes.
   til autentisert (`auth.uid()`), ny `get_my_votes`, grants til `authenticated`.
 - `supabase/migrations/0007_lockdown.sql` — fjerner anon-`execute` på innloggings-RPC-ene
   (Supabase gir anon direkte grant som `revoke from public` ikke fjerner). MÅ kjøres.
+- `supabase/migrations/0009_larry.sql` — Larry-flagget: tabellen `cheat_flags` + RPC-en
+  `flag_cheater()`. MÅ kjøres for at flagget skal lagres (uten den er Larry-siden bare en
+  vits uten logging — appen krasjer ikke). Fila har ferdige dashbord-spørringer i toppen.
 - **Verktøy:** `npm run preflight` (sjekker migrasjoner/bucketer/datoer/demo-modus + at anon er
   blokkert — trenger `.env`). `scripts/jump-day.sh <1-4|reset>` flytter `case_config`-datoene
   for testing (se filens topp; valgfri `SUPABASE_DB_URL` for å kjøre direkte via psql).
