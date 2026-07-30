@@ -10,16 +10,16 @@ import { markStartSeen } from '../lib/intro'
 // nytt med knappen nederst. Åpnes fra skrivebordsikonet (ruten /start).
 
 // PLACEHOLDER — bytt ut med ekte intro-tekst. (Foreløpig gibberish.)
-const INTRO_DOC = `# Velkommen, etterforsker
+const INTRO_DOC = `# Velkommen sjef
 
 **SAK #2026-1738 — «GF-mordet»**
 
 Århundrets mest forferdelig mord, og politiet har bedt nettopp *deg* om å
-se på saken med friske øyne.
+se på saken med friske øyne. Wiiild, right?
 
 > «Jeg har aldri opplevd noe liknende, det er helt forferdelig.» — *Studentprest Sverre*.
 
-Som etterforskerkonsulent hos Politiet er det din jobb å finne morderen.
+Som etterforskerkonsulent hos Politiet er det din jobb å finne morderen - raskere enn rasketoget.
 
 ![Sørmarka](case/intro/sormarka.jpg)
 
@@ -27,13 +27,22 @@ Som etterforskerkonsulent hos Politiet er det din jobb å finne morderen.
 
 1. Les gjennom alt av bevis
 2. Svar på dagens spørsmål i POLITI-appen
-3. **Hvis du noengang spør Andreas (en allvitende Gud) "er X morderen?" kommer han til å svare "ja" uavhengig av verdien til X.**
+3. **Ved bruk av avansert lyveteknikk så sier Andreas ja til alle spørsmål som spør om morderen.**
 
-Sjekk POLITI-appen neste for å se på dagens spørsmål! Du vil få muligheten til å velge et navn og stemme. Du er nemlig ikke den eneste detektiven på saken!
+Sjekk POLITI-appen neste for å se på dagens spørsmål!! Du vil få muligheten til å velge et navn og stemme. Du er nemlig ikke den eneste detektiven på saken!
 
 Hva skjer hvis du svarer feil tenker du? Det er jo litt kleint da... 
 
-*Lykke til.*`
+Hvis noe er utydelig så bare prøv deg litt frem. Etter du har stemt kan du fortsatt bytte mening etterhvert ;)
+
+*Lykke til.*
+
+
+
+
+
+PS: Har jeg brukt ditt navn i saken, og du ønsker å holdes ute? Null stress - send meg en melding på Slack eller si ifra så anonymiserer jeg ting fort som bare det. Tok meg litt kreative friheter til å nevne hvem jeg ville, men er såklart ikke meningen å skape dårlig stemning. Legger meg helt flat! Bare et forsøk på god humor.
+`
 
 export default function StartHere() {
   const [phase, setPhase] = useState<'intro' | 'doc'>('intro')

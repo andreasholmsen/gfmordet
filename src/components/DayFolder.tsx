@@ -67,6 +67,10 @@ export default function DayFolder() {
 
   const folders = dayContent.folders ?? []
   const folderOf = (doc: CaseDoc) => folders.find((f) => f.id === doc.folder)
+  const childrenOf = (f: SubfolderDef) => folders.filter((c) => c.parent === f.id)
+  // Antall dokumenter i mappen OG i eventuelle under-undermapper (for flis-telleren).
+  const docsUnder = (f: SubfolderDef, docs: CaseDoc[]) =>
+    docs.filter((d) => d.folder === f.id || childrenOf(f).some((c) => c.id === d.folder)).length
 
   if (openDoc) {
     const tint = folderOf(openDoc)?.tint
@@ -90,14 +94,18 @@ export default function DayFolder() {
 
   const visibleDocs = dayContent.docs
 
-  // Inne i en undermappe: vis kun dens dokumenter, tintet med mappens farge.
+  // Inne i en undermappe: eventuelle under-undermapper først, så mappens egne
+  // dokumenter — alt tintet med mappens farge.
   if (openFolder) {
     const folderDocs = visibleDocs.filter((d) => d.folder === openFolder.id)
+    const subFolders = childrenOf(openFolder).filter((c) => docsUnder(c, visibleDocs) > 0)
+    // Ligger vi i en under-undermappe? Da skal «tilbake» gå til foreldremappen.
+    const parent = folders.find((f) => f.id === openFolder.parent)
     return (
       <AppWindow title={`${title} — ${openFolder.title}`} icon={openFolder.icon ?? '📁'}>
         <div ref={anchor} />
-        <button className="btn" onClick={() => setOpenFolder(null)}>
-          {t('backTo', { name: title })}
+        <button className="btn" onClick={() => setOpenFolder(parent ?? null)}>
+          {t('backTo', { name: parent ? parent.title : title })}
         </button>
         {openFolder.intro && (
           <div className="intro-note" style={{ marginTop: 14 }}>
@@ -105,6 +113,25 @@ export default function DayFolder() {
           </div>
         )}
         <div className="doc-list" style={{ marginTop: openFolder.intro ? 0 : 14 }}>
+          {subFolders.map((f) => {
+            const count = docsUnder(f, visibleDocs)
+            return (
+              <button
+                key={f.id}
+                className="doc-tile doc-tile--folder"
+                style={tintStyle(f.tint ?? openFolder.tint)}
+                onClick={() => setOpenFolder(f)}
+              >
+                <span className="doc-tile__glyph" aria-hidden>
+                  {f.icon ?? '📁'}
+                </span>
+                <span className="doc-tile__title">{f.title}</span>
+                <span className="doc-tile__count">
+                  {t(count === 1 ? 'docCount1' : 'docCountN', { n: count })}
+                </span>
+              </button>
+            )
+          })}
           {folderDocs.map((doc) => (
             <button
               key={doc.id}
@@ -125,7 +152,8 @@ export default function DayFolder() {
 
   // Rot-nivå: undermapper (kun de som har synlige dokumenter) + løse dokumenter.
   const looseDocs = visibleDocs.filter((d) => !folderOf(d))
-  const visibleFolders = folders.filter((f) => visibleDocs.some((d) => d.folder === f.id))
+  // Kun rot-mapper her — under-undermapper vises inne i foreldremappen.
+  const visibleFolders = folders.filter((f) => !f.parent && docsUnder(f, visibleDocs) > 0)
 
   return (
     <AppWindow title={title} icon="📁">
@@ -140,7 +168,7 @@ export default function DayFolder() {
       ) : (
         <div className="doc-list">
           {visibleFolders.map((f) => {
-            const count = visibleDocs.filter((d) => d.folder === f.id).length
+            const count = docsUnder(f, visibleDocs)
             return (
               <button
                 key={f.id}

@@ -1872,6 +1872,27 @@ textarea.field {
   background: linear-gradient(180deg, #fff5fa, #f3ecff);
   color: #4a3a4a;
 }
+/* Brede/høye skjermer: telefonen har FAST høyde (min(72vh, 640px)), så den hang
+   i toppen med opptil 650px død plass under. `margin-block: auto` framfor
+   `justify-content: center` er bevisst — auto-marger spiser bare POSITIV ledig
+   plass, så på lave skjermer (der telefonen er høyere enn vinduet) blir de 0 og
+   innholdet kan fortsatt rulles fra toppen. justify-content ville klippet
+   toppen utenfor rekkevidde. */
+@media (min-width: 760px) {
+  .window--angela .window__body {
+    display: flex;
+    flex-direction: column;
+  }
+  .window--angela .phone,
+  .window--angela .phone-lock {
+    margin-block: auto;
+  }
+  /* `margin-inline: auto` slår av flex-stretch, så telefonen ville krympet til
+     innholdsbredden. width:100% + max-width:420px gir riktig bredde igjen. */
+  .window--angela .phone {
+    width: 100%;
+  }
+}
 .window--angela .intro-note {
   color: #7a5c74;
   font-style: italic;

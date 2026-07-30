@@ -29,6 +29,10 @@ export interface CaseDoc {
 export interface SubfolderDef {
   id: string
   title: string // 'Vitneutsagn'
+  /** `id`-en til en annen mappe i samme dag ⇒ denne blir en UNDER-undermappe som
+   *  vises inne i foreldremappen. Kun ÉN nivå nesting (mappe → mappe → dokument);
+   *  utelates ⇒ mappen ligger på dagens rot-nivå som før. */
+  parent?: string
   /** Emoji på mappe-flisen (standard 📁). */
   icon?: string
   /** Pastellfarge (CSS-farge) som tinter mappe-flisen, dokument-flisene inni og
@@ -266,6 +270,22 @@ export interface CaseManifest {
   }
 }
 
+// De 10 karakterene som har vitneutsagn — ENESTE kilde for stemmealternativene
+// på både dag 1 og dag 3, så listene ikke kan komme i utakt. Rekkefølgen følger
+// vitneutsagnene i dag 1. Legger du til en karakter: legg den til her.
+const SUSPECT_OPTIONS: { id: string; label: string }[] = [
+  { id: 'sverre', label: 'Sverre' },
+  { id: 'hedvig', label: 'Hedvig' },
+  { id: 'ane', label: 'Ane' },
+  { id: 'runill', label: 'Runill' },
+  { id: 'maud', label: 'Maud' },
+  { id: 'erik', label: 'Erik' },
+  { id: 'oskar', label: 'Oskar' },
+  { id: 'anna', label: 'Anna' },
+  { id: 'pia', label: 'Pia' },
+  { id: 'andreas', label: 'Andreas' },
+]
+
 // ----------------------------------------------------------------------------
 //  EKSEMPELINNHOLD — bytt ut med din egen sak.
 // ----------------------------------------------------------------------------
@@ -286,7 +306,31 @@ export const CASE: CaseManifest = {
           title: 'Vitneutsagn',
           icon: '🗣️',
           tint: '#d7e9fb',
-          intro: 'Forklaringer avgitt til politiet. _Minst én av dem lyver._',
+        },
+        // Pias bilder → to under-undermapper (mobil / kamera). Filnavnene ER
+        // dokumenttitlene, så tidsstemplene er synlige i fliselista.
+        {
+          id: 'pia-bilder',
+          title: 'Pias bilder',
+          icon: '📷',
+          tint: '#ffe4cc',
+          intro: 'Bildene Pia sendte inn til politiet. Overført fra to ulike enheter.',
+        },
+        {
+          id: 'pia-mobil',
+          parent: 'pia-bilder',
+          title: 'Mobilbilder',
+          icon: '📱',
+          tint: '#ffe4cc',
+          intro: 'Hentet fra Pias mobiltelefon.',
+        },
+        {
+          id: 'pia-kamera',
+          parent: 'pia-bilder',
+          title: 'Kamerabilder',
+          icon: '📷',
+          tint: '#ffe4cc',
+          intro: 'Hentet fra minnekortet i Pias kamera.',
         },
       ],
       docs: [
@@ -625,23 +669,151 @@ export const CASE: CaseManifest = {
             '18:42 – Hadde samtale med edruvakt Henriette angående tips.\n\n' +
             '21:02 – Edruvakt måtte byttes, rakk ikke nytt møte',
         },
+
+        // ------------------------------------------------------------------
+        // PIAS BILDER. Filnavnet er tittelen, så klokkeslettet er synlig.
+        // Mobilen stilte seg om til norsk tid ved landing; kameraet står
+        // fortsatt på Moldova-tid (én time foran, jf. Anna sitt utsagn). De tre
+        // bildene som finnes på BEGGE enhetene har derfor filnavn som ligger
+        // nøyaktig én time fra hverandre — samme sekund, samme motiv:
+        //   10:46:12 / 11:46:12  ·  19:30:45 / 20:30:45  ·  20:55:12 / 21:55:12
+        // Legg filene i public/case/dag1/pia/ — se README-en der.
+        // ------------------------------------------------------------------
+
+        // --- Mobil (norsk tid — telefonen stilte seg om ved landing) ---
+        {
+          id: 'd1-pia-m1',
+          title: 'IMG_20260730_121540.jpg', // Praha, mellomlanding
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag1/pia/moldova5.jpg',
+        },
+        {
+          id: 'd1-pia-m2',
+          title: 'IMG_20260730_181402.jpg', // inne i flyet
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag1/pia/plane.jpg',
+        },
+        {
+          id: 'd1-pia-m3',
+          title: 'IMG_20260730_195133.jpg', // flyvindu, solnedgang
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag1/pia/moldova.jpg',
+        },
+        {
+          id: 'd1-pia-m4',
+          title: 'IMG_20260730_211208.jpg', // Oslo lufthavn
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag1/pia/gardmeon airport.jpg',
+        },
+        {
+          id: 'd1-pia-m5',
+          title: 'IMG_20260731_101547.jpg', // Sørmarka-skiltet
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag1/pia/sørmarka1.jpg',
+        },
+        {
+          // ★ samme fil som kameraets IMG_20260731_114612.jpg (+1 time)
+          id: 'd1-pia-m6',
+          title: 'IMG_20260731_104612.jpg', // Sørmarka over vannet
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag1/pia/sørmarka.jpg',
+        },
+        {
+          id: 'd1-pia-m7',
+          title: 'IMG_20260731_112033.jpg', // hotellrommet
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag1/pia/hotell2.jpg',
+        },
+        {
+          // ★ samme fil som kameraets IMG_20260731_203045.jpg (+1 time)
+          id: 'd1-pia-m8',
+          title: 'IMG_20260731_193045.jpg', // bankettsalen
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag1/pia/sørmarlka3.jpg',
+        },
+        {
+          // ★ samme fil som kameraets IMG_20260731_215512.jpg (+1 time)
+          id: 'd1-pia-m9',
+          title: 'IMG_20260731_205512.jpg', // gjengen
+          kind: 'image',
+          folder: 'pia-mobil',
+          src: 'case/dag1/pia/people1.jpg',
+        },
+
+        // --- Kamera (Moldova-tid). Moldova-bildene er tatt i Moldova, så der er
+        //     klokka riktig; Norge-bildene ligger én time for sent. ---
+        {
+          id: 'd1-pia-k1',
+          title: 'IMG_20260728_201235.jpg', // folkedrakt i solnedgang
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag1/pia/Moldova4.jpg',
+        },
+        {
+          id: 'd1-pia-k2',
+          title: 'IMG_20260729_132408.jpg', // EU-flagg, midt på dagen
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag1/pia/Moldova3.jpg',
+        },
+        {
+          id: 'd1-pia-k3',
+          title: 'IMG_20260729_200317.jpg', // Chișinău ovenfra, gyllen time
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag1/pia/Moldova1.jpg',
+        },
+        {
+          id: 'd1-pia-k4',
+          title: 'IMG_20260729_211842.jpg', // jernbanestasjonen, blå time
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag1/pia/Moldova2.jpg',
+        },
+        {
+          // ★ samme fil som mobilens IMG_20260731_104612.jpg
+          id: 'd1-pia-k5',
+          title: 'IMG_20260731_114612.jpg', // Sørmarka over vannet
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag1/pia/sørmarka.jpg',
+        },
+        {
+          id: 'd1-pia-k6',
+          title: 'IMG_20260731_150318.jpg', // hotellkorridoren
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag1/pia/hotelcorridor.jpg',
+        },
+        {
+          // ★ samme fil som mobilens IMG_20260731_193045.jpg
+          id: 'd1-pia-k7',
+          title: 'IMG_20260731_203045.jpg', // bankettsalen
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag1/pia/sørmarlka3.jpg',
+        },
+        {
+          // ★ samme fil som mobilens IMG_20260731_205512.jpg
+          id: 'd1-pia-k8',
+          title: 'IMG_20260731_215512.jpg', // gjengen
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag1/pia/people1.jpg',
+        },
       ],
       question: {
         type: 'multiple_choice',
         prompt: 'Hvem lyver i vitneutsagnet sitt?',
-        options: [
-          { id: 'sverre', label: 'Sverre' },
-          { id: 'hedvig', label: 'Hedvig' },
-          { id: 'ane', label: 'Ane' },
-          { id: 'runill', label: 'Runill' },
-          { id: 'maud', label: 'Maud' },
-          { id: 'erik', label: 'Erik' },
-          { id: 'oskar', label: 'Oskar' },
-          { id: 'anna', label: 'Anna' },
-          { id: 'pia', label: 'Pia' },
-          { id: 'andreas', label: 'Andreas' },
-          { id: 'ingen', label: 'Ingen av dem lyver' },
-        ],
+        options: [...SUSPECT_OPTIONS, { id: 'ingen', label: 'Ingen av dem lyver' }],
       },
     },
 
@@ -682,12 +854,7 @@ export const CASE: CaseManifest = {
       question: {
         type: 'mc_with_other',
         prompt: 'Hvem drepte egentlig Angela?',
-        options: [
-          { id: 'kari', label: 'Kari Lund' },
-          { id: 'per', label: 'Per Haug' },
-          { id: 'thomas', label: 'Thomas Berg' },
-          { id: 'annet', label: 'Annet (skriv selv)' },
-        ],
+        options: [...SUSPECT_OPTIONS, { id: 'annet', label: 'Annet (skriv selv)' }],
         otherOptionId: 'annet',
         otherPlaceholder: 'Hvem tror du gjorde det – og hvorfor?',
       },
@@ -1499,8 +1666,8 @@ export const CASE: CaseManifest = {
           { from: 'me', text: 'Vi fikk en A lol, chillern da', time: '22. mars 2025 17:26' },
           { from: 'them', text: 'LETSGOO', time: '22. mars 2025 18:01' },
           { from: 'them', text: 'Gratulerer med dagen!!', time: '25. mars 2025 18:01' },
-          { from: 'them', text: 'Du som er ANSA proff, vet du om det er for sent å sende inn vedtektsforslag? Står åtte uker på nettsiden (aka utgått frist), men tenkte det var greit å spørre i tilfelle', time: '11. juni 2026 16:51' },
-          { from: 'me', text: 'Det er dessverre for sent, men lov å ta med juice til åpen debatt!!', time: '12. juni 2026 14:55' },
+          // Vedtektsforslag-spørsmålet er flyttet til Slack (sl-dm-andreas) — det er
+          // en ANSA-sak, og hører hjemme i arbeidskanalen, ikke i privatchatten.
           { from: 'me', text: 'Håper du koser deg så langt i Noreg', time: '12. juni 2026 14:56' },
           { from: 'them', text: 'Jeg er klar til å bestille! Fikse i morgen?😆', time: '13. juni 2026 00:37' },
           { from: 'them', text: 'Blir kjempebra. Får fikse litt god stemning blant oss franskmenn🤗 vi blir vel sånn 20 stk', time: '13. juni 2026 00:37' },
@@ -1771,9 +1938,500 @@ export const CASE: CaseManifest = {
           topic: 'Bankettmiddag lørdag 🥂',
           messages: [
             { author: 'Angela', text: 'Bordplasseringen er klar! Ligger i driven.', time: 'fre 14:05' },
-            { author: 'Kari', text: 'Hvorfor sitter jeg ved siden av Per??', time: 'fre 14:22' },
-            { author: 'Angela', text: 'Det ordner seg sikkert 😅', time: 'fre 14:30', edited: true },
-            { author: 'Per', text: 'Jeg bytter gjerne plass.', time: 'fre 15:01' },
+            {
+              author: 'Ingeborg Frogner Dahl-Hilstad',
+              text: 'Skal hovedstyret sitte samlet, eller spredt utover bordene?',
+              time: 'fre 14:22',
+            },
+            {
+              author: 'Angela',
+              text: 'Spredt. Folk skal snakke med noen de ikke kjenner. Det er hele poenget.',
+              time: 'fre 14:30',
+              edited: true,
+            },
+            {
+              author: 'Henriette Moe Schjelderup',
+              text: 'Jeg har kjøpt duker. De er litt for korte, men det ser helt fint ut på bilde.',
+              time: 'fre 15:01',
+            },
+            { author: 'Jofrid', text: 'Jeg tar med blomster 🌸', time: 'fre 15:14' },
+            {
+              author: 'Brage Johnsen',
+              text: 'Kan vi ha en toastmaster som faktisk holder tiden i år',
+              time: 'fre 16:02',
+            },
+            {
+              author: 'Angela',
+              text: 'Vi HAR en toastmaster som holder tiden. Jeg har gitt hen en klokke og et blikk.',
+              time: 'fre 16:10',
+            },
+            {
+              author: 'Henriette Moe Schjelderup',
+              text:
+                'Serviettene i ANSA-grønn var utsolgt så nå er de mintgrønne. Ingen kommer til å ' +
+                'merke det.',
+              time: 'tor 11:40',
+            },
+            { author: 'Angela', text: 'Noen kommer helt sikkert til å merke det.', time: 'tor 11:44' },
+          ],
+        },
+        {
+          id: 'sl-francaise',
+          name: 'la-delegation-francaise',
+          topic: 'Ici on parle français 🇫🇷',
+          messages: [
+            // --- CIV VII før GF. Gutta (Andreas, Oskar, Brage, Aleksander, Wiktor)
+            //     spiller konstant. Bekrefter Anna sitt utsagn om at Wiktor vant og
+            //     at Andreas var deppa, og setter opp omkampen på GF.
+            {
+              author: 'Aleksander Victor Taban',
+              text: 'qui veut jouer ce soir ? 🤡',
+              time: '12. juli 17:40',
+            },
+            { author: 'Wiktor Jankowski', text: 'moi', time: '12. juli 17:41' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'moi mais je ne joue plus jamais contre Wiktor',
+              time: '12. juli 17:44',
+            },
+            { author: 'Wiktor Jankowski', text: 'mdrrrr', time: '12. juli 17:45' },
+            {
+              author: 'Oskar',
+              suspectId: 'oskar',
+              text: 'il boude encore',
+              time: '12. juli 17:52',
+            },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'je ne boude pas. je réfléchis à ma stratégie.',
+              time: '12. juli 17:53',
+            },
+            { author: 'Brage Johnsen', text: 'il boude', time: '12. juli 17:55' },
+            {
+              author: 'Oskar',
+              suspectId: 'oskar',
+              text:
+                "quelqu'un peut m'expliquer pourquoi on doit changer de civ entre les âges. " +
+                "200 heures de jeu et je ne comprends toujours pas",
+              time: '21. juli 20:12',
+            },
+            {
+              author: 'Wiktor Jankowski',
+              text: "c'est littéralement le principe du jeu Oskar",
+              time: '21. juli 20:15',
+            },
+            { author: 'Oskar', suspectId: 'oskar', text: "c'est stupide", time: '21. juli 20:16' },
+            { author: 'Brage Johnsen', text: 'il dit ça chaque partie', time: '21. juli 20:18' },
+            {
+              author: 'Aleksander Victor Taban',
+              text: 'et il joue quand même chaque soir 🤡',
+              time: '21. juli 20:20',
+            },
+            {
+              author: 'Wiktor Jankowski',
+              // ↳ bekrefter Anna: «Wiktor … forklarte at det var fordi han hadde vunnet i
+              //   dataspillet CIV VII» — og Wiktor-DM-en (sju timer).
+              text: 'SEPT HEURES. et il a quitté la partie avant la fin 😭',
+              time: '27. juli 00:02',
+            },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: "j'avais un train",
+              time: '27. juli 08:40',
+            },
+            {
+              author: 'Oskar',
+              suspectId: 'oskar',
+              text: "tu n'avais pas de train",
+              time: '27. juli 08:42',
+            },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: "j'avais moralement un train",
+              time: '27. juli 08:43',
+            },
+            { author: 'Aleksander Victor Taban', text: '🤡🤡🤡', time: '27. juli 08:44' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: "revanche à la GF. j'apporte mon pc.",
+              time: '27. juli 09:10',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: 'tu vas porter une tour de 12 kilos dans un avion ??',
+              time: '27. juli 09:14',
+            },
+            { author: 'Andreas', suspectId: 'andreas', text: 'oui', time: '27. juli 09:15' },
+            {
+              author: 'Angela',
+              text: 'Pas dans la salle plénière. Je suis sérieuse.',
+              time: '27. juli 09:30',
+            },
+            { author: 'Aleksander Victor Taban', text: 'on trouvera une chambre 🫡', time: '27. juli 09:32' },
+            {
+              author: 'Aleksander Victor Taban',
+              text: "quelqu'un sait à quelle heure on part demain ?? 🤡",
+              time: 'man 21:14',
+            },
+            {
+              author: 'Maia Vejlgaard Evensen',
+              text: '8h30 devant la réception. Je répète : 8h30.',
+              time: 'man 21:20',
+            },
+            { author: 'Wiktor Jankowski', text: 'mdrrrr personne ne sera là à 8h30', time: 'man 21:22' },
+            { author: 'Maia Vejlgaard Evensen', text: 'Je sais.', time: 'man 21:23' },
+            {
+              author: 'Svea Hedda Marie König',
+              text: 'moi je viens mais je dors dans le bus 💕',
+              time: 'man 21:41',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: 'grève SNCF jeudi. évidemment. on va tous mourir dans cette gare',
+              time: 'tir 07:55',
+            },
+            {
+              author: 'Aleksander Victor Taban',
+              text: "on a raté le train, on prend le suivant, tout va très bien 🤡🤡",
+              time: 'tir 10:32',
+            },
+            { author: 'Angela', text: 'Vous êtes où là ??', time: 'tir 10:40' },
+            { author: 'Aleksander Victor Taban', text: 'dans un kebab', time: 'tir 10:41' },
+            { author: 'Angela', text: 'Bien sûr.', time: 'tir 10:42' },
+            {
+              author: 'Wiktor Jankowski',
+              text: "le kebab est bien meilleur que la nourriture de l'avion, donc c'est un choix stratégique",
+              time: 'tir 10:50',
+            },
+            {
+              author: 'Svea Hedda Marie König',
+              text: "j'ai oublié mon chargeur à paris 😭",
+              time: 'ons 18:03',
+            },
+            {
+              author: 'Maia Vejlgaard Evensen',
+              text: "tu as oublié ton chargeur à paris l'année dernière aussi",
+              time: 'ons 18:07',
+            },
+            { author: 'Svea Hedda Marie König', text: "c'est ma tradition 💕", time: 'ons 18:09' },
+            {
+              author: 'Brage Johnsen',
+              text: "quelqu'un peut m'expliquer pourquoi il fait 11 degrés en juillet ici",
+              time: 'tor 08:12',
+            },
+            { author: 'Wiktor Jankowski', text: 'bienvenue en Norvège 🇳🇴', time: 'tor 08:15' },
+            {
+              author: 'Aleksander Victor Taban',
+              text: "les norvégiens appellent ça l'été ☀️",
+              time: 'tor 08:16',
+            },
+            { author: 'Angela', text: "C'est l'été.", time: 'tor 08:30' },
+            {
+              author: 'Svea Hedda Marie König',
+              text: 'on se retrouve au bar après le dîner ? 💕',
+              time: 'fre 17:22',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: "il y a UN barman pour 100 personnes. préparez-vous psychologiquement",
+              time: 'fre 17:30',
+            },
+            {
+              author: 'Aleksander Victor Taban',
+              text: 'jsp pourquoi mais je trouve ça drôle 🤡',
+              time: 'fre 17:31',
+            },
+
+            // --- Fredag kveld: omkampen på rommet etter prisutdelingen (21:30) og
+            //     før baren (~22:20). Bekrefter Oskar («guttatid» på rommet med
+            //     studentprest Sverre), Sverre («ble litt for teknisk for meg») og
+            //     Erik (snakket med Oskar om spelet i baren etterpå). Stopper
+            //     bevisst lenge før drapet 23:38 — ingen får alibi her.
+            {
+              author: 'Aleksander Victor Taban',
+              text: 'la remise des prix est finie, on monte à la chambre 🤡',
+              time: 'fre 21:34',
+            },
+            {
+              author: 'Oskar',
+              suspectId: 'oskar',
+              // ↳ bekrefter at ANSA Toulouse vant årets lokallag (Oskar/Maud/Anna).
+              text: "Toulouse a gagné. je n'ai plus rien à prouver ce soir",
+              time: 'fre 21:36',
+            },
+            { author: 'Andreas', suspectId: 'andreas', text: 'moi si', time: 'fre 21:37' },
+            {
+              author: 'Wiktor Jankowski',
+              text: 'le prêtre monte avec nous ??',
+              time: 'fre 21:41',
+            },
+            {
+              author: 'Brage Johnsen',
+              // ↳ bekrefter Oskar: «Vi gutta gikk på rommet vårt litt med studentprest
+              //   Sverre for å ha guttatid».
+              text: "sverre a dit oui. il ne sait pas du tout ce qui l'attend",
+              time: 'fre 21:43',
+            },
+            {
+              author: 'Aleksander Victor Taban',
+              text: 'on lui explique les voies héritage en cinq minutes, ça va aller 🤡',
+              time: 'fre 21:48',
+            },
+            {
+              author: 'Oskar',
+              suspectId: 'oskar',
+              // ↳ bekrefter Sverre: «Var morsomt, men ble litt for teknisk for meg.»
+              text: "il a dit que c'était trop technique. honnêtement il a raison",
+              time: 'fre 21:57',
+            },
+            {
+              author: 'Wiktor Jankowski',
+              text: 'GG 🏆 bon, on descend au bar ?',
+              time: 'fre 22:04',
+            },
+            {
+              author: 'Brage Johnsen',
+              // ↳ bekrefter Ane/Oskar: køen i baren ble helt utrolig lang.
+              text: 'oui. et la queue va être infinie, comme chaque année',
+              time: 'fre 22:07',
+            },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'je vous rejoins, je range le pc',
+              time: 'fre 22:09',
+            },
+            {
+              author: 'Aleksander Victor Taban',
+              text: "quelqu'un a vu mon chargeur 🤡",
+              time: 'fre 22:10',
+            },
+            {
+              author: 'Svea Hedda Marie König',
+              text: 'demande à moi. je suis experte en chargeurs perdus 💕',
+              time: 'fre 22:12',
+            },
+          ],
+        },
+
+        // ------------------------------------------------------------------
+        // STØY-KANALER. Ingen spor her — bare vanlig GF-mas som gjør at
+        // telefonen føles ekte og gir spillerne noe å lete gjennom. Ingen av
+        // avsenderne er mistenkte (Brage/Ingeborg/Henriette/Jofrid er alle
+        // navn som allerede finnes i saken andre steder).
+        // ------------------------------------------------------------------
+        {
+          id: 'sl-generelt',
+          name: 'generelt',
+          topic: 'Alt og ingenting 🌀',
+          messages: [
+            {
+              author: 'Angela',
+              text: 'Wifi på hotellet er «GF2026» og passordet er «generalforsamling». Alt i små bokstaver. Ja jeg vet.',
+              time: 'tor 09:14',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: 'Nei det passordet kommer aldri noen til å klare å skrive inn på første forsøk',
+              time: 'tor 09:20',
+            },
+            {
+              author: 'Ingeborg Frogner Dahl-Hilstad',
+              text:
+                'Minner om at navneskiltene skal bæres synlig hele helgen. Det står i ' +
+                'retningslinjene, og det er nokså greit for oss som ikke kjenner alle 200.',
+              time: 'tor 09:41',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: 'Mitt sier «Bryne Johnsen». To skilt på rad nå. Jeg gir opp assa 🙃',
+              time: 'tor 09:52',
+            },
+            {
+              author: 'Angela',
+              text: 'Nei hæ! Jeg fikser et nytt til deg i morgen, lover.',
+              time: 'tor 10:03',
+            },
+            {
+              author: 'Henriette Moe Schjelderup',
+              text:
+                'Noen som har sett en svart ladekabel i plenumssalen? Den lå ved bordet foran, ' +
+                'også var den plutselig borte. Ikke krise, men litt irriterende.',
+              time: 'tor 16:30',
+            },
+            {
+              author: 'Jofrid',
+              text: 'Jeg har en hel pose med kabler som folk har glemt igjen. Kom og se innom 🌸',
+              time: 'tor 16:44',
+            },
+            {
+              author: 'Angela',
+              text: 'Kaffemaskinen i 2. etasje er tom igjen. Dette er det tredje døgnet.',
+              time: 'fre 07:58',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: 'Det er vel livet det...',
+              time: 'fre 08:02',
+            },
+          ],
+        },
+        {
+          id: 'sl-logistikk',
+          name: 'logistikk',
+          topic: 'Buss, rom, nøkler 🚌',
+          messages: [
+            {
+              author: 'Ingeborg Frogner Dahl-Hilstad',
+              text:
+                'Bussen fra flyplassen går 14:20 og 17:50. Ikke 14:30 som det står i det gamle ' +
+                'programmet — det er rettet i den nye versjonen som ligger i driven.',
+              time: 'ons 11:05',
+            },
+            {
+              author: 'Angela',
+              text: 'Jeg har lagt inn riktig tid i programmet nå. Versjon 4. Ikke bruk versjon 3. Eller 2.',
+              time: 'ons 11:22',
+              edited: true,
+            },
+            {
+              author: 'Henriette Moe Schjelderup',
+              text: 'Er det versjon 4 eller «programmet_ferdig_FERDIG.pdf»? 😅',
+              time: 'ons 11:26',
+            },
+            {
+              author: 'Angela',
+              text: 'Den siste. Nei vent. Den nest siste. Jeg sletter resten.',
+              time: 'ons 11:31',
+            },
+            {
+              author: 'Brage Johnsen',
+              text:
+                'Litt av gjengen fra Frankrike kommer først sent på torsdag, så vi rekker ikke ' +
+                'registreringen. Går det greit å hente navneskiltene fredag morgen?',
+              time: 'ons 15:47',
+            },
+            {
+              author: 'Angela',
+              text: 'Jada helt fint. Jeg legger dem i en konvolutt i resepsjonen.',
+              time: 'ons 15:52',
+            },
+            {
+              author: 'Ingeborg Frogner Dahl-Hilstad',
+              text:
+                'To rom har fått feil antall nøkkelkort. Hotellet sier det er «umulig», men de ' +
+                'har sagt det før også.',
+              time: 'tor 13:14',
+            },
+            {
+              author: 'Henriette Moe Schjelderup',
+              text: 'Umulig er et sterkt ord for et hotell som booket oss inn på feil helg i fjor',
+              time: 'tor 13:20',
+            },
+          ],
+        },
+        {
+          id: 'sl-teknikk',
+          name: 'teknikk',
+          topic: 'Projektor, mikk, HDMI 🔌',
+          messages: [
+            {
+              author: 'Angela',
+              text: 'Mikrofon 2 knaser når man går forbi høyttaleren på venstre side. Noen som er tekniske?',
+              time: 'tor 12:02',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: 'Jeg er ikke teknisk men jeg kan holde den stille',
+              time: 'tor 12:06',
+            },
+            {
+              author: 'Henriette Moe Schjelderup',
+              text:
+                'Prøvde å bytte batteri, hjalp litt. Tror det er kabelen bak scenen som ligger ' +
+                'oppå strømkabelen. Klassisk.',
+              time: 'tor 12:35',
+            },
+            {
+              author: 'Angela',
+              text:
+                'Projektoren viser alt i litt grønt. Hvertfall på min maskin. Fungerte helt fint ' +
+                'i går, så nå vet jeg ikke helt.',
+              time: 'tor 14:11',
+            },
+            {
+              author: 'Henriette Moe Schjelderup',
+              text: 'Grønt er ANSA-farge så det er nesten på tema?',
+              time: 'tor 14:15',
+            },
+            {
+              author: 'Angela',
+              text: 'Byttet HDMI-kabel og nå er det bare litt grønt. Godt nok. Vi kjører på.',
+              time: 'tor 14:52',
+            },
+            {
+              author: 'Ingeborg Frogner Dahl-Hilstad',
+              text:
+                'Husk å teste presentasjonene FØR sesjonen begynner. Hvert år er det noen som ' +
+                'oppdager at fonten ser helt annerledes ut på en annen maskin.',
+              time: 'fre 08:30',
+            },
+          ],
+        },
+        {
+          id: 'sl-mat',
+          name: 'mat-og-allergier',
+          topic: 'Catering 🍽️',
+          messages: [
+            {
+              author: 'Ingeborg Frogner Dahl-Hilstad',
+              text:
+                'Frist for å melde inn allergier var forrige mandag. Vi har fått inn 14 nye ' +
+                'siden da. Jeg sier ikke nei, jeg sier bare at det finnes en frist.',
+              time: 'tir 10:40',
+            },
+            {
+              author: 'Angela',
+              text: 'Kjøkkenet sier de fikser det. De er kjempegreie.',
+              time: 'tir 10:48',
+            },
+            {
+              author: 'Jofrid',
+              text: 'Er det vegetaralternativ på banketten? Spør for flere 🌸',
+              time: 'tir 14:03',
+            },
+            {
+              author: 'Angela',
+              text: 'Ja! Og glutenfritt. Og ett måltid uten nøtter. Jeg har en tabell nå. Jeg elsker tabellen.',
+              time: 'tir 14:19',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: 'Kan vi få noe annet enn kylling og ris til lunsj tre dager på rad',
+              time: 'tor 12:44',
+            },
+            {
+              author: 'Angela',
+              text: 'Nei 🙂',
+              time: 'tor 12:45',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: 'Respekterer det',
+              time: 'tor 12:46',
+            },
+            {
+              author: 'Henriette Moe Schjelderup',
+              text:
+                'Baren tar bare kort, ikke kontanter. Bare så folk vet det før køen blir helt ' +
+                'utrolig lang som i fjor.',
+              time: 'fre 16:20',
+            },
           ],
         },
         {
@@ -1861,12 +2519,456 @@ export const CASE: CaseManifest = {
           ],
         },
         {
-          id: 'sl-dm-kari',
-          name: 'Kari',
+          // Flyttet hit fra WhatsApp: vedtektsforslag-spørsmålet er en ANSA-sak.
+          // ↳ bekrefter Andreas sitt eget utsagn («Det var en del vedtektsforslag jeg
+          //   ikke fikk sendt …») og Sverre («irritert på Andreas … noe om vedtekter og
+          //   at han var forsinket»). Resten av tråden er ren støy.
+          id: 'sl-dm-andreas',
+          name: 'Andreas',
           dm: true,
           messages: [
-            { author: 'Kari', text: 'Vi må snakke om det du så. IKKE si det til noen.', time: 'fre 23:12' },
-            { author: 'Angela', text: 'Jeg lover ingenting.', time: 'lør 08:03' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Er det wifi i plenumssalen?',
+              time: '2. juni 10:14',
+            },
+            { author: 'Angela', text: 'Ja. Passordet står i #generelt.', time: '2. juni 10:40' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Jeg finner ikke #generelt',
+              time: '2. juni 10:41',
+            },
+            { author: 'Angela', text: 'Det er en kanal. Du er med i den.', time: '2. juni 10:44' },
+            { author: 'Andreas', suspectId: 'andreas', text: 'Åh', time: '2. juni 10:45' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Er det dresskode på banketten??',
+              time: '5. juni 21:02',
+            },
+            { author: 'Angela', text: 'Pent. Ikke smoking, ikke joggebukse.', time: '5. juni 21:30' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Så joggebukse med blazer?',
+              time: '5. juni 21:31',
+            },
+            { author: 'Angela', text: 'Nei.', time: '5. juni 21:33' },
+            { author: 'Andreas', suspectId: 'andreas', text: 'Noteres 🫡', time: '5. juni 21:34' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text:
+                'Du som er ANSA proff, vet du om det er for sent å sende inn vedtektsforslag? ' +
+                'Står åtte uker på nettsiden (aka utgått frist), men tenkte det var greit å ' +
+                'spørre i tilfelle',
+              time: '11. juni 16:51',
+            },
+            {
+              author: 'Angela',
+              text: 'Det er dessverre for sent, men lov å ta med juice til åpen debatt!!',
+              time: '12. juni 14:55',
+            },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Blir det pub quiz på GF i år?',
+              time: '20. juni 19:12',
+            },
+            { author: 'Angela', text: 'Det står ikke i tidsplanen nei.', time: '20. juni 19:40' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Men det STÅR ikke at det ikke er pub quiz heller',
+              time: '20. juni 19:41',
+            },
+            { author: 'Angela', text: 'Teknisk sant.', time: '20. juni 19:44' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Hvem er møteleder i år?',
+              time: '9. juli 12:30',
+            },
+            { author: 'Angela', text: 'Står i sakspapirene.', time: '9. juli 13:05' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Har lest sakspapirene',
+              time: '9. juli 13:06',
+            },
+            { author: 'Angela', text: 'Tydeligvis ikke da.', time: '9. juli 13:07' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: '',
+              // Bytt gjerne til en annen fil i public/case/memes/.
+              img: 'case/memes/axnus4.jpg',
+              time: '9. juli 13:09',
+            },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Tar du med Vanish? Sånn i tilfelle',
+              time: '24. juli 23:40',
+            },
+            { author: 'Angela', text: 'Hvorfor i alle dager', time: '25. juli 08:02' },
+            {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Bare i tilfelle 🙂',
+              time: '25. juli 08:15',
+            },
+             {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Viktige saker: https://kunde.byggekamera.no/?p=1171&c=1579',
+              time: '27. juli 08:15',
+            },
+             {
+              author: 'Andreas',
+              suspectId: 'andreas',
+              text: 'Byggekameraet til NOS (Nye Oslo Spektrum). Eneste vi gjør på jobb',
+              time: '27. juli 08:15',
+            },
+          ],
+        },
+        // ------------------------------------------------------------------
+        // STØY-DM-ER. Mest hverdagslig GF-mas, men noen meldinger bekrefter
+        // ting vitnene sier (merket «↳ bekrefter …» i kommentar). Ingen av
+        // motpartene er mistenkte, og ingenting her motsier tidslinjen.
+        // ------------------------------------------------------------------
+        {
+          id: 'sl-dm-brage',
+          name: 'Brage Johnsen',
+          dm: true,
+          messages: [
+            {
+              author: 'Angela',
+              text: 'Brage! Har du regnearket fra ANSA Frankrike? Jeg trenger tallene før tirsdag.',
+              time: '12. juli 09:20',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: 'Jada kommer i morgen. Oskar sitter på den siste fila tror jeg',
+              time: '12. juli 09:44',
+            },
+            {
+              author: 'Angela',
+              text: 'Takk <3',
+              time: '12. juli 09:45',
+            },
+            {
+              author: 'Brage Johnsen',
+              text: 'Er det lov å ta med gitar? Spør for gjengen.',
+              time: '21. juli 20:11',
+            },
+            { author: 'Angela', text: 'Ta med. Men ikke etter midnatt.', time: '21. juli 20:30' },
+            {
+              author: 'Brage Johnsen',
+              // ↳ bekrefter Sverre: «Vi har fått klager fra folk som Brage Johnsen om at
+              //   det kan være farlig» (nattbadingen).
+              text:
+                'Nei jeg må bare si det én gang til før helgen: jeg synes fortsatt nattbadinga ' +
+                'er en temmelig dårlig idé. Det er stummende mørkt der nede og ingen har ' +
+                'ordentlig oversikt. Jeg har sagt det til Sverre også.',
+              time: 'ons 22:14',
+            },
+            {
+              author: 'Angela',
+              text:
+                'Jeg skjønner deg helt. Vi tar det opp på møtet med de ansatte og hovedstyret, ' +
+                'men jeg kan ikke love noe — folk elsker det jo. Vi har hvertfall edruvakt.',
+              time: 'tor 07:52',
+            },
+            { author: 'Brage Johnsen', text: 'Det er det jeg sier hvert år og', time: 'tor 07:58' },
+            {
+              author: 'Angela',
+              text: 'Og hvert år hører jeg på deg og gjør ingenting. Konsekvent hvertfall!',
+              time: 'tor 08:01',
+            },
+          ],
+        },
+        {
+          id: 'sl-dm-ingeborg',
+          name: 'Ingeborg Frogner Dahl-Hilstad',
+          dm: true,
+          messages: [
+            {
+              author: 'Ingeborg Frogner Dahl-Hilstad',
+              text: 'Har du malen for saksframlegg? Den gamle har fortsatt logoen fra 2019.',
+              time: '18. juli 10:15',
+            },
+            { author: 'Angela', text: 'Ligger i driven under «Maler_NY». Ikke «Maler».', time: '18. juli 10:31' },
+            {
+              author: 'Ingeborg Frogner Dahl-Hilstad',
+              text: 'Det er to mapper som heter «Maler_NY».',
+              time: '18. juli 10:36',
+            },
+            { author: 'Angela', text: 'Den med emoji i navnet.', time: '18. juli 10:38' },
+            {
+              author: 'Ingeborg Frogner Dahl-Hilstad',
+              text: 'Begge har emoji.',
+              time: '18. juli 10:39',
+            },
+            { author: 'Angela', text: 'Jeg ringer deg.', time: '18. juli 10:40' },
+            {
+              author: 'Ingeborg Frogner Dahl-Hilstad',
+              // ↳ bekrefter vedtekt/nynorsk-tråden (Erik-DM-en, e-posten, og det Maud,
+              //   Sverre og Erik sier om vedtektskonflikten).
+              text:
+                'Du — har du sett at §55 har fått ny ordlyd i den siste vedtektsfila? Det står ' +
+                '«Daglig leiing» nå. Jeg finner ikke vedtaket det skulle komme fra noe sted.',
+              time: '28. juli 13:40',
+            },
+            {
+              author: 'Angela',
+              text: 'Jeg lurer på akkurat det samme. Jeg spør Erik direkte.',
+              time: '28. juli 14:48',
+            },
+            {
+              author: 'Ingeborg Frogner Dahl-Hilstad',
+              text:
+                'Fint. Jeg elsker nynorsk, men jeg elsker protokoll litt mer. Det skal jo stå ' +
+                'i et referat et sted.',
+              time: '28. juli 15:02',
+            },
+          ],
+        },
+        {
+          id: 'sl-dm-henriette',
+          name: 'Henriette Moe Schjelderup',
+          dm: true,
+          messages: [
+            {
+              author: 'Henriette Moe Schjelderup',
+              text: 'Jeg kan ta edruvakt fredag hvis ingen andre gidder. Har gjort det før, går helt fint.',
+              time: 'man 19:40',
+            },
+            { author: 'Angela', text: 'Du er gull <3 Jeg setter deg opp.', time: 'man 19:52' },
+            {
+              author: 'Henriette Moe Schjelderup',
+              // ↳ bekrefter Runills notater: «18:42 – Hadde samtale med edruvakt Henriette
+              //   angående tips.»
+              text:
+                'Runill ville gå gjennom noen tips med oss edruvakter før banketten. Rundt ' +
+                '18:30 sa hun. Skal jeg si det videre til de andre?',
+              time: 'tor 15:20',
+            },
+            { author: 'Angela', text: 'Ja gjør det. Runill er kjempegod på sånt.', time: 'tor 15:26' },
+            {
+              author: 'Henriette Moe Schjelderup',
+              // ↳ bekrefter Runills notater: «21:02 – Edruvakt måtte byttes, rakk ikke nytt møte.»
+              text:
+                'Nei her ble det rot. Jeg måtte bytte vakt i siste sekund, så jeg rakk ikke det ' +
+                'nye møtet. Har sagt det til Runill. Beklager assa!',
+              time: 'fre 21:02',
+            },
+            {
+              author: 'Angela',
+              text: 'Helt greit! Det ordner seg. Takk for at du sier det.',
+              time: 'fre 21:09',
+            },
+          ],
+        },
+        {
+          id: 'sl-dm-jofrid',
+          name: 'Jofrid',
+          dm: true,
+          messages: [
+            {
+              author: 'Jofrid',
+              text:
+                'Hei Angela 🌸 Bare en liten sjekk-inn. Du har jobbet nokså mye nå, og jeg ser ' +
+                'deg svare på meldinger klokka to om natta. Husk å spise noe.',
+              time: '24. juli 11:12',
+            },
+            {
+              author: 'Angela',
+              text: 'Jada jeg spiser! Jeg har til og med laget GitHub Issues for måltidene. Funker fett.',
+              time: '24. juli 12:30',
+            },
+            { author: 'Jofrid', text: 'Det var ikke helt svaret jeg håpet på 😄', time: '24. juli 12:41' },
+            {
+              author: 'Jofrid',
+              text: 'Jeg tar med kakao og pledd til stillerommet i tilfelle noen trenger en pause 🌸',
+              time: 'tor 09:05',
+            },
+            { author: 'Angela', text: 'Du er grunnen til at folk kommer tilbake hvert år <3', time: 'tor 09:20' },
+          ],
+        },
+        {
+          id: 'sl-dm-wiktor',
+          name: 'Wiktor Jankowski',
+          dm: true,
+          messages: [
+            {
+              author: 'Wiktor Jankowski',
+              // ↳ bekrefter Anna: «Wiktor var det også, og forklarte at det var fordi han
+              //   hadde vunnet i dataspillet CIV VII.»
+              text: 'ANGELA. Jeg vant i CIV mot Andreas. Han tar det ikke særlig bra.',
+              time: '26. juli 23:48',
+            },
+            { author: 'Angela', text: 'HAHAHA. Hvor lang tid tok den runden?', time: '27. juli 08:14' },
+            { author: 'Wiktor Jankowski', text: 'Sju timer? Vi begynte rett etter middag.', time: '27. juli 08:20' },
+            { author: 'Angela', text: 'Sju TIMER. Skaff dere liv.', time: '27. juli 08:22' },
+            {
+              author: 'Wiktor Jankowski',
+              text: 'Dette ER livene våre. Andreas krever omkamp på GF forresten, så det blir en laaang helg',
+              time: '27. juli 08:31',
+            },
+            { author: 'Angela', text: 'Men hva faen da', time: '27. juli 08:35' },
+            { author: 'Wiktor Jankowski', text: 'Vi finner et rom 🫡', time: '27. juli 08:36' },
+          ],
+        },
+        {
+          id: 'sl-dm-kaja',
+          name: 'Hidde Bakker',
+          dm: true,
+          messages: [
+            {
+              author: 'Hidde Bakker',
+              text: 'Hei! Vi kommer en del fra ANSA Benelux. Er det nok kapasitet i baren?',
+              time: '20. juli 16:02',
+            },
+            {
+              author: 'Angela',
+              // ↳ bekrefter Ane: «Køen i baren var noe helt utrolig lang — spesielt fra
+              //   ANSA Benelux.»
+              text: 'Det er én bar og én bartender. Så nei 😅 Kom tidlig, eller kom med tålmodighet.',
+              time: '20. juli 16:20',
+            },
+            { author: 'Hidde Bakker', text: 'Vi tar med tålmodighet og masse lægs', time: '20. juli 16:24' },
+            { author: 'Hidde Bakker', text: 'Kan vi ta med egen høyttaler til nach?', time: 'tir 21:33' },
+            { author: 'Angela', text: 'Bro', time: 'tir 21:40' },
+            { author: 'Hidde Bakker', text: 'Verdt et forsøk 🙏', time: 'tir 21:41' },
+          ],
+        },
+        {
+          // Jonathan er førstegangsdelegat og har ingen rolle i planleggingen — bare
+          // en nervøs nykommer som spør om alt. Ren støy.
+          id: 'sl-dm-jonathan',
+          name: 'Jonathan Nagelgaard',
+          dm: true,
+          messages: [
+            {
+              author: 'Jonathan Nagelgaard',
+              text:
+                'Hei! Beklager at jeg spør deg om alt, men det er første gang jeg skal på GF og ' +
+                'jeg skjønner nokså lite. Er det dumt å spørre hva GF står for?',
+              time: '14. juli 20:12',
+            },
+            {
+              author: 'Angela',
+              text: 'Generalforsamling! Og nei, det er ikke dumt. Halvparten sier bare «GF» og håper på det beste.',
+              time: '14. juli 20:40',
+            },
+            {
+              author: 'Jonathan Nagelgaard',
+              text: 'Godt å høre. Neste spørsmål: hva er en forretningsorden',
+              time: '14. juli 20:41',
+            },
+            {
+              author: 'Angela',
+              text: 'Et regelverk for møtet. Ingen har lest det. Møteledelsen har lest det.',
+              time: '14. juli 20:52',
+            },
+            {
+              author: 'Jonathan Nagelgaard',
+              text: 'Så jeg trenger ikke lese det?',
+              time: '14. juli 20:53',
+            },
+            { author: 'Angela', text: 'Du BØR lese det. Du kommer ikke til å lese det.', time: '14. juli 20:55' },
+            {
+              author: 'Jonathan Nagelgaard',
+              text: 'Nei det er nok riktig det 😅',
+              time: '14. juli 20:56',
+            },
+            {
+              author: 'Jonathan Nagelgaard',
+              text:
+                'Må man si noe fra talerstolen? For jeg har egentlig ingenting å si, jeg har mest ' +
+                'lyst til å sitte og se på',
+              time: '19. juli 11:30',
+            },
+            {
+              author: 'Angela',
+              text:
+                'Du må ingenting. Det er helt lov å bare følge med hele helgen. De fleste som ' +
+                'snakker mest er de som har vært der ti ganger.',
+              time: '19. juli 12:04',
+            },
+            {
+              author: 'Jonathan Nagelgaard',
+              text: 'Fint. Hvor mange er det egentlig der?',
+              time: '19. juli 12:05',
+            },
+            { author: 'Angela', text: 'Rundt 200.', time: '19. juli 12:11' },
+            { author: 'Jonathan Nagelgaard', text: '200???', time: '19. juli 12:11' },
+            { author: 'Jonathan Nagelgaard', text: 'Jeg kjenner jo ingen assa', time: '19. juli 12:12' },
+            {
+              author: 'Angela',
+              text:
+                'Ingen kjente noen første gang. Du kommer til å kjenne halve Europa innen lørdag, ' +
+                'det er sånn det funker.',
+              time: '19. juli 12:30',
+            },
+            {
+              author: 'Jonathan Nagelgaard',
+              text: 'Blir det noe sosialt eller er det bare møter i tre dager',
+              time: '26. juli 22:14',
+            },
+            {
+              author: 'Angela',
+              text: 'Det er bankett på lørdagen. Og folk finner alltid på noe etterpå.',
+              time: '27. juli 08:20',
+            },
+            {
+              author: 'Jonathan Nagelgaard',
+              text: 'Er det gratis mat?',
+              time: '27. juli 08:21',
+            },
+            { author: 'Angela', text: 'Ja. Kylling og ris. Mye kylling og ris.', time: '27. juli 08:24' },
+            { author: 'Jonathan Nagelgaard', text: 'Elsker kylling og ris 🙏', time: '27. juli 08:25' },
+            {
+              author: 'Jonathan Nagelgaard',
+              text: 'Siste spørsmål lover: er det noen som sjekker om man har lest sakspapirene',
+              time: 'tor 23:41',
+            },
+            { author: 'Angela', text: 'Nei.', time: 'fre 07:50' },
+            { author: 'Jonathan Nagelgaard', text: 'Nice', time: 'fre 07:52' },
+            {
+              author: 'Angela',
+              text: 'Men det er 224 sider, så jeg hadde begynt nå hvis jeg var deg.',
+              time: 'fre 07:53',
+            },
+            { author: 'Jonathan Nagelgaard', text: 'Å', time: 'fre 07:55' },
+          ],
+        },
+        {
+          id: 'sl-dm-bendik',
+          name: 'Lorenz Strohe',
+          dm: true,
+          messages: [
+            {
+              author: 'Lorenz Strohe',
+              text: 'Hei. Kvitteringene fra reisen din mangler MVA-felt, så jeg får ikke ført dem.',
+              time: '15. juli 11:20',
+            },
+            {
+              author: 'Angela',
+              text: 'Sender på nytt i kveld. Jeg har dem i en konvolutt et eller annet sted.',
+              time: '15. juli 12:05',
+            },
+            { author: 'Lorenz Strohe', text: 'Bilde av kvitteringen holder. Trenger ikke originalen.', time: '15. juli 12:09' },
+            { author: 'Angela', text: 'Det burde jeg visst for tre år siden assa', time: '15. juli 12:11' },
+            {
+              author: 'Lorenz Strohe',
+              text: 'Det står i rutinen. Som ingen leser. Jeg har lagt meg til ro med det.',
+              time: '15. juli 12:15',
+              edited: true,
+            },
           ],
         },
       ],

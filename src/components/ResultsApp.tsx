@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { CASE, type DayContent, type Question } from '../case/manifest'
 import { getLiveResults, hasSupabase, type ResultRow } from '../lib/supabase'
+import { useUnlock } from '../lib/UnlockContext'
 import AppWindow from './AppWindow'
 
 // Distinkte farger per alternativ (fungerer med mange mistenkte, også på mobil).
@@ -27,15 +28,23 @@ function demoRows(day: DayContent): ResultRow[] {
 
 export default function ResultsApp() {
   const days = CASE.days
+  const { isUnlocked } = useUnlock()
   const [dayNum, setDayNum] = useState<number>(days[0]?.day ?? 1)
   const day = days.find((d) => d.day === dayNum) ?? days[0]
   const [rows, setRows] = useState<ResultRow[] | null>(null)
   const [animate, setAnimate] = useState(false)
 
+  // En dags stemmer holdes tilbake til dagen ETTER har åpnet — samme regel som
+  // resultatene i POLITI-appen (dag 1 frigis når dag 2 slippes). Gjelder alle
+  // dager, ikke bare dag 1, ellers lekker Excel dag 2/3 på samme måte.
+  const nextDay = days.find((d) => d.day === day.day + 1)
+  const released = !nextDay || isUnlocked(nextDay.day)
+
   useEffect(() => {
     let alive = true
     setRows(null)
     setAnimate(false)
+    if (!released) return // ikke hent tall vi ikke får vise
     if (!hasSupabase) {
       setRows(demoRows(day)) // demo-modus: syntetiske tall
     } else {
@@ -44,7 +53,7 @@ export default function ResultsApp() {
     return () => {
       alive = false
     }
-  }, [day])
+  }, [day, released])
 
   // Animer stolpene inn etter første maling.
   useEffect(() => {
@@ -78,11 +87,19 @@ export default function ResultsApp() {
       <div className="excel">
         <div className="excel__ribbon">
           <span className="excel__file">📊 Resultater.xlsx</span>
-          <span className="excel__hint">Live{!hasSupabase && ' · demo-tall'}</span>
+          <span className="excel__hint">
+            {released ? `Live${!hasSupabase ? ' · demo-tall' : ''}` : 'Låst'}
+          </span>
         </div>
 
         <div className="excel__content">
-          {rows === null ? (
+          {!released ? (
+            <p className="notice">
+              🔒 Avstemningen for {day.title} vises når {nextDay!.title} åpner. Tallene
+              offentliggjøres først når dagen er over — ingen skal kunne se hva de andre har
+              stemt underveis.
+            </p>
+          ) : rows === null ? (
             <p className="notice">Laster …</p>
           ) : !day.question ? (
             <p className="notice">Ingen avstemning på denne dagen.</p>

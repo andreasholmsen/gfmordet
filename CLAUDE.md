@@ -86,12 +86,24 @@ manuelt i dashbordet. `0006_romance.sql` ligger igjen kun som historikk — ikke
 
 ## Undermapper i dag-mappene (med farge-tema)
 
-Dag-mapper kan ha undermapper: definer `folders: [{ id, title, icon?, tint?, intro? }]`
+Dag-mapper kan ha undermapper: definer `folders: [{ id, title, icon?, tint?, intro?, parent? }]`
 på dagen i manifestet og sett `folder: '<id>'` på dokumentene som skal inn. `tint`
 (lys pastellfarge, f.eks. `#d7e9fb`) farger mappe-flisen, dokument-flisene inni OG
 «papiret» når dokumentet åpnes — brukes til å gi dokumenttyper eget utseende (eks:
 lyseblå vitneutsagn i dag 1). Umerkede dokumenter ligger løst i dagen som før.
 Implementert i `DayFolder.tsx`; CSS: `.doc-tile--folder` / `.doc-tinted`.
+
+`parent: '<mappe-id>'` gir ÉN nivå nesting (mappe → mappe → dokument): mappen vises
+inne i foreldremappen i stedet for på dagens rot, «tilbake» går til forelderen, og
+flis-telleren på forelderen summerer dokumentene i alle barna. Brukt av «Pias bilder»
+(dag 1) → `Mobilbilder` / `Kamerabilder`.
+
+**Pias bilder = tidssone-sporet.** Dokumenttitlene ER filnavnene (`IMG_20260731_104612.jpg`),
+så klokkeslettet er synlig på flisene. Mobilen stilte seg om til norsk tid ved landing;
+kameraet står fortsatt på Moldova-tid (én time foran, jf. Anna sitt utsagn). Tre motiv
+finnes på begge enhetene med identiske sekunder og én times forskjell. Filene legges i
+`public/case/dag1/pia/` — se `README.md` der for hvilket bilde som skal ha hvilket navn.
+Endrer du et tidspunkt må BÅDE `title` og `src` endres.
 
 ## Offerets filer = låst mobil (kode + «POLITI-HACK»)
 
