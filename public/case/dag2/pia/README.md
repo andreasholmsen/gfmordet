@@ -1,7 +1,8 @@
 # Pias bilder
 
-Bildene her er ferdig koblet opp i `src/case/manifest.ts` (dag 2, mappene `pia-mobil` og
-`pia-kamera`). Filnavnene på disk beholdes som de er — det er **dokumenttittelen** i
+Bildene her er ferdig koblet opp i `src/case/manifest.ts`: **mobilbildene på dag 2**
+(mappe `pia-mobil`) og **kamerabildene på dag 3** (mappe `pia-kamera`). Filene ligger
+fortsatt alle i denne mappa — bare `folder`/dag i manifestet skiller dem. Filnavnene på disk beholdes som de er — det er **dokumenttittelen** i
 manifestet som vises til spillerne, og den er et `IMG_2026…`-navn med klokkeslett i.
 
 **Tidslogikken:** mobilen stilte seg om til norsk tid da hun landet. Kameraet står
@@ -18,7 +19,7 @@ forskjell — det er sporet:
 | Bankettsalen | `sørmarlka3.jpg` | `19:30:45` | `20:30:45` |
 | Gjengen | `people1.jpg` | `20:55:12` | `21:55:12` |
 
-## Mobilbilder — norsk tid
+## Mobilbilder — norsk tid (DAG 2)
 
 | Vises som | Fil | Motiv |
 | --- | --- | --- |
@@ -32,7 +33,7 @@ forskjell — det er sporet:
 | `IMG_20260801_193045.jpg` | `sørmarlka3.jpg` | **★** Bankettsalen |
 | `IMG_20260801_205512.jpg` | `people1.jpg` | **★** Gjengen |
 
-## Kamerabilder — Moldova-tid
+## Kamerabilder (DAG 3) — Moldova-tid
 
 | Vises som | Fil | Motiv |
 | --- | --- | --- |

@@ -807,7 +807,8 @@ export const CASE: CaseManifest = {
           title: 'Pias bilder',
           icon: '📷',
           tint: '#ffe4cc',
-          intro: 'Bildene Pia sendte inn til politiet. Overført fra to ulike enheter.',
+          intro:
+            'Bildene Pia sendte inn til politiet. Overført fra mobilen hennes — hun har flere\n\nbilder på kameraet som ikke er ferdig overført.',
         },
         {
           id: 'pia-mobil',
@@ -816,14 +817,6 @@ export const CASE: CaseManifest = {
           icon: '📱',
           tint: '#ffe4cc',
           intro: 'Hentet fra Pias mobiltelefon.',
-        },
-        {
-          id: 'pia-kamera',
-          parent: 'pia-bilder',
-          title: 'Kamerabilder',
-          icon: '📷',
-          tint: '#ffe4cc',
-          intro: 'Hentet fra minnekortet i Pias kamera.',
         },
       ],
       docs: [
@@ -834,11 +827,10 @@ export const CASE: CaseManifest = {
           // Blek klinisk grå — skiller seg fra vitneutsagn (blå), Pia (fersken),
           // Runills notater (gul) og dørloggen (grønn).
           tint: '#eceff3',
-          // VIKTIG (jf. plotdokumentet): dag 2 skal IKKE slå fast noe medisinsk
-          // om blodmengde — «lite blod» er nøkkelen som først kommer i det
-          // rettsmedisinske tillegget på dag 3. Her skal giften være bekreftet
-          // og slaget stå UFORKLART: den opprinnelige konklusjonen er strøket
-          // og stemplet «TIL GJENNOMGANG».
+          // VIKTIG: dag 2 skal IKKE forklare hodeskaden. Det var MYE blod på
+          // åstedet (jf. Runill) — og nettopp det er gåten, siden Hedvig ikke
+          // såg blod 20 min tidligere. Her skal giften være bekreftet og slaget
+          // stå UFORKLART: den opprinnelige konklusjonen er strøket og stemplet.
           inline:
             '```\n' +
             '════════════════════════════════════════\n' +
@@ -887,6 +879,95 @@ export const CASE: CaseManifest = {
             'ferdig gjennomgått.**\n',
         },
         // ---------------------------------------------------------------------
+        // RUNILL, AVHØR 2 — renvasking. Mange mistenker henne etter dag 1 (pilla,
+        // de sju minuttene, at hun var alene med Angela). Her svarer hun presist
+        // på alt, og korrigerer «alt blodet» fra første avhør — det er nettopp
+        // korreksjonen som gjør henne troverdig, og den setter opp dag 3.
+        // ---------------------------------------------------------------------
+        {
+          id: 'd2-vitne-runill-2',
+          title: 'Vitneavhør 2: Runill',
+          kind: 'markdown',
+          tint: '#d7e9fb',
+          inline:
+            '## Vitneavhør 2 — Runill\n\n' +
+            '**Du ga Angela en tablett på ettermiddagen. Hva var det?**\n\n' +
+            '«To paracet, mot hodeverk. Jeg fører alt jeg gir ut i notatboka, så det står der ' +
+            'med klokkeslett. Jeg ga det samme til fire andre den dagen — det er en helt vanlig ' +
+            'dag på jobb for meg. Ved navnet hennes skrev jeg «sjekke i morgen», for hun så ' +
+            'sliten ut.»\n\n' +
+            '**Dere snakket lenge på telefon kvelden før. Om hva?**\n\n' +
+            '«Det kan jeg ikke gå inn på. Sosialveiledning er taushetsbelagt — det står i ' +
+            '§86.2, og det gjelder også etter at noen er død. Det jeg KAN si er at hun hadde ' +
+            'bestilt en time hos meg mandagen etter GF. Det ligger i systemet, dere får se ' +
+            'det selv.»\n\n' +
+            '**Hvorfor tok det sju minutter før du ringte?**\n\n' +
+            '«Fordi jeg gjorde jobben min i feil rekkefølge. Jeg sikret rommet først og ringte ' +
+            'etterpå. Jeg er beredskapsopplært, og jeg vet at det skal være motsatt. Jeg tenkte ' +
+            'på hundre studenter i gangen utenfor.»\n\n' +
+            '**Du sa «alt blodet» i går. Beskriv det.**\n\n' +
+            '«Det var mye. Det lå en pøl ved hodet hennes, og det er derfor jeg var så redd for ' +
+            'at noen andre skulle komme inn og se det. Jeg satte meg ned på kne for å kjenne ' +
+            'etter puls, og da fikk jeg det på buksa og på hånda. Dere har tatt klærne mine — ' +
+            'bare undersøk dem.»\n\n' +
+            '**Vi har gjort det.**\n\n' +
+            '«Godt. Da vet dere mer enn meg.»',
+        },
+        {
+          id: 'd2-runill-funnrapport',
+          title: 'Funnrapport (Runill)',
+          kind: 'markdown',
+          tint: '#e3efe6',
+          // MYE blod er selve gåten (Hedvig såg ingen blod 20 min tidligere).
+          // IKKE endre til «lite blod» — det ødelegger dag 3.
+          inline:
+            '```\n' +
+            '════════════════════════════════════\n' +
+            '  ANSA — BEREDSKAP\n' +
+            '  FUNNRAPPORT (nedskrevet på stedet)\n' +
+            '  Skrevet av .. Runill, sosialveileder\n' +
+            '  Dato ........ lør 01.08.2026\n' +
+            '  Klokke ...... 23:45\n' +
+            '════════════════════════════════════\n' +
+            '```\n\n' +
+            '**23:38** — Fant Angela Liu livløs på gulvet i plenumssalen. Ingen andre til stede ' +
+            'i rommet.\n\n' +
+            '**Observert:** Ingen puls. Hodeskade bak, høyre side. **Mye blod på gulvet ved ' +
+            'hodet.** Ingen tegn til kamp. Stol veltet ved bordenden.\n\n' +
+            '**Merk:** Jeg gikk ned på kne for å kjenne etter puls og fikk blod på buksa og ' +
+            'høyre hånd. Ingenting annet i rommet er rørt av meg.\n\n' +
+            '**23:39–23:44** — Lukket begge dører. Ba to personer i korridoren forlate området. ' +
+            'Holdt ytterligere to personer unna rommet.\n\n' +
+            '**23:45** — Ringte 113.\n\n' +
+            '_Skrevet ned rett etterpå så jeg husker rekkefølgen riktig. Jeg vet at jeg burde ' +
+            'ringt først._',
+        },
+        {
+          // Renvasker Runill FYSISK — og virker bare fordi det var mye blod:
+          // den som slo ville hatt sprut på seg. Hun har kun kontaktoverføring
+          // (kne + høyre hånd) fra å kjenne etter puls.
+          id: 'd2-klaer-runill',
+          title: 'Undersøkelse: klær (Runill)',
+          kind: 'markdown',
+          tint: '#efe2e2',
+          inline:
+            '```\n' +
+            '════════════════════════════════════\n' +
+            '  KRIMINALTEKNISK UNDERSØKELSE\n' +
+            '  Sak ......... 2026/1187\n' +
+            '  Beslag ...... B-11 (klær, Runill)\n' +
+            '  Sikret ...... 02.08.2026 kl. 00:20\n' +
+            '════════════════════════════════════\n' +
+            '```\n\n' +
+            '**Funn**\n\n' +
+            '- Blod på begge knær og i høyre håndflate. Mønsteret er **kontaktoverføring** — ' +
+            'altså blod som er kommet dit ved berøring og knestående.\n' +
+            '- **Ingen sprut- eller kastemønster** er påvist noe sted på klærne.\n' +
+            '- Ingen blod på ermer, bryst, rygg eller i ansikt.\n' +
+            '- Ingen blod på skosåler ut over ett avtrykk ved kroppen.\n\n' +
+            '_Blodet på klærne er kontaktblod. Det er ikke funnet spor av sprut._',
+        },
+        // ---------------------------------------------------------------------
         // GLASSANALYSE — Hedvig ber selv om denne i avhøret på dag 2.
         // Ingen alkohol, ingen gift. Dreper hele barsporet.
         // ---------------------------------------------------------------------
@@ -899,7 +980,7 @@ export const CASE: CaseManifest = {
             '```\n' +
             '════════════════════════════════════\n' +
             '  KRIMINALTEKNISK ANALYSE\n' +
-            '  Sak ......... 2026/1187\n' +
+            '  Sak ......... 2026-1738\n' +
             '  Beslag ...... B-04\n' +
             '  Beskrivelse . høyt glass, ca. 1/3\n' +
             '                fylt, blå væske\n' +
@@ -919,7 +1000,8 @@ export const CASE: CaseManifest = {
             'Glasset er ikke et cocktailglass, men et ordinært høyt serveringsglass av typen ' +
             'hotellet bruker til alle drikkevarer. Isbitene var smeltet ved sikring, og ' +
             'kondensavtrykket på karmen viser at glasset hadde stått urørt i lang tid.\n\n' +
-            'Kun ett sett fingeravtrykk på glasset ut over avdødes.\n\n' +
+            'Avtrykk fra fire personer er identifisert, herunder avdødes. Avtrykkene har ingen ' +
+            'bevisverdi da glasset er håndtert av flere.\n\n' +
             '**Konklusjon:** væsken i beslag B-04 er en blåfarget sportsdrikk. Den inneholder ' +
             'verken alkohol eller helseskadelige stoffer.',
         },
@@ -996,6 +1078,70 @@ export const CASE: CaseManifest = {
             '| 01.08 | 12:02 | Mamma | inn | ubesvart |\n' +
             '| 01.08 | 12:40 | Sørmarka konferansehotell | inn | 2 min |\n\n' +
             '_Ingen anrop registrert etter kl. 12:40 den 01.08.2026._',
+        },
+
+        // =====================================================================
+        //  DRIKKESERVERING PÅ MØTET — hint, ikke bevis.
+        //  REGLER: ordet «vors», «alkohol» og «vin» finnes IKKE. Ingen som var
+        //  der innrømmer noe; alle hintene kommer utenfra. Ingenting peker på
+        //  hvem som ordnet drikken — fakturaen går til ROMMET, ikke en person.
+        //  Selve bestillingen (hva som ble kjøpt) er et DAG 3-dokument.
+        // =====================================================================
+        {
+          id: 'd2-hotellfaktura',
+          title: 'Delfaktura fra hotellet',
+          kind: 'markdown',
+          tint: '#f6f1e4',
+          inline:
+            '```\n' +
+            '════════════════════════════════════\n' +
+            '  SØRMARKA KONFERANSEHOTELL\n' +
+            '  Delfaktura 20261188\n' +
+            '  Kunde: ANSA — Generalforsamling 70\n' +
+            '  Periode: 31.07 – 02.08.2026\n' +
+            '════════════════════════════════════\n' +
+            '```\n\n' +
+            '| Post | Detaljer | Beløp |\n' +
+            '| --- | --- | --- |\n' +
+            '| Plenumssal | 3 dager | 42 000 |\n' +
+            '| Møterom Bjørk | lør 01.08, kl. 14:00–18:30 | 3 400 |\n' +
+            '| Møterom Bjørk | **servering iht. bestilling, 14 pers.** | 6 860 |\n' +
+            '| Bankettmiddag | 98 kuverter | 68 600 |\n' +
+            '| Bar, bankett | etter forbruk, se eget bilag | 24 115 |\n' +
+            '| Møterom Gran | fre 31.07, kl. 09–12 | 2 200 |\n' +
+            '| Møterom Gran | kaffe/te, 20 pers. | 900 |\n' +
+            '| Ekstra rydding | Møterom Bjørk, lør kveld | 750 |\n' +
+            '| Overnatting | se romoversikt | 214 500 |\n\n' +
+            '_Spørsmål om fakturaen rettes til resepsjonen. Bilag og bestillinger kan ' +
+            'ettersendes på forespørsel._',
+        },
+        {
+          id: 'd2-renholdslogg',
+          title: 'Renholdslogg',
+          kind: 'markdown',
+          tint: '#e2e8f0',
+          inline:
+            '```\n' +
+            '════════════════════════════════════\n' +
+            '  SØRMARKA — RENHOLD\n' +
+            '  Vaktliste lør 01.08.2026\n' +
+            '  Ansv.: A. Ruud\n' +
+            '════════════════════════════════════\n' +
+            '```\n\n' +
+            '| TID | ROM | MERKNAD |\n' +
+            '| --- | --- | --- |\n' +
+            '| 08:20 | Plenumssal | Standard. |\n' +
+            '| 11:40 | Foajé | Standard. |\n' +
+            '| 13:10 | Møterom Bjørk | Klargjort for 14 pers. Bestilling levert 13:50. |\n' +
+            '| 15:30 | Plenumssal | Standard. |\n' +
+            '| 18:45 | Møterom Bjørk | **Ekstra rydding. Mange glass. Stoler satt tilbake. ' +
+            'Ett glass knust — ikke belastet.** |\n' +
+            '| 19:00 | Bankettsal | Ferdigstilt før servering. |\n' +
+            '| 22:10 | Toaletter 1. etg. | Standard. |\n' +
+            '| 23:05 | Korridor v/sal | Søl på gulv, tørket opp. |\n' +
+            '| — | Korridor v/sal | Videre renhold innstilt på politiets anmodning. |\n\n' +
+            '_Merknad fra ansvarlig: bestilling til Bjørk ble levert av kjøkkenet, ikke av ' +
+            'renhold. Se kjøkkenets bilag._',
         },
 
         // ------------------------------------------------------------------
@@ -1076,67 +1222,6 @@ export const CASE: CaseManifest = {
           src: 'case/dag2/pia/people1.jpg',
         },
 
-        // --- Kamera (Moldova-tid). Moldova-bildene er tatt i Moldova, så der er
-        //     klokka riktig; Norge-bildene ligger én time for sent. ---
-        {
-          id: 'd2-pia-k1',
-          title: 'IMG_20260728_201235.jpg', // folkedrakt i solnedgang
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/Moldova4.jpg',
-        },
-        {
-          id: 'd2-pia-k2',
-          title: 'IMG_20260729_132408.jpg', // EU-flagg, midt på dagen
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/Moldova3.jpg',
-        },
-        {
-          id: 'd2-pia-k3',
-          title: 'IMG_20260729_200317.jpg', // Chișinău ovenfra, gyllen time
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/Moldova1.jpg',
-        },
-        {
-          id: 'd2-pia-k4',
-          title: 'IMG_20260729_211842.jpg', // jernbanestasjonen, blå time
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/Moldova2.jpg',
-        },
-        {
-          // ★ samme fil som mobilens IMG_20260731_104612.jpg
-          id: 'd2-pia-k5',
-          title: 'IMG_20260731_114612.jpg', // Sørmarka over vannet
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/sørmarka.jpg',
-        },
-        {
-          id: 'd2-pia-k6',
-          title: 'IMG_20260731_150318.jpg', // hotellkorridoren
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/hotelcorridor.jpg',
-        },
-        {
-          // ★ samme fil som mobilens IMG_20260801_193045.jpg
-          id: 'd2-pia-k7',
-          title: 'IMG_20260801_203045.jpg', // bankettsalen
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/sørmarlka3.jpg',
-        },
-        {
-          // ★ samme fil som mobilens IMG_20260801_205512.jpg
-          id: 'd2-pia-k8',
-          title: 'IMG_20260801_215512.jpg', // gjengen
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/people1.jpg',
-        },
       ],
       question: {
         type: 'free_text',
@@ -1217,7 +1302,81 @@ export const CASE: CaseManifest = {
       day: 3,
       title: 'Dag 3',
       intro: 'Det siste beviset. Nå må du bestemme deg.',
+      folders: [
+        {
+          id: 'pia-kamera',
+          title: 'Pias kamerabilder',
+          icon: '📷',
+          tint: '#ffe4cc',
+          intro:
+            'Minnekortet fra Pias kamera er ferdig overført. Kameraet er et annet apparat enn ' +
+            'mobilen hennes.',
+        },
+      ],
       docs: [
+        // --- Pias KAMERABILDER (Moldova-tid). Moldova-bildene er tatt i Moldova, så
+        //     der er klokka riktig; Norge-bildene ligger én time for sent. De tre
+        //     ★-motivene finnes også i mobilmappen på DAG 2 — én times forskjell,
+        //     samme sekund. Det er tidssone-sporet.
+        {
+          id: 'd3-pia-k1',
+          title: 'IMG_20260728_201235.jpg', // folkedrakt i solnedgang
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/Moldova4.jpg',
+        },
+        {
+          id: 'd3-pia-k2',
+          title: 'IMG_20260729_132408.jpg', // EU-flagg, midt på dagen
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/Moldova3.jpg',
+        },
+        {
+          id: 'd3-pia-k3',
+          title: 'IMG_20260729_200317.jpg', // Chișinău ovenfra, gyllen time
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/Moldova1.jpg',
+        },
+        {
+          id: 'd3-pia-k4',
+          title: 'IMG_20260729_211842.jpg', // jernbanestasjonen, blå time
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/Moldova2.jpg',
+        },
+        {
+          // ★ samme fil som mobilens (dag 2) IMG_20260731_104612.jpg
+          id: 'd3-pia-k5',
+          title: 'IMG_20260731_114612.jpg', // Sørmarka over vannet
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/sørmarka.jpg',
+        },
+        {
+          id: 'd3-pia-k6',
+          title: 'IMG_20260731_150318.jpg', // hotellkorridoren
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/hotelcorridor.jpg',
+        },
+        {
+          // ★ samme fil som mobilens (dag 2) IMG_20260801_193045.jpg
+          id: 'd3-pia-k7',
+          title: 'IMG_20260801_203045.jpg', // bankettsalen
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/sørmarlka3.jpg',
+        },
+        {
+          // ★ samme fil som mobilens (dag 2) IMG_20260801_205512.jpg
+          id: 'd3-pia-k8',
+          title: 'IMG_20260801_215512.jpg', // gjengen
+          kind: 'image',
+          folder: 'pia-kamera',
+          src: 'case/dag2/pia/people1.jpg',
+        },
         {
           id: 'd3-brev',
           title: 'Funnet brev',
@@ -1338,6 +1497,19 @@ export const CASE: CaseManifest = {
       postedLabel: 'Sponset',
     },
     {
+      // Karakterisering, IKKE bevis: ingen tall som kan kobles mot
+      // partnerkonto-tallene i Checkin-rapporten (det ville løst saken på dag 2).
+      id: 'li-d2-sverre',
+      author: 'Studentprest Sverre',
+      authorTitle: 'Studentprest · Vinylvrenger',
+      day: 2,
+      text:
+        'Pubquiz i Amsterdam er i boks! 🎉 Tusen takk til alle som kom — og til ANSA for at ' +
+        'eg får reise rundt og gjere dette. Neste stopp: GF70. Nokon som vil ha ein til der?? 🤷',
+      likes: 5140,
+      comments: 88,
+    },
+    {
       id: 'li-d2-ansa-toulouse',
       author: 'ANSA',
       authorTitle: 'Association of Norwegian Students Abroad',
@@ -1347,7 +1519,6 @@ export const CASE: CaseManifest = {
         'hvertfall ikke i tvil. Neste år kan det være DEG — søk verv da vel!',
       likes: 189,
       comments: 41,
-      postedLabel: '4 t',
     },
     {
       id: 'li-d2-checkin',
@@ -1356,7 +1527,8 @@ export const CASE: CaseManifest = {
       day: 2,
       text:
         'Arrangerer du noe? Stort eller smått — Checkin gjør billettsalg nokså enkelt for ' +
-        'studentorganisasjoner i hele Europa. Ingen skjulte kostnader, lover! 😇',
+        'studentorganisasjoner i hele Europa. Ingen skjulte kostnader, lover! 😇 Spør oss om ' +
+        'partnerprogrammet — det lønner seg. 💸',
       likes: 6,
       comments: 0,
       postedLabel: 'Sponset',
@@ -1369,7 +1541,6 @@ export const CASE: CaseManifest = {
       img: 'case/linkedin/engineers.jpg',
       likes: 214,
       comments: 31,
-      postedLabel: '1 d',
     },
     {
       id: 'li2',
@@ -2589,6 +2760,195 @@ export const CASE: CaseManifest = {
       },
     ],
     email: [
+      // =====================================================================
+      //  DRIKKESERVERING PÅ MØTET (lør 1. aug) — hintene kommer UTENFRA.
+      //  Ingen av avsenderne var på møtet, ingen bruker ordet «vors», og ingen
+      //  peker på hvem som ordnet drikken. Bonusen: hintene får de USKYLDIGE
+      //  til å se verst ut (presidenten, sosialveilederen, edruvaktene).
+      //  Sverre nevnes ikke én gang.
+      // =====================================================================
+      {
+        id: 'ep-ingeborg-referat-1',
+        from: 'Ingeborg Frogner Dahl-Hilstad <ingeborg@ansa.no>',
+        to: 'angela@epost.no',
+        subject: 'Referat fra møtet lørdag',
+        date: 'lør. 1. august, 18:40',
+        unread: true,
+        body:
+          'Hei Angela,\n\n' +
+          'Jeg finner ikke referatet fra møtet mellom sekretariatet, hovedstyret og TRIA i ' +
+          'dag. Ligger det et annet sted enn i driven?\n\n' +
+          'Jeg spør fordi jeg skal føre inn hva som ble besluttet om nattbadingen, og jeg har ' +
+          'ingenting å føre fra.\n\n' +
+          'Mvh\nIngeborg',
+      },
+      {
+        id: 'ep-ingeborg-referat-2',
+        folder: 'sendt',
+        from: 'Angela',
+        to: 'Ingeborg Frogner Dahl-Hilstad <ingeborg@ansa.no>',
+        subject: 'SV: Referat fra møtet lørdag',
+        date: 'lør. 1. august, 19:04',
+        body:
+          'Hei!\n\n' +
+          'Det ble ikke skrevet referat. Det ble litt sånn etter hvert.\n\n' +
+          'Vi konkluderte ikke noe om nattbadingen heller. Vi tar det på nytt i høst.\n\n' +
+          'A.',
+      },
+      {
+        id: 'ep-ingeborg-referat-3',
+        from: 'Ingeborg Frogner Dahl-Hilstad <ingeborg@ansa.no>',
+        to: 'angela@epost.no',
+        subject: 'SV: SV: Referat fra møtet lørdag',
+        date: 'lør. 1. august, 19:11',
+        unread: true,
+        body: 'Ingen referat og ingen konklusjon?\n\nVar det et møte da?',
+      },
+      {
+        id: 'ep-jonathan-mote',
+        from: 'Jonathan Nagelgaard <jonathan.nagelgaard@epost.no>',
+        to: 'angela@epost.no',
+        subject: 'Beklager forstyrrelsen i dag!',
+        date: 'lør. 1. august, 17:22',
+        unread: true,
+        body:
+          'Hei Angela!\n\n' +
+          'Beklager at jeg banket på møterommet i ettermiddag. Jeg skjønte etterpå at det var ' +
+          'et internt møte, jeg trodde bare det var en pause siden det var så god stemning ' +
+          'der inne.\n\n' +
+          'Jeg skulle bare spørre om hvor jeg skal sitte på banketten. Fant det ut selv! ' +
+          'Det stod på et ark. 😅\n\n' +
+          'Ses i kveld!\n\n' +
+          'Jonathan',
+      },
+      {
+        id: 'ep-henriette-edruvakt',
+        from: 'Henriette Moe Schjelderup <henriette.moe@epost.no>',
+        to: 'angela@epost.no',
+        subject: 'Edruvaktene i kveld',
+        date: 'lør. 1. august, 21:06',
+        unread: true,
+        body:
+          'Hei! Bare så du er informert, siden du er prosjektleder.\n\n' +
+          'Vi ble tre og ikke fem på edruvakt i kveld. Runill hadde gjennomgangen 18:30 som ' +
+          'planlagt, men to av dem som skulle stå kom ikke — og jeg fikk beskjed om at de ' +
+          'ikke burde stå vakt likevel i kveld.\n\n' +
+          'Jeg måtte bytte i siste sekund selv også, så jeg rakk ikke gjennomgangen. Ane tok ' +
+          'min vakt fra 21. Hun sa det var helt fint.\n\n' +
+          'Går bra! Bare litt tynt. Sier det til Runill også.\n\n' +
+          'Henriette',
+      },
+
+      // =====================================================================
+      //  SVERRE-SPORET (Checkin). PRINSIPP: hint om forbrytelsen han ALLEREDE
+      //  har begått — aldri om drapet. Ingen av disse navngir ham, og ingen
+      //  gir ham motiv. Spillerne skal avslutte dag 2 med «det er noe rart
+      //  med Checkin», IKKE med «Sverre gjorde det».
+      //  Smoking gun-utkastet («sjekke etter GF») ligger på dag 3 (day: 3).
+      // =====================================================================
+      {
+        id: 'ep-checkin-rapport',
+        from: 'Checkin <rapport@checkin.no>',
+        to: 'angela@epost.no',
+        subject: 'Månedsoversikt juli — arrangement knyttet til ANSA',
+        date: 'fre. 31. juli, 04:02',
+        unread: true,
+        body:
+          'Automatisk generert oversikt. Du mottar denne fordi e-postadressen din er ' +
+          'registrert som administrativ kontakt.\n\n' +
+          '**Juli 2026**\n\n' +
+          '| | |\n' +
+          '| --- | --- |\n' +
+          '| Arrangement opprettet | 9 |\n' +
+          '| Solgte billetter | 612 |\n' +
+          '| Herav opprettet av partnerkonto | 7 |\n' +
+          '| Aktive partnerkontoer | 1 |\n\n' +
+          '**Hittil i år**\n\n' +
+          '| | |\n' +
+          '| --- | --- |\n' +
+          '| Arrangement opprettet | 68 |\n' +
+          '| Solgte billetter | 4 431 |\n' +
+          '| Herav opprettet av partnerkonto | 41 |\n\n' +
+          'Se full oversikt ved å logge inn.\n\n' +
+          '_Har du spørsmål om partnerordningen? Kontakt din kontaktperson hos Checkin._',
+      },
+      {
+        id: 'ep-kasserer-1',
+        from: 'Tuva Sæbø <tuva@ansadublin.no>',
+        to: 'angela@epost.no',
+        subject: 'Litt rart spørsmål om pubquiz-billetter',
+        date: 'tor. 30. juli, 14:18',
+        unread: true,
+        body:
+          'Hei Angela!\n\n' +
+          'Beklager at jeg plager deg rett før GF, men du er den eneste jeg vet faktisk kan ' +
+          'systemene.\n\n' +
+          'Vi hadde pubquiz i mars og brukte Checkin til billettene. Vi satte prisen til ' +
+          '80 kr. Men når jeg fører regnskapet nå får jeg det ikke til å stemme — det kom ' +
+          'inn mindre enn 80 per billett. Ikke mye mindre, men nok til at det blir feil i ' +
+          'årsregnskapet.\n\n' +
+          'Er det et gebyr jeg ikke har fått med meg? Jeg finner ingenting i avtalen vi ' +
+          'signerte, men jeg vet heller ikke helt hvem som signerte den.\n\n' +
+          'Hilsen Tuva\n' +
+          '_økonomiansvarlig, ANSA Dublin_',
+      },
+      {
+        id: 'ep-kasserer-2',
+        folder: 'sendt',
+        from: 'Angela',
+        to: 'Tuva Sæbø <tuva@ansadublin.no>',
+        subject: 'SV: Litt rart spørsmål om pubquiz-billetter',
+        date: 'tor. 30. juli, 22:51',
+        body:
+          'Hei Tuva!\n\n' +
+          'Ikke beklag, dette er et helt riktig spørsmål å stille. Kort svar: det skal ikke ' +
+          'være noe gebyr som ikke står i avtalen.\n\n' +
+          'Kan du sende meg avtalen? Og hvem som satte opp arrangementet i Checkin?\n\n' +
+          'Jeg ser på det i helgen.\n\n' +
+          'Angela',
+      },
+      {
+        // Sverre spør om nøyaktig de tallene som bestemmer utbetalingen hans.
+        // Helt hjelpsom og ufarlig på dag 2. NB: bokmål — Sverre snakker
+        // bokmål i vitneutsagnet, og nynorsk er Eriks spor (ikke bland dem).
+        id: 'ep-sverre-deltakertall',
+        from: 'Sverre <sverre@sjomannskirken.no>',
+        to: 'angela@epost.no',
+        subject: 'Deltakertall vår 2026',
+        date: 'ons. 29. juli, 08:34',
+        body:
+          'Morn Angela!\n\n' +
+          'Håper det går bra i innspurten. Si til om det er noe jeg kan avlaste med — jeg er ' +
+          'på plass fra torsdag.\n\n' +
+          'Én liten ting: har du samlet oversikt over deltakertall for arrangementene i ' +
+          'Frankrike, Irland, Tyskland og Nederland i vår? Fint å ha til min egen ' +
+          'rapportering. Holder med totaler per arrangement, trenger ikke navn.\n\n' +
+          'Ingen hast. Sees på fredag!\n\n' +
+          'Sverre',
+      },
+      {
+        // DAG 3: smoking gun. Angela har begynt å telle — ingen navn, ingen
+        // anklage, men «alle samme partnerkonto» + «ta det opp søndag».
+        id: 'ep-til-meg-selv',
+        folder: 'utkast',
+        day: 3,
+        from: 'Angela',
+        to: 'angela@epost.no',
+        subject: 'sjekke etter GF',
+        date: 'lør. 1. august, 09:12',
+        body:
+          'Bordeaux 84\n' +
+          'Toulouse 112\n' +
+          'Dublin 61\n' +
+          'München 90\n' +
+          'Wien 55\n' +
+          'Amsterdam 78\n' +
+          'Praha 66\n\n' +
+          'alle Checkin. alle samme partnerkonto.\n\n' +
+          'gebyr?? finn avtalen\n\n' +
+          'ta det opp søndag',
+      },
+
       // E-post-tråden med Ingeborg om vedtektene (29. juli) — spørsmålet i
       // Sendt, svaret i Innboks, og Angelas beroligende svar i Sendt.
       {

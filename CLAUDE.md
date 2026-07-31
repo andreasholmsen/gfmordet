@@ -102,8 +102,9 @@ inne i foreldremappen i stedet for på dagens rot, «tilbake» går til forelder
 flis-telleren på forelderen summerer dokumentene i alle barna. Brukt av «Pias bilder»
 (dag 2) → `Mobilbilder` / `Kamerabilder`.
 
-**Pias bilder = tidssone-sporet.** Ligger på **dag 2** (Pia sier i dag 1-utsagnet sitt at hun
-skal sende dem, så de dukker opp dagen etter). Dokumenttitlene ER filnavnene
+**Pias bilder = tidssone-sporet.** **Mobilbildene ligger på dag 2** (Pia sier i dag 1-utsagnet
+sitt at hun skal sende dem) og **kamerabildene på dag 3** (minnekortet «ble ferdig overført»)
+— duplikat-fella løses derfor først på dag 3. Dokumenttitlene ER filnavnene
 (`IMG_20260731_104612.jpg`), så klokkeslettet er synlig på flisene. Mobilen stilte seg om til
 norsk tid ved landing; kameraet står fortsatt på Moldova-tid (én time foran, jf. Anna sitt
 utsagn). Tre motiv finnes på begge enhetene med identiske sekunder og én times forskjell.
@@ -276,7 +277,7 @@ skjer når neste dag slippes.
 - `src/components/AngelaFiles.tsx` + `src/components/phone/` (`PhoneHeader`, `WhatsAppApp`,
   `MailApp`, `SlackApp`) — telefon-hjemskjerm + appene på Angelas mobil (`CASE.angelaPhone`).
 - `src/components/Minesveiper.tsx` — lite frittstående minesveiper-spill (påskeegg).
-- `src/components/LarryEasterEgg.tsx` + `LarryPage.tsx` — Larry: 0.1 % sjanse per klikk på
+- `src/components/LarryEasterEgg.tsx` + `LarryPage.tsx` — Larry: 0,5 % (1/200) sjanse per klikk på
   skrivebordet for at `larry.gif` glitcher inn. Etter første gang låses et Larry-ikon opp
   (`localStorage: gf-mordet.larry-found.v1`) → ruta `/larry` (svart vindu, `variant="larry"`).
   Larry tilbyr å «fjerne halvparten av vitnene»; sier man ja kalles RPC-en `flag_cheater()`
