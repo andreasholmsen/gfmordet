@@ -76,7 +76,7 @@ const nb = {
   larryDeclined: 'Klokt. Jeg hadde ikke gjort det for deg likevel.',
   larryReveal1: 'Ha. Je vais te toucher la nuit.',
   larryReveal2: 'Je te jette une malédiction.',
-  larryReveal3: 'LA MALÉDICTION DE LARRY LE MALICIEUX',
+  larryReveal3: 'Patetisk... Jeg ville aldri hjulpet deg',
   larryClose: 'Lukk',
 }
 
@@ -139,7 +139,7 @@ const nn: typeof nb = {
   larryDeclined: 'Klokt. Eg hadde ikkje gjort det for deg likevel.',
   larryReveal1: 'Ha. Je vais te toucher la nuit.',
   larryReveal2: 'Je jette sur toi une malediction.',
-  larryReveal3: 'LA MALÉDICTION DE LARRY LE MALICIEUX',
+  larryReveal3: 'Patetisk... Eg ville aldri hjelpt deg',
   larryClose: 'Lukk',
 }
 

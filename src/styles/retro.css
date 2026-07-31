@@ -3104,6 +3104,76 @@ textarea.field {
   color: #7a7a85;
 }
 
+/* Nytt avhør i POLITI (briefing) som må leses før dagens spørsmål */
+.briefing__body {
+  margin-top: 14px;
+}
+.briefing__teaser {
+  margin-bottom: 4px;
+}
+/* Dramatisk «og løgneren var …»-inngang øverst på dagen */
+.briefing__lead {
+  margin-bottom: 16px;
+}
+.briefing__lead .markdown {
+  background: #0d130d;
+  color: #c8ffd4;
+  box-shadow: none;
+  border: 1px solid #1f4a2a;
+  border-left: 4px solid #e3c14b;
+  padding: 20px 16px;
+}
+.briefing__lead .markdown h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #8fbf9f;
+  text-align: center;
+}
+/* Sitatene fra vitneutsagnene */
+.briefing__lead .markdown blockquote {
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-left: 3px solid #5cff8a;
+  background: rgba(92, 255, 138, 0.06);
+  font-size: 0.85rem;
+}
+.briefing__lead .markdown h1 {
+  text-align: center;
+  margin: 6px 0 18px;
+  font-size: clamp(2rem, 11vw, 3.1rem);
+  line-height: 1.05;
+  letter-spacing: 2px;
+  color: #e3c14b;
+  text-shadow: 0 0 14px rgba(227, 193, 75, 0.45);
+  animation: briefing-reveal 0.5s ease-out both;
+}
+@keyframes briefing-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+.briefing__lead .markdown p {
+  font-size: 0.9rem;
+}
+.briefing__lead .markdown p:last-child {
+  margin-bottom: 0;
+}
+
+/* Dagens fasit (POLITI, når dagen er stengt) — over stengt-panelet */
+.day-reveal {
+  margin-bottom: 16px;
+}
+.day-reveal .markdown blockquote {
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-left: 3px solid #5cff8a;
+  background: rgba(92, 255, 138, 0.06);
+}
+
 /* Stengt avstemning (POLITI): umulig å overse at dagen er passert */
 .vote-closed {
   border: 2px dashed #e3c14b;

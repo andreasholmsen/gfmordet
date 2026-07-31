@@ -5,6 +5,7 @@ import { useUnlock } from '../lib/UnlockContext'
 import { useAuth } from '../lib/AuthContext'
 import { getMyVote } from '../lib/votes'
 import AppWindow from './AppWindow'
+import Markdown from './Markdown'
 import VoteForm from './VoteForm'
 import KillerReveal from './KillerReveal'
 
@@ -44,7 +45,12 @@ function VoteClosed({
           Du svarte: <strong>{answerLabel}</strong>
         </p>
       ) : (
-        <p className="vote-closed__answer">Fristen har gått ut — svar kan ikke lenger endres.</p>
+        // Gjelder også for dem som kom sent til spillet: de skal skjønne at de
+        // fortsatt kan være med videre, ikke at de har mistet toget.
+        <p className="vote-closed__answer">
+          Du svarte ikke på dette spørsmålet. Det er helt greit — les fasiten over, så er du
+          klar for dagens spørsmål.
+        </p>
       )}
       <p className="vote-closed__now">
         Det er <strong>Dag {currentDay}</strong> som gjelder nå.
@@ -56,10 +62,24 @@ function VoteClosed({
   )
 }
 
+// Har spilleren åpnet dagens briefing (nytt avhør)? Huskes per enhet.
+const briefingKey = (day: number) => `gfm:politi-briefing:${day}`
+function briefingRead(day: number): boolean {
+  try {
+    return localStorage.getItem(briefingKey(day)) === '1'
+  } catch {
+    return false
+  }
+}
+
 export default function PoliceApp() {
   const { unlockedDays, isUnlocked, loading, demo } = useUnlock()
   const { user } = useAuth()
   const navigate = useNavigate()
+  // Åpnet briefing (per dag). State så spørsmålet dukker opp umiddelbart.
+  const [readDays, setReadDays] = useState<Record<number, boolean>>({})
+  // Åpen briefing-visning (dagen den gjelder), eller null.
+  const [openBriefing, setOpenBriefing] = useState<number | null>(null)
 
   // Synlige faner = åpne dager. Standardfane = siste åpne dag.
   const visibleDays = useMemo(
@@ -127,15 +147,74 @@ export default function PoliceApp() {
         ) : (
           <>
             <h2>{dayContent.title}</h2>
+
+            {/* Nytt avhør som må leses før dagens spørsmål vises. */}
+            {dayContent.briefing &&
+              (openBriefing === dayContent.day ? (
+                <div className="briefing">
+                  <button className="btn" onClick={() => setOpenBriefing(null)}>
+                    ← Tilbake
+                  </button>
+                  <div className="briefing__body">
+                    <Markdown source={dayContent.briefing.body} />
+                  </div>
+                </div>
+              ) : (
+                <div className="briefing__teaser">
+                  {dayContent.briefing.intro && (
+                    <div className="briefing__lead">
+                      <Markdown source={dayContent.briefing.intro} />
+                    </div>
+                  )}
+                  <button
+                    className="btn btn--primary"
+                    onClick={() => {
+                      const d = dayContent.day
+                      try {
+                        localStorage.setItem(briefingKey(d), '1')
+                      } catch {
+                        /* privat modus e.l. — gjelder bare denne økten */
+                      }
+                      setReadDays((r) => ({ ...r, [d]: true }))
+                      setOpenBriefing(d)
+                    }}
+                  >
+                    📄 {dayContent.briefing.title}
+                  </button>
+                </div>
+              ))}
+
+            {/* Spørsmålet holdes tilbake til briefingen er åpnet. */}
+            {/* Mens avhøret leses vises ikke spørsmålet — én ting av gangen. */}
+            {dayContent.briefing &&
+              openBriefing !== dayContent.day &&
+              !(readDays[dayContent.day] || briefingRead(dayContent.day)) && (
+                <p className="notice" style={{ marginTop: 14 }}>
+                  🔒 Dagens spørsmål åpnes når du har lest avhøret over.
+                </p>
+              )}
+
             {dayContent.question &&
+              openBriefing !== dayContent.day &&
+              (!dayContent.briefing ||
+                readDays[dayContent.day] ||
+                briefingRead(dayContent.day)) &&
               // Stemming stenger når neste dag åpner. (Hoppes over i demo/dev,
-              // der alle dager er kunstig åpne samtidig.)
+              // der alle dager er kunstig åpne samtidig.) Da vises dagens FASIT
+              // (`reveal`) — samtidig som stemmetallene frigis i Excel.
               (!demo && !import.meta.env.DEV && isUnlocked(dayContent.day + 1) ? (
-                <VoteClosed
-                  day={dayContent}
-                  currentDay={Math.max(...unlockedDays)}
-                  onGoToCurrent={() => setTab(Math.max(...unlockedDays))}
-                />
+                <>
+                  {dayContent.reveal && (
+                    <div className="day-reveal">
+                      <Markdown source={dayContent.reveal} />
+                    </div>
+                  )}
+                  <VoteClosed
+                    day={dayContent}
+                    currentDay={Math.max(...unlockedDays)}
+                    onGoToCurrent={() => setTab(Math.max(...unlockedDays))}
+                  />
+                </>
               ) : (
                 <VoteForm key={dayContent.day} day={dayContent} />
               ))}

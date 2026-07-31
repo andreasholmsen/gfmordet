@@ -288,6 +288,15 @@ skjer når neste dag slippes.
 - `src/components/Dialog.tsx` + `ContextMenu.tsx` — gjenbrukbar modal + høyreklikk-meny.
 - `src/components/PoliceApp.tsx` + `VoteForm.tsx` + `ResultsView.tsx` — POLITI-app. Identitet
   hentes fra `useAuth()`. `ResultsView` animerer barene og viser «du stemte som X %».
+  Når en dag STENGER (neste dag åpner) vises dagens fasit fra `DayContent.reveal`
+  (markdown) over «stengt»-panelet — samtidig som Excel frigir dagens stemmetall.
+  (Hoppes over i demo/dev der alle dager er åpne — fasit kan derfor ikke forhåndsvises der.)
+- **`DayContent.briefing`** (`{ title, body, intro? }`) — et avhør som ligger INNE i
+  POLITI-appen (ikke i dag-mappen) og som MÅ åpnes før dagens spørsmål vises («🔒 Dagens
+  spørsmål åpnes når du har lest avhøret over»). Åpning huskes per enhet
+  (`localStorage: gfm:politi-briefing:<dag>`), og avhøret kan leses om igjen etterpå.
+  Brukt av dag 2 → «Nytt vitneavhør: Hedvig» (hun innrømmer møtet, Powerade i stedet for
+  Blue Lagoon, og sier at det IKKE var blod — dagens viktigste setning).
 - `src/components/AuthScreen.tsx` — logg inn / registrer (brukernavn + passord), retro-stilt.
 - `src/lib/AuthContext.tsx` — Supabase Auth-sesjon + `useAuth()` (`signIn/signUp/signOut`,
   `user`). Hydrerer egne stemmer ved innlogging. Demo-modus: fabrikkert bruker.

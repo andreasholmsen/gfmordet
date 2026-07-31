@@ -134,6 +134,20 @@ export interface DayContent {
   docs: CaseDoc[]
   /** Dagens spørsmål i POLITI-appen. La stå udefinert for dag 4 (ingen stemming). */
   question?: Question
+  /** Dagens fasit (markdown). Vises i POLITI-appen når dagen er STENGT (neste
+   *  dag har åpnet) — samtidig som stemmetallene frigis i Excel. */
+  reveal?: string
+  /** Dokument som ligger INNE I POLITI-appen (ikke i dag-mappen), og som MÅ
+   *  åpnes før dagens spørsmål vises. Brukes til nye avhør politiet «henter
+   *  inn» før man kan svare. Huskes per enhet (localStorage). */
+  briefing?: {
+    /** Etikett på knappen, f.eks. 'Nytt vitneavhør: Hedvig'. */
+    title: string
+    /** Markdown — selve avhøret. */
+    body: string
+    /** Kort tekst over knappen (markdown), valgfri. */
+    intro?: string
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -755,6 +769,30 @@ export const CASE: CaseManifest = {
         prompt: 'Hvem lyver i vitneutsagnet sitt?',
         options: [...SUSPECT_OPTIONS, { id: 'ingen', label: 'Ingen av dem lyver' }],
       },
+      // Fasit for dag 1 — vises i POLITI når dag 2 har åpnet (avstemning stengt).
+      reveal:
+        '## Løsningen på Dag 1\n\n' +
+        '**Løgneren? Hedvig.**\n\n' +
+        'At Hedvig gikk inn i salen med drikke var nemlig ingen tilfeldighet — det var ' +
+        'nemlig Angela som fikk drikken.\n\n' +
+        'Hedvig sier:\n\n' +
+        '> «Når jeg gikk til baren rundt 22:30-tiden så stod noen av Frankrikegutta der. ' +
+        'Oskar og Brage var veldig pratsomme, men Andreas virket litt mer stille. Nerver ' +
+        'kanskje? Brage hjalp meg hvertfall velge ut en passende drikke, og jeg gikk ' +
+        'gjennom salen hvor Angela satt. Vi snakket litt sammen også gikk jeg videre for å ' +
+        'se hvor vennene mine var.»\n\n' +
+        'Men i Erik sitt vitneutsagn hører vi tydelig:\n\n' +
+        '> «Anna enn det såg eg også Hedvig gå inn i den salen eit par gonger i løpet av ' +
+        'kvelden. Ho hadde til og med nokre fancy cocktailar idet ho gjekk inn i salen for ' +
+        'andre gong.»\n\n' +
+        'Senere på kvelden hører vi også fra Ane:\n\n' +
+        '> «Jeg var edruvakt så jeg gikk rundt. På et tidspunkt tok jeg meg en runde også ' +
+        'så jeg Angela sittende alene med en Blue Lagoon-cocktail. Hun så kjempesliten ut, ' +
+        'så jeg fratok henne drinken og gikk ut til Runill for å se.»\n\n' +
+        'Hvorfor ville Hedvig løyet om å alt ha møtt Angela tidligere den kvelden, og ' +
+        'hvorfor ga Hedvig en drink til Angela???\n\n' +
+        '**På grunn av din smarte tenking tar politiet flere vitneavhør og samler mer bevis ' +
+        'rundt saken 🤓**',
     },
 
     {
@@ -791,12 +829,173 @@ export const CASE: CaseManifest = {
       docs: [
         {
           id: 'd2-obd',
-          title: 'Foreløpig obduksjon',
+          title: 'Foreløpig obduksjonsrapport',
           kind: 'markdown',
+          // Blek klinisk grå — skiller seg fra vitneutsagn (blå), Pia (fersken),
+          // Runills notater (gul) og dørloggen (grønn).
+          tint: '#eceff3',
+          // VIKTIG (jf. plotdokumentet): dag 2 skal IKKE slå fast noe medisinsk
+          // om blodmengde — «lite blod» er nøkkelen som først kommer i det
+          // rettsmedisinske tillegget på dag 3. Her skal giften være bekreftet
+          // og slaget stå UFORKLART: den opprinnelige konklusjonen er strøket
+          // og stemplet «TIL GJENNOMGANG».
           inline:
-            '## Obduksjon (foreløpig)\n\n' +
-            'Dødsårsak først antatt å være hjertestans. Nye prøver tyder på noe annet. ' +
-            'Spor av et ukjent stoff i blodet. Ingen ytre skader.',
+            '```\n' +
+            '════════════════════════════════════════\n' +
+            '  RETTSMEDISINSK INSTITUTT\n' +
+            '  FORELØPIG OBDUKSJONSRAPPORT\n' +
+            '  Sak ......... 2026-1738\n' +
+            '  Avdøde ...... Angela Hengzhi Liu, 23 år\n' +
+            '  Obdusert .... søn 02.08.2026 kl. 08:40\n' +
+            '  Rekvirent ... politiet, Nordre Follo\n' +
+            '  Status ...... FORELØPIG — ikke endelig\n' +
+            '════════════════════════════════════════\n' +
+            '```\n\n' +
+            '### 1. Foreløpig konklusjon (fra åstedet)\n\n' +
+            '~~Dødsårsak antas å være traume mot bakhodet påført med butt gjenstand. ' +
+            'Skademønsteret er forenlig med ett enkelt slag. Dødsfallet vurderes som ' +
+            'voldsomt.~~\n\n' +
+            '```\n' +
+            ' ╔═══════════════════════╗\n' +
+            ' ║ ✗  MÅ UNDERSØKES   ✗ ║\n' +
+            ' ╚═══════════════════════╝\n' +
+            '```\n\n' +
+            '**Konklusjonen over er strøket.** Toksikologisk hurtigprøve gir et annet bilde, ' +
+            'se punkt 3.\n\n' +
+            '### 2. Ytre undersøkelse\n\n' +
+            '- Kvinne, 168 cm, normal ernæringstilstand. Ingen tidligere kjent sykdom.\n' +
+            '- Iført festkjole (magenta) og én sko. Den andre skoen lå ca. 1 m fra kroppen.\n' +
+            '- Skade i bakhodet, høyre side. **Tidspunkt og rekkefølge er ikke fastslått.**\n' +
+            '- Ingen forsvarsskader på hender eller underarmer. Ingen tegn til kamp.\n' +
+            '- Ingen merker på hals. Ingen stikk- eller kuttskader.\n' +
+            '- Neglene er hele og rene.\n\n' +
+            '### 3. Toksikologi (hurtigprøve)\n\n' +
+            '- Påvist **ukjent stoff** i blod. Videre analyse pågår.\n' +
+            '- Fordelingen i vev tilsier at **inntaket har skjedd fire til sju timer før ' +
+            'dødstidspunktet** — ikke i minuttene eller kvarteret før.\n' +
+            '- **Etanol: 0,2 ‰.** Avdøde var i praksis edru.\n' +
+            '- Mageinnhold: sportsdrikk og noe uspist mat. Siste måltid anslås 3 timer før ' +
+            'død.\n' +
+            '- Ingen påvisning av narkotiske stoffer. Paracetamol i terapeutisk mengde.\n\n' +
+            '### 4. Dødstidspunkt\n\n' +
+            'Anslått mellom kl. 22:30 og 23:40 lørdag 1. august, basert på kroppstemperatur og ' +
+            'likstivhet ved ankomst.\n\n' +
+            '### 5. Merknader\n\n' +
+            '- Prøver er sendt til utvidet analyse. Endelig rapport ettersendes.\n' +
+            '- Klær, glass og øvrige gjenstander fra åstedet er oversendt kriminalteknikk.\n' +
+            '- Rekvirent har bedt om særskilt vurdering av hodeskaden. **Dette punktet er ikke ' +
+            'ferdig gjennomgått.**\n',
+        },
+        // ---------------------------------------------------------------------
+        // GLASSANALYSE — Hedvig ber selv om denne i avhøret på dag 2.
+        // Ingen alkohol, ingen gift. Dreper hele barsporet.
+        // ---------------------------------------------------------------------
+        {
+          id: 'd2-glassanalyse',
+          title: 'Analyse: glass fra vinduskarm',
+          kind: 'markdown',
+          tint: '#efe2e2',
+          inline:
+            '```\n' +
+            '════════════════════════════════════\n' +
+            '  KRIMINALTEKNISK ANALYSE\n' +
+            '  Sak ......... 2026/1187\n' +
+            '  Beslag ...... B-04\n' +
+            '  Beskrivelse . høyt glass, ca. 1/3\n' +
+            '                fylt, blå væske\n' +
+            '  Funnsted .... vinduskarm, korridor\n' +
+            '                utenfor plenumssal\n' +
+            '  Sikret ...... 02.08.2026 kl. 01:10\n' +
+            '════════════════════════════════════\n' +
+            '```\n\n' +
+            '**Innhold**\n\n' +
+            'Væsken består av vann, sukker, natrium, kalium, sitronsyre og fargestoffet ' +
+            '**E133 (briljantblå)**. Sammensetningen samsvarer med kommersiell ' +
+            'sportsdrikk.\n\n' +
+            '**Alkohol:** ikke påvist.\n\n' +
+            '**Toksiske stoffer:** ikke påvist. Væsken er analysert mot samme panel som i ' +
+            'sak 2026/1187 pkt. 2, samt utvidet screening. Negativt i alle tester.\n\n' +
+            '**Merknad fra teknisk**\n\n' +
+            'Glasset er ikke et cocktailglass, men et ordinært høyt serveringsglass av typen ' +
+            'hotellet bruker til alle drikkevarer. Isbitene var smeltet ved sikring, og ' +
+            'kondensavtrykket på karmen viser at glasset hadde stått urørt i lang tid.\n\n' +
+            'Kun ett sett fingeravtrykk på glasset ut over avdødes.\n\n' +
+            '**Konklusjon:** væsken i beslag B-04 er en blåfarget sportsdrikk. Den inneholder ' +
+            'verken alkohol eller helseskadelige stoffer.',
+        },
+        {
+          id: 'd2-barkvittering',
+          title: 'Barkvittering 22:34',
+          kind: 'markdown',
+          // Varmt kvitteringspapir.
+          tint: '#faf3e0',
+          // Bekrefter Hedvigs andre utsagn: hun kjøpte TO Powerade (ingen
+          // alkohol), og de er BLÅ — derfor tok Ane den for en Blue Lagoon.
+          inline:
+            '```\n' +
+            '   SØRMARKA KONFERANSEHOTELL\n' +
+            '          BAR 1 · KASSE 2\n' +
+            '   Org.nr 914 552 108 MVA\n' +
+            '- - - - - - - - - - - - - - - - - -\n' +
+            '   Kvittering ..... 0417\n' +
+            '   Dato ........... lør 01.08.2026\n' +
+            '   Tid ............ 22:34\n' +
+            '   Betjent av ..... TOBIAS\n' +
+            '- - - - - - - - - - - - - - - - - -\n' +
+            '   2 x POWERADE MOUNTAIN BLAST\n' +
+            '       0,5 L (BLÅ)     2 x 45,00\n' +
+            '                          90,00\n' +
+            '- - - - - - - - - - - - - - - - - -\n' +
+            '   TOTALT                 90,00\n' +
+            '   Herav MVA 15 %         11,74\n' +
+            '   Betalt: VIPPS *** 6642\n' +
+            '   Navn:   H. HAZELAND\n' +
+            '- - - - - - - - - - - - - - - - - -\n' +
+            '   ALKOHOLENHETER ......... 0\n' +
+            '   Takk for besøket!\n' +
+            '   Åpen til 01:00 · nattbading\n' +
+            '   skjer på eget ansvar\n' +
+            '```\n\n' +
+            '**MERKNAD (kriminalteknikk):** Kvitteringen ble funnet i lommen på en jakke i ' +
+            'garderoben. Kasseloggen bekrefter kjøpet. Ingen alkohol er registrert på ' +
+            'kvitteringen.',
+        },
+
+        {
+          id: 'd2-anropslogg',
+          title: 'Anropslogg (Angela)',
+          kind: 'markdown',
+          tint: '#e6e0f0',
+          inline:
+            '```\n' +
+            '════════════════════════════════════\n' +
+            '  TELEOPERATØR — TRAFIKKDATA\n' +
+            '  Abonnent ... A. Liu\n' +
+            '  Periode .... 28.07 – 01.08.2026\n' +
+            '  Utlevert ... 02.08.2026\n' +
+            '  Hjemmel .... straffeprosessloven\n' +
+            '════════════════════════════════════\n' +
+            '```\n\n' +
+            '| DATO | TID | MOTPART | RETNING | VARIGHET |\n' +
+            '| --- | --- | --- | --- | --- |\n' +
+            '| 28.07 | 10:14 | Sørmarka konferansehotell | ut | 6 min |\n' +
+            '| 28.07 | 15:47 | Ingeborg F. Dahl-Hilstad | inn | 11 min |\n' +
+            '| 28.07 | 19:02 | Mamma | inn | 22 min |\n' +
+            '| 29.07 | 09:41 | Ingeborg F. Dahl-Hilstad | ut | 4 min |\n' +
+            '| 29.07 | 13:20 | Runill | ut | 2 min |\n' +
+            '| 29.07 | 16:55 | Maia Vejlgaard Evensen | inn | 38 min |\n' +
+            '| 29.07 | 20:08 | Sverre | ut | 4 min |\n' +
+            '| 30.07 | 08:30 | Sørmarka konferansehotell | ut | 9 min |\n' +
+            '| 30.07 | 11:12 | Henriette Moe Schjelderup | inn | 3 min |\n' +
+            '| 30.07 | 14:26 | Runill | inn | 26 min |\n' +
+            '| 30.07 | 17:44 | Andreas Holmsen | inn | 14 min |\n' +
+            '| 31.07 | 09:05 | Aleksander Victor Taban | inn | 1 min |\n' +
+            '| 31.07 | 09:06 | Aleksander Victor Taban | inn | 12 min |\n' +
+            '| 31.07 | 18:20 | Brage Flønæs Johnsen | ut | 5 min |\n' +
+            '| 31.07 | 22:15 | Runill | ut | 19 min |\n' +
+            '| 01.08 | 12:02 | Mamma | inn | ubesvart |\n' +
+            '| 01.08 | 12:40 | Sørmarka konferansehotell | inn | 2 min |\n\n' +
+            '_Ingen anrop registrert etter kl. 12:40 den 01.08.2026._',
         },
 
         // ------------------------------------------------------------------
@@ -941,8 +1140,76 @@ export const CASE: CaseManifest = {
       ],
       question: {
         type: 'free_text',
-        prompt: 'Hvordan døde EGENTLIG offeret?',
+        prompt: 'Hva var den faktiske dødsårsaken til Angela?',
         placeholder: 'Skriv din teori …',
+      },
+      // Fasit for dag 2 — vises i POLITI når dag 3 har åpnet (avstemning stengt).
+      reveal:
+        '## Løsningen på Dag 2\n\n' +
+        '**Angela ble forgiftet.**\n\n' +
+        'Glasset i vinduskarmen var en Powerade. Ingen alkohol, ingen gift — Hedvig ' +
+        'snakket sant, og hun kjøpte to fordi hun tok en til seg selv også.\n\n' +
+        'Men obduksjonen sier noe mer ubehagelig: stoffet ble tilført **fire til sju ' +
+        'timer** før hun døde. Altså et sted mellom kl. 16:00 og 19:30.\n\n' +
+        'Da hadde ikke banketten begynt engang.\n\n' +
+        '> «Vi hadde også et ekstra møte blant ansatte og hovedstyret.»\n\n' +
+        'Alle som har snakket om den ettermiddagen har kalt den noe forskjellig. Ingen ' +
+        'har sagt hva som egentlig skjedde der.\n\n' +
+        '**Og ett spørsmål står helt åpent:** hvis giften drepte henne — hvorfor er det ' +
+        'et hodesår?\n\n' +
+        '**Politiet jobber videre i natt. I morgen har vi svaret. 🕵️**',
+      // Nytt avhør politiet hentet inn etter dag 1. MÅ åpnes før dagens
+      // spørsmål vises — spilleren skal lese det før de svarer.
+      briefing: {
+        title: 'Nytt vitneavhør: Hedvig',
+        intro:
+          '### Og løgneren var …\n\n' +
+          '# HEDVIG 🎭\n\n' +
+          'At Hedvig gikk inn i salen med drikke var nemlig ingen tilfeldighet — det var ' +
+          'nemlig Angela som fikk drikken.\n\n' +
+          'Hedvig sier:\n\n' +
+          '> «Når jeg gikk til baren rundt 22:30-tiden så stod noen av Frankrikegutta der. ' +
+          'Oskar og Brage var veldig pratsomme, men Andreas virket litt mer stille. Nerver ' +
+          'kanskje? Brage hjalp meg hvertfall velge ut en passende drikke, og jeg gikk gjennom ' +
+          'salen hvor Angela satt. Vi snakket litt sammen også gikk jeg videre for å se hvor ' +
+          'vennene mine var.»\n\n' +
+          'Men i Erik sitt vitneutsagn hører vi tydelig:\n\n' +
+          '> «Anna enn det såg eg også Hedvig gå inn i den salen eit par gonger i løpet av ' +
+          'kvelden. Ho hadde til og med nokre fancy cocktailar idet ho gjekk inn i salen for ' +
+          'andre gong.»\n\n' +
+          'Senere på kvelden hører vi også fra Ane:\n\n' +
+          '> «Jeg var edruvakt så jeg gikk rundt. På et tidspunkt tok jeg meg en runde også så ' +
+          'jeg Angela sittende alene med en Blue Lagoon-cocktail. Hun så kjempesliten ut, så ' +
+          'jeg fratok henne drinken og gikk ut til Runill for å se.»\n\n' +
+          'Hvorfor ville Hedvig løyet om å alt ha møtt Angela tidligere enn kvelden, og hvorfor ' +
+          'ga Hedvig en drink til Angela???\n\n' +
+          '**På grunn av din smarte tenking tar politiet flere vitneavhør og samler mer bevis ' +
+          'rundt saken 🤓**',
+        body:
+          '## Vitneavhør 2 — Hedvig\n\n' +
+          '**Du har blitt observert gå inn i den salen flere ganger enn du nevnte! Din ' +
+          'morder!!**\n\n' +
+          '«Vent hæ nei jeg aner ikke hva du snakker om, såklart gjorde jeg da ikke det.»\n\n' +
+          '**Åååå stakkars deg... Det er helt sikkert bare en misforståelse, hvordan endte hun ' +
+          'opp med en Blue Lagoon-cocktail da?**\n\n' +
+          '«Blue Lagoon? Neinei det har jeg faktisk ikke gjort. Jeg ga henne bare en Powerade ' +
+          'siden hun virket litt sliten. Ifølge Brage så føler man seg mye bedre etter alkohol ' +
+          'hvis man chugger en Powerade. Det var derfor jeg kjøpte en til meg selv også!»\n\n' +
+          '**Så du innrømmer at du utela et møte med Angela??**\n\n' +
+          '«Ja... Vi har jo vært litt rivaler siden hun er i Toulousegjengen og jeg er i ' +
+          'Madrid. Når Toulouse vant årets lokallag tvilte jeg på at hun var objektiv rundt ' +
+          'saken — så jeg ønsket å konfrontere henne om det. Men jeg lover intensjonene mine ' +
+          'var gode!! Når jeg så henne skjønte jeg at hun var utmattet, så jeg gikk ut og ' +
+          'skulle hente vann. Bare ta en analyse av glasset!»\n\n' +
+          '**Vi skal ta en analyse av innholdet ja. Men hvorfor løy du?**\n\n' +
+          '«Det ser jo forferdelig ut hvis jeg har skjeftet henne til døden. Når jeg kom inn ' +
+          'og så henne kollapset var jeg kjemperedd. Mitt forrige vitneutsagn var sent på ' +
+          'natten, jeg var sliten, hadde drukket og var allerede stresset til valg. Jeg mente ' +
+          'ingenting vondt.»\n\n' +
+          '**Så du noe som kunne vært et mordvåpen da i løpet av kvelden?**\n\n' +
+          '«Mordvåpen? Nei hun kollapset jo bare da — hva mener du med mordvåpen?»\n\n' +
+          '**Ja alt blodet? Det må da være forårsaket av et mordvåpen?**\n\n' +
+          '«Det var ikke noe blod når jeg fant Angela kollapset...»',
       },
     },
 
@@ -1032,6 +1299,68 @@ export const CASE: CaseManifest = {
   // LinkedIn-feed (falsk plattform). Bytt ut med ekte innhold; legg bilder i
   // public/case/linkedin/. Bunn-posten har `link` og åpner en ekte profil ved klikk.
   linkedin: [
+    // ---- Dag 2-drypp: annonser og gratulasjoner (vises når dag 2 er åpen) ----
+    {
+      id: 'li-d2-nso',
+      author: 'Norsk studentorganisasjon (NSO)',
+      authorTitle: 'Organisasjon · 14 032 følgere',
+      day: 2,
+      text:
+        'Vi i NSO vil gratulere våre gode venner i ANSA med gjennomført generalforsamling ' +
+        'nummer 70! 70 år med innsats for norske studenter i utlandet er hvertfall ikke noe ' +
+        'å kimse av. Vi hører det har vært en temmelig begivenhetsrik helg — stå på videre! 🎉',
+      likes: 214,
+      comments: 12,
+      postedLabel: '2 t',
+    },
+    {
+      id: 'li-d2-sormarka',
+      author: 'Sørmarka konferansehotell',
+      authorTitle: 'Hotell · 1 204 følgere',
+      day: 2,
+      text:
+        'Takk til ANSA som valgte oss for GF70! Det ble såklart en helg vi sent vil glemme. ' +
+        'Vi minner forøvrig gjester om at nattbading skjer på eget ansvar. 🏊',
+      likes: 67,
+      comments: 23,
+      postedLabel: '5 t',
+    },
+    {
+      id: 'li-d2-vanish',
+      author: 'Vanish Norge',
+      authorTitle: 'Annonse · Sponset',
+      day: 2,
+      text:
+        'Rødvin på den fineste skjorta di?? Det går helt fint. Vanish Oxi Action fjerner ' +
+        'selv de verste flekkene — nesten uansett hva det er. 💪',
+      likes: 8,
+      comments: 1,
+      postedLabel: 'Sponset',
+    },
+    {
+      id: 'li-d2-ansa-toulouse',
+      author: 'ANSA',
+      authorTitle: 'Association of Norwegian Students Abroad',
+      day: 2,
+      text:
+        'Gratulerer til ANSA Toulouse som feide inn Årets lokallag på GF70! 🏆 Juryen var ' +
+        'hvertfall ikke i tvil. Neste år kan det være DEG — søk verv da vel!',
+      likes: 189,
+      comments: 41,
+      postedLabel: '4 t',
+    },
+    {
+      id: 'li-d2-checkin',
+      author: 'Checkin',
+      authorTitle: 'Annonse · Billettering for organisasjoner',
+      day: 2,
+      text:
+        'Arrangerer du noe? Stort eller smått — Checkin gjør billettsalg nokså enkelt for ' +
+        'studentorganisasjoner i hele Europa. Ingen skjulte kostnader, lover! 😇',
+      likes: 6,
+      comments: 0,
+      postedLabel: 'Sponset',
+    },
     {
       id: 'li1',
       author: 'Angela Liu',
