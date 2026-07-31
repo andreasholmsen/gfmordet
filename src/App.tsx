@@ -20,6 +20,7 @@ import SuspectBoard from './components/SuspectBoard'
 import AngelaFiles from './components/AngelaFiles'
 import ResultsApp from './components/ResultsApp'
 import Minesveiper from './components/Minesveiper'
+import Bragevalgomat from './components/Bragevalgomat'
 import LarryPage from './components/LarryPage'
 import Taskbar from './components/Taskbar'
 import LarryEasterEgg from './components/LarryEasterEgg'
@@ -93,6 +94,7 @@ function GatedShell() {
           <Route path="/angela" element={<AngelaFiles />} />
           <Route path="/resultater" element={<ResultsApp />} />
           <Route path="/spill/minesveiper" element={<Minesveiper />} />
+          <Route path="/bragevalgomat" element={<Bragevalgomat />} />
           <Route path="/larry" element={<LarryPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

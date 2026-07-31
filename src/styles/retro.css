@@ -5060,3 +5060,78 @@ textarea.field {
   display: block;
   background: #b9c8d2; /* samme som portrettets bakgrunnsfarge */
 }
+
+/* ===========================================================================
+   Bragevalgomaten (frittstående morospørrequiz)
+   =========================================================================== */
+.valgomat {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.valgomat__progress {
+  height: 14px;
+  box-shadow: var(--bevel-in);
+  background: var(--surface-light);
+  padding: 2px;
+}
+.valgomat__progress-fill {
+  height: 100%;
+  background: var(--titlebar);
+  transition: width 0.25s ease;
+}
+.valgomat__step {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--shadow);
+}
+.valgomat__question {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.valgomat__back {
+  align-self: flex-start;
+}
+.valgomat__winner {
+  text-align: center;
+  padding: 16px 12px;
+  box-shadow: var(--bevel-in);
+  background: var(--surface-light);
+}
+.valgomat__winner-emoji {
+  font-size: 3rem;
+  display: block;
+}
+.valgomat__winner-lead {
+  margin: 6px 0 0;
+  color: var(--shadow);
+  font-size: 0.85rem;
+}
+.valgomat__winner-name {
+  margin: 2px 0;
+  font-size: 1.5rem;
+}
+.valgomat__winner-pct {
+  margin: 0;
+  font-weight: bold;
+  color: var(--titlebar);
+}
+.valgomat__winner-desc {
+  margin: 8px 0 0;
+}
+.valgomat__list-title {
+  margin: 4px 0 0;
+  font-size: 0.95rem;
+}
+.valgomat__winner-img {
+  display: block;
+  width: min(220px, 60vw);
+  aspect-ratio: 1;
+  object-fit: cover;
+  margin: 0 auto;
+  box-shadow: var(--bevel-out);
+  padding: 3px;
+  background: var(--surface);
+}

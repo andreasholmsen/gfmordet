@@ -188,6 +188,8 @@ export default function Desktop() {
     appIcons.push({ label: 'Radio France', glyph: '📻', node: <RadioGlyph />, to: '/spotify' })
   }
   appIcons.push({ label: t('minesweeper'), glyph: '💣', to: '/spill/minesveiper' })
+  // Bragevalgomaten — frittstående morospørrequiz («hvilken Brage er du?»).
+  appIcons.push({ label: 'BRAGE', glyph: '🗳️', to: '/bragevalgomat' })
   // Låst opp etter at Larry er sett minst én gang. Klikk åpner Larry-siden
   // (gif-en spilles inne i vinduet). Høyreklikk-menyens hold-snarvei bruker
   // fortsatt triggerLarry() for å teste selve glitchen.
