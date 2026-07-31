@@ -868,7 +868,7 @@ export const CASE: CaseManifest = {
             '- **Etanol: 0,2 ‰.** Avdøde var i praksis edru.\n' +
             '- Mageinnhold: sportsdrikk og noe uspist mat. Siste måltid anslås 3 timer før ' +
             'død.\n' +
-            '- Ingen påvisning av narkotiske stoffer. Paracetamol i terapeutisk mengde.\n\n' +
+            '- Ingen påvisning av narkotiske stoffer. Ibux i terapeutisk mengde.\n\n' +
             '### 4. Dødstidspunkt\n\n' +
             'Anslått mellom kl. 22:30 og 23:40 lørdag 1. august, basert på kroppstemperatur og ' +
             'likstivhet ved ankomst.\n\n' +
@@ -892,7 +892,7 @@ export const CASE: CaseManifest = {
           inline:
             '## Vitneavhør 2 — Runill\n\n' +
             '**Du ga Angela en tablett på ettermiddagen. Hva var det?**\n\n' +
-            '«To paracet, mot hodeverk. Jeg fører alt jeg gir ut i notatboka, så det står der ' +
+            '«To Ibux, mot hodeverk. Jeg fører alt jeg gir ut i notatboka, så det står der ' +
             'med klokkeslett. Jeg ga det samme til fire andre den dagen — det er en helt vanlig ' +
             'dag på jobb for meg. Ved navnet hennes skrev jeg «sjekke i morgen», for hun så ' +
             'sliten ut.»\n\n' +
