@@ -1497,19 +1497,6 @@ export const CASE: CaseManifest = {
       postedLabel: 'Sponset',
     },
     {
-      // Karakterisering, IKKE bevis: ingen tall som kan kobles mot
-      // partnerkonto-tallene i Checkin-rapporten (det ville løst saken på dag 2).
-      id: 'li-d2-sverre',
-      author: 'Studentprest Sverre',
-      authorTitle: 'Studentprest · Vinylvrenger',
-      day: 2,
-      text:
-        'Pubquiz i Amsterdam er i boks! 🎉 Tusen takk til alle som kom — og til ANSA for at ' +
-        'eg får reise rundt og gjere dette. Neste stopp: GF70. Nokon som vil ha ein til der?? 🤷',
-      likes: 5140,
-      comments: 88,
-    },
-    {
       id: 'li-d2-ansa-toulouse',
       author: 'ANSA',
       authorTitle: 'Association of Norwegian Students Abroad',
@@ -1527,8 +1514,7 @@ export const CASE: CaseManifest = {
       day: 2,
       text:
         'Arrangerer du noe? Stort eller smått — Checkin gjør billettsalg nokså enkelt for ' +
-        'studentorganisasjoner i hele Europa. Ingen skjulte kostnader, lover! 😇 Spør oss om ' +
-        'partnerprogrammet — det lønner seg. 💸',
+        'studentorganisasjoner i hele Europa. Ingen skjulte kostnader, lover! 😇',
       likes: 6,
       comments: 0,
       postedLabel: 'Sponset',
@@ -2906,25 +2892,6 @@ export const CASE: CaseManifest = {
           'Kan du sende meg avtalen? Og hvem som satte opp arrangementet i Checkin?\n\n' +
           'Jeg ser på det i helgen.\n\n' +
           'Angela',
-      },
-      {
-        // Sverre spør om nøyaktig de tallene som bestemmer utbetalingen hans.
-        // Helt hjelpsom og ufarlig på dag 2. NB: bokmål — Sverre snakker
-        // bokmål i vitneutsagnet, og nynorsk er Eriks spor (ikke bland dem).
-        id: 'ep-sverre-deltakertall',
-        from: 'Sverre <sverre@sjomannskirken.no>',
-        to: 'angela@epost.no',
-        subject: 'Deltakertall vår 2026',
-        date: 'ons. 29. juli, 08:34',
-        body:
-          'Morn Angela!\n\n' +
-          'Håper det går bra i innspurten. Si til om det er noe jeg kan avlaste med — jeg er ' +
-          'på plass fra torsdag.\n\n' +
-          'Én liten ting: har du samlet oversikt over deltakertall for arrangementene i ' +
-          'Frankrike, Irland, Tyskland og Nederland i vår? Fint å ha til min egen ' +
-          'rapportering. Holder med totaler per arrangement, trenger ikke navn.\n\n' +
-          'Ingen hast. Sees på fredag!\n\n' +
-          'Sverre',
       },
       {
         // DAG 3: smoking gun. Angela har begynt å telle — ingen navn, ingen
