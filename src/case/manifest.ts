@@ -362,8 +362,8 @@ export const CASE: CaseManifest = {
             'henne trodde jeg hun hadde besvimt.»\n\n' +
             '**Hva gjorde du så?**\n\n' +
             '«Nei mitt første instinkt var naturligvis å løpe til resepsjonen for å spørre om ' +
-            'hjelp og ringe ambulanse. På veien dultet jeg borti Anna. Etter resepsjonen ble ' +
-            'ringt så løp jeg tilbake. De forstod ikke situasjonen med en gang så det tok ' +
+            'hjelp og ringe ambulanse. På veien dultet jeg borti Anna. Etter resepsjonen ' +
+            'ringte så løp jeg tilbake. De forstod ikke situasjonen med en gang så det tok ' +
             'lenger tid enn ønskelig. På veien tilbake klarte jeg å snuble, men innen jeg var ' +
             'tilbake så hadde andre folk oppdaget henne — og jeg ble bedt om å holde meg unna ' +
             'åstedet. Jeg husker ikke så mye av kvelden, alt gikk i ett. Det sykeste er hvor ' +
