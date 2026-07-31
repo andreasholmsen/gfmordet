@@ -114,7 +114,7 @@ hvilket navn. Endrer du et tidspunkt må BÅDE `title` og `src` endres.
 
 To dokumenter som bare betyr noe SAMMEN, og som derfor ligger på hver sin side av spillet:
 
-- **`d1-dorlogg`** (dag 1, løs flis, blekgrønn `tint`) — 59 kortåpninger natt til 1. aug, kun
+- **`d1-dorlogg`** (dag 1, løs flis, blekgrønn `tint`) — 59 kortåpninger natt til 2. aug (bankett lørdag 1. aug), kun
   romnummer og klokkeslett. Ingen navn.
 - **`a-romfordeling`** (Angelas filer) — hvilket romnummer som hører til hvem.
 

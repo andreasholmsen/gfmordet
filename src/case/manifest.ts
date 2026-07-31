@@ -673,9 +673,9 @@ export const CASE: CaseManifest = {
             '════════════════════════════════════════\n' +
             '  ADGANGSKONTROLL — ÅPNINGSLOGG\n' +
             '  Anlegg ...... Sørmarka Oslo\n' +
-            '  Periode ..... fre 31.07.2026 18:00 –\n' +
-            '                lør 01.08.2026 04:00\n' +
-            '  Utskrift .... lør 01.08.2026 09:14\n' +
+            '  Periode ..... lør 01.08.2026 18:00 –\n' +
+            '                søn 02.08.2026 04:00\n' +
+            '  Utskrift .... søn 02.08.2026 09:14\n' +
             '  Enhet ....... dørkontroll v4.2 / A–C\n' +
             '════════════════════════════════════════\n' +
             '```\n\n' +
@@ -861,17 +861,17 @@ export const CASE: CaseManifest = {
           src: 'case/dag2/pia/hotell2.jpg',
         },
         {
-          // ★ samme fil som kameraets IMG_20260731_203045.jpg (+1 time)
+          // ★ samme fil som kameraets IMG_20260801_203045.jpg (+1 time)
           id: 'd2-pia-m8',
-          title: 'IMG_20260731_193045.jpg', // bankettsalen
+          title: 'IMG_20260801_193045.jpg', // bankettsalen
           kind: 'image',
           folder: 'pia-mobil',
           src: 'case/dag2/pia/sørmarlka3.jpg',
         },
         {
-          // ★ samme fil som kameraets IMG_20260731_215512.jpg (+1 time)
+          // ★ samme fil som kameraets IMG_20260801_215512.jpg (+1 time)
           id: 'd2-pia-m9',
-          title: 'IMG_20260731_205512.jpg', // gjengen
+          title: 'IMG_20260801_205512.jpg', // gjengen
           kind: 'image',
           folder: 'pia-mobil',
           src: 'case/dag2/pia/people1.jpg',
@@ -923,17 +923,17 @@ export const CASE: CaseManifest = {
           src: 'case/dag2/pia/hotelcorridor.jpg',
         },
         {
-          // ★ samme fil som mobilens IMG_20260731_193045.jpg
+          // ★ samme fil som mobilens IMG_20260801_193045.jpg
           id: 'd2-pia-k7',
-          title: 'IMG_20260731_203045.jpg', // bankettsalen
+          title: 'IMG_20260801_203045.jpg', // bankettsalen
           kind: 'image',
           folder: 'pia-kamera',
           src: 'case/dag2/pia/sørmarlka3.jpg',
         },
         {
-          // ★ samme fil som mobilens IMG_20260731_205512.jpg
+          // ★ samme fil som mobilens IMG_20260801_205512.jpg
           id: 'd2-pia-k8',
-          title: 'IMG_20260731_215512.jpg', // gjengen
+          title: 'IMG_20260801_215512.jpg', // gjengen
           kind: 'image',
           folder: 'pia-kamera',
           src: 'case/dag2/pia/people1.jpg',
@@ -3411,7 +3411,7 @@ export const CASE: CaseManifest = {
           messages: [
             {
               author: 'Henriette Moe Schjelderup',
-              text: 'Jeg kan ta edruvakt fredag hvis ingen andre gidder. Har gjort det før, går helt fint.',
+              text: 'Jeg kan ta edruvakt lørdag hvis ingen andre gidder. Har gjort det før, går helt fint.',
               time: 'man 19:40',
             },
             {

@@ -29,8 +29,8 @@ forskjell — det er sporet:
 | `IMG_20260731_101547.jpg` | `sørmarka1.jpg` | Sørmarka-skiltet |
 | `IMG_20260731_104612.jpg` | `sørmarka.jpg` | **★** Sørmarka over vannet |
 | `IMG_20260731_112033.jpg` | `hotell2.jpg` | Hotellrommet |
-| `IMG_20260731_193045.jpg` | `sørmarlka3.jpg` | **★** Bankettsalen |
-| `IMG_20260731_205512.jpg` | `people1.jpg` | **★** Gjengen |
+| `IMG_20260801_193045.jpg` | `sørmarlka3.jpg` | **★** Bankettsalen |
+| `IMG_20260801_205512.jpg` | `people1.jpg` | **★** Gjengen |
 
 ## Kamerabilder — Moldova-tid
 
@@ -42,8 +42,8 @@ forskjell — det er sporet:
 | `IMG_20260729_211842.jpg` | `Moldova2.jpg` | Jernbanestasjonen, blå time |
 | `IMG_20260731_114612.jpg` | `sørmarka.jpg` | **★** Sørmarka over vannet |
 | `IMG_20260731_150318.jpg` | `hotelcorridor.jpg` | Hotellkorridoren |
-| `IMG_20260731_203045.jpg` | `sørmarlka3.jpg` | **★** Bankettsalen |
-| `IMG_20260731_215512.jpg` | `people1.jpg` | **★** Gjengen |
+| `IMG_20260801_203045.jpg` | `sørmarlka3.jpg` | **★** Bankettsalen |
+| `IMG_20260801_215512.jpg` | `people1.jpg` | **★** Gjengen |
 
 ## Hvis du endrer noe
 
