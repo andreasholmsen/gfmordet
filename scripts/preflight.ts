@@ -86,6 +86,7 @@ async function main() {
     ['0003 live results', 'get_live_results', { p_day: 1 }],
     ['0004 auth', 'get_my_votes', {}],
     ['0005 stories', 'get_active_stories', {}],
+    ['0009 larry', 'get_cheat_flags', {}],
   ]
   for (const [migration, rpc, args] of rpcChecks) {
     const r = await rpcExists(rpc, args)

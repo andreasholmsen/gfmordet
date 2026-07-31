@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { CASE, type DayContent, type Question } from '../case/manifest'
-import { getLiveResults, hasSupabase, type ResultRow } from '../lib/supabase'
+import { getCheatFlags, getLiveResults, hasSupabase, type LarryRow, type ResultRow } from '../lib/supabase'
 import { useUnlock } from '../lib/UnlockContext'
 import AppWindow from './AppWindow'
 
@@ -29,9 +29,12 @@ function demoRows(day: DayContent): ResultRow[] {
 export default function ResultsApp() {
   const days = CASE.days
   const { isUnlocked } = useUnlock()
-  const [dayNum, setDayNum] = useState<number>(days[0]?.day ?? 1)
-  const day = days.find((d) => d.day === dayNum) ?? days[0]
+  // Ark-faner: én per dag + «Larry» (hvem takket ja til Larrys «hjelp»).
+  const [tab, setTab] = useState<number | 'larry'>(days[0]?.day ?? 1)
+  const isLarry = tab === 'larry'
+  const day = days.find((d) => d.day === tab) ?? days[0]
   const [rows, setRows] = useState<ResultRow[] | null>(null)
+  const [larry, setLarry] = useState<LarryRow[] | null>(null)
   const [animate, setAnimate] = useState(false)
 
   // En dags stemmer holdes tilbake til dagen ETTER har åpnet — samme regel som
@@ -41,6 +44,7 @@ export default function ResultsApp() {
   const released = !nextDay || isUnlocked(nextDay.day)
 
   useEffect(() => {
+    if (isLarry) return
     let alive = true
     setRows(null)
     setAnimate(false)
@@ -53,7 +57,25 @@ export default function ResultsApp() {
     return () => {
       alive = false
     }
-  }, [day, released])
+  }, [day, released, isLarry])
+
+  // Larry-arket: hentes hver gang fanen åpnes (liten liste, alltid fersk).
+  useEffect(() => {
+    if (!isLarry) return
+    let alive = true
+    setLarry(null)
+    if (!hasSupabase) {
+      setLarry([
+        { name: 'Demo-etterforsker', at: new Date().toISOString() },
+        { name: 'Agent Testesen', at: new Date().toISOString() },
+      ])
+    } else {
+      getCheatFlags().then((r) => alive && setLarry(r))
+    }
+    return () => {
+      alive = false
+    }
+  }, [isLarry])
 
   // Animer stolpene inn etter første maling.
   useEffect(() => {
@@ -88,12 +110,54 @@ export default function ResultsApp() {
         <div className="excel__ribbon">
           <span className="excel__file">📊 Resultater.xlsx</span>
           <span className="excel__hint">
-            {released ? `Live${!hasSupabase ? ' · demo-tall' : ''}` : 'Låst'}
+            {isLarry || released ? `Live${!hasSupabase ? ' · demo-tall' : ''}` : 'Låst'}
           </span>
         </div>
 
         <div className="excel__content">
-          {!released ? (
+          {isLarry ? (
+            larry === null ? (
+              <p className="notice">Laster …</p>
+            ) : larry.length === 0 ? (
+              <p className="notice">Ingen har takket ja til Larry ennå. 👽</p>
+            ) : (
+              <table className="excel-grid">
+                <thead>
+                  <tr>
+                    <th className="excel-grid__corner" />
+                    <th>A</th>
+                    <th>B</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="excel-grid__headrow">
+                    <td className="excel-grid__rownum">1</td>
+                    <td>Takket ja til Larry 👽</td>
+                    <td>Tidspunkt</td>
+                  </tr>
+                  {larry.map((r, i) => (
+                    <tr key={i}>
+                      <td className="excel-grid__rownum">{i + 2}</td>
+                      <td>{r.name}</td>
+                      <td className="excel-grid__num">
+                        {new Date(r.at).toLocaleString('nb-NO', {
+                          day: 'numeric',
+                          month: 'short',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </td>
+                    </tr>
+                  ))}
+                  <tr className="excel-grid__totalrow">
+                    <td className="excel-grid__rownum">{larry.length + 2}</td>
+                    <td>Totalt</td>
+                    <td className="excel-grid__num">{larry.length}</td>
+                  </tr>
+                </tbody>
+              </table>
+            )
+          ) : !released ? (
             <p className="notice">
               🔒 Avstemningen for {day.title} vises når {nextDay!.title} åpner. Tallene
               offentliggjøres først når dagen er over — ingen skal kunne se hva de andre har
@@ -182,12 +246,18 @@ export default function ResultsApp() {
           {days.map((d) => (
             <button
               key={d.day}
-              className={`excel__sheet ${d.day === dayNum ? 'excel__sheet--active' : ''}`}
-              onClick={() => setDayNum(d.day)}
+              className={`excel__sheet ${d.day === tab ? 'excel__sheet--active' : ''}`}
+              onClick={() => setTab(d.day)}
             >
               {d.title}
             </button>
           ))}
+          <button
+            className={`excel__sheet ${isLarry ? 'excel__sheet--active' : ''}`}
+            onClick={() => setTab('larry')}
+          >
+            Larry 👽
+          </button>
         </div>
       </div>
     </AppWindow>

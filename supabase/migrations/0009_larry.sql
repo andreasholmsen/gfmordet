@@ -1,12 +1,13 @@
 -- ============================================================================
---  GF-mordet — Larry-flagget («hvem prøvde å jukse?»)
+--  GF-mordet — Larry-flagget («hvem takket ja til Larry?»)
 --  Kjør i Supabase SQL Editor ETTER 0004_auth.sql. Trygg og additiv — rører
 --  ikke stemmer, stories eller noe annet.
 --
 --  BAKGRUNN: Larry-ikonet (easter egget) tilbyr spilleren å «fjerne halvparten
 --  av vitnene». Han gjør ingenting i det hele tatt — men vi noterer hvem som
---  sa ja, slik at det kan vises som en spøk på dag 4. Spilleren får VITE at det
---  ble notert (Larry sier det rett ut), så ingen loggføres i det skjulte.
+--  sa ja. Spilleren får VITE at det ble notert (Larry sier det rett ut), så
+--  ingen loggføres i det skjulte. Lista vises i Excel-appens ark «Larry 👽»
+--  (via get_cheat_flags under).
 --
 --  Samme sikkerhetsmodell som resten av spillet: RLS på, INGEN tabellpolicyer,
 --  all skriving via SECURITY DEFINER-RPC. Identiteten leses server-side fra
@@ -21,9 +22,8 @@ create table if not exists public.cheat_flags (
 
 alter table public.cheat_flags enable row level security;
 
--- Bevisst INGEN policyer: verken anon eller authenticated får lese tabellen
--- direkte. Kun service_role (Supabase-dashbordet) ser innholdet — se spørringen
--- nederst i fila. Det hindrer at spillere kan snoke i lista før avsløringen.
+-- Bevisst INGEN policyer: ingen direkte tabelltilgang. All lesing/skriving går
+-- via RPC-ene under (service_role/dashbordet omgår RLS som vanlig).
 
 -- ---------------------------------------------------------------------------
 --  RPC: noter at spilleren sa ja til Larrys «hjelp».
@@ -53,22 +53,26 @@ begin
 end;
 $$;
 
+-- ---------------------------------------------------------------------------
+--  RPC: hele lista (navn + tidspunkt), eldst først — Excel-arket «Larry 👽».
+--  Synlig for alle innloggede: Larry sier selv at han noterer, og veggen er
+--  en del av spøken.
+-- ---------------------------------------------------------------------------
+create or replace function public.get_cheat_flags()
+returns table(player_name text, created_at timestamptz)
+language sql
+security definer
+set search_path = public
+as $$
+  select c.player_name, c.created_at
+  from public.cheat_flags c
+  order by c.created_at;
+$$;
+
 -- Krev innlogging (Supabase gir nye funksjoner direkte anon-grant, jf. 0007).
 revoke execute on function public.flag_cheater() from anon;
 grant execute on function public.flag_cheater() to authenticated;
+revoke execute on function public.get_cheat_flags() from anon;
+grant execute on function public.get_cheat_flags() to authenticated;
 
--- ---------------------------------------------------------------------------
---  Slik ser du lista (kjør i SQL Editor — dashbordet kjører som service_role
---  og omgår RLS). Det finnes med vilje ingen lese-RPC: hadde den vært kallbar
---  for `authenticated`, kunne spillerne hentet lista selv og ødelagt spøken.
---
---    select player_name, created_at
---    from public.cheat_flags
---    order by created_at;
---
---  Antall:
---    select count(*) from public.cheat_flags;
---
---  Nullstille før spillet starter:
---    delete from public.cheat_flags;
--- ---------------------------------------------------------------------------
+-- Nullstille før spillet starter:  delete from public.cheat_flags;

@@ -356,3 +356,27 @@ export async function deleteMyStory(id: string, path: string): Promise<void> {
 
 /** Cooldown mellom stories (ms) — må matche `interval '4 hours'` i 0005. */
 export const STORY_COOLDOWN_MS = 4 * 60 * 60 * 1000
+
+// ---------------------------------------------------------------------------
+//  Larry-veggen (0009): hvem som takket ja til Larrys «hjelp» (flag_cheater).
+//  Vises i Excel-appens ark «Larry 👽».
+// ---------------------------------------------------------------------------
+
+export interface LarryRow {
+  name: string
+  at: string // ISO-tidspunkt (første gang de sa ja)
+}
+
+/** Hele Larry-veggen (navn + tidspunkt), eldst først. */
+export async function getCheatFlags(): Promise<LarryRow[]> {
+  if (!supabase) return []
+  const { data, error } = await supabase.rpc('get_cheat_flags')
+  if (error || !data) {
+    if (error) console.warn('get_cheat_flags (kjør 0009_larry.sql?)', error.message)
+    return []
+  }
+  return (data as { player_name: string; created_at: string }[]).map((r) => ({
+    name: r.player_name,
+    at: r.created_at,
+  }))
+}

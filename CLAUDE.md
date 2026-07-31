@@ -282,9 +282,9 @@ skjer når neste dag slippes.
   Larry tilbyr å «fjerne halvparten av vitnene»; sier man ja kalles RPC-en `flag_cheater()`
   (se `0009_larry.sql`) og han innrømmer med en gang at han ikke kan noe og at han skrev det
   ned — ingen skjult logging, og puslespillet endres ikke. Svaret huskes per enhet
-  (`gfm:larry-answer`), flagget er idempotent server-side. Se «hvem prøvde å jukse?» i
-  Supabase-dashbordet: `select player_name, created_at from public.cheat_flags order by created_at;`
-  (bevisst ingen lese-RPC, så spillerne ikke kan spolere avsløringen).
+  (`gfm:larry-answer`), flagget er idempotent server-side. **Excel-appen har et eget ark
+  «Larry 👽»** som viser hele lista (navn + tidspunkt, via `get_cheat_flags` — synlig for
+  alle innloggede; Larry sier selv at han noterer, veggen er en del av spøken).
 - `src/components/Dialog.tsx` + `ContextMenu.tsx` — gjenbrukbar modal + høyreklikk-meny.
 - `src/components/PoliceApp.tsx` + `VoteForm.tsx` + `ResultsView.tsx` — POLITI-app. Identitet
   hentes fra `useAuth()`. `ResultsView` animerer barene og viser «du stemte som X %».
