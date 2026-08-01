@@ -1540,6 +1540,33 @@ export const CASE: CaseManifest = {
         otherOptionId: 'annet',
         otherPlaceholder: 'Hvem tror du gjorde det – og hvorfor?',
       },
+      // Samme grep som dag 2: gårsdagens fasit som intro i POLITI-appen, og
+      // en kort statusrapport som MÅ åpnes før dagens endelige spørsmål vises.
+      briefing: {
+        title: 'Politiets statusrapport',
+        intro:
+          '### Og den offisielle dødsårsaken er …\n\n' +
+          '# FORGIFTNING ☠️\n\n' +
+          'Ifølge obduksjonsrapporten hadde Angela et uidentifisert stoff i kroppen, ' +
+          'tatt **4–7 timer før dødstidspunktet**. Gjennom flere dokumenter vet vi også ' +
+          'mer om «møtet» den ettermiddagen — blant annet at det var servering fra ' +
+          'kjøkkenet og knuste glass fra vaskingen. En deltaker prøvde til og med å ' +
+          'komme seg inn fordi han mistok det for en fest.\n\n' +
+          'Det var her Angela først ble forgiftet — utmattelsen utover kvelden var en ' +
+          'konsekvens av stoffet.\n\n' +
+          '**Din briljante deduksjonsevne gir grunnlag for flere samtaler med de ' +
+          'mistenkte. Politiet har også gjort gjennombrudd på Angela sin WhatsApp! 🕵️**\n\n' +
+          'Det siste beviset ligger i Dag 3-mappen. Nå må du bestemme deg.',
+        body:
+          '## Statusrapport — søndag\n\n' +
+          'Forgiftningen skjedde på «møtet» i Møterom Bjørk. Av de på mistenktlisten ' +
+          'var kun **Maud, Runill, Ane, Erik og Sverre** til stede — de fem andre er ' +
+          'renvasket for forgiftningen.\n\n' +
+          'Nye dokumenter ligger i Dag 3-mappen: to nye vitneavhør, kriminalteknisk ' +
+          'tillegg fra åstedet, kjøkkenets bilag, edruvakt-lista og vedtektenes ' +
+          'filhistorikk. Teknikerne har også låst opp **WhatsApp** på Angelas telefon.\n\n' +
+          'Les bevisene. Deretter: hvem drepte Angela?',
+      },
     },
 
     {
