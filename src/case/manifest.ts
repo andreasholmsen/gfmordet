@@ -1301,7 +1301,21 @@ export const CASE: CaseManifest = {
     {
       day: 3,
       title: 'Dag 3',
-      intro: 'Det siste beviset. Nå må du bestemme deg.',
+      // Gårsdagens fasit gjentas øverst i dag-mappen (samme grep som dag 2,
+      // der dag 1-løsningen åpnet briefingen) før dagens dokumenter.
+      intro:
+        '### Og den offisielle dødsårsaken er …\n\n' +
+        '# FORGIFTNING ☠️\n\n' +
+        'Ifølge obduksjonsrapporten hadde Angela et uidentifisert stoff i kroppen, ' +
+        'tatt **4–7 timer før dødstidspunktet**. Gjennom flere dokumenter vet vi også ' +
+        'mer om «møtet» den ettermiddagen — blant annet at det var servering fra ' +
+        'kjøkkenet og knuste glass fra vaskingen. En deltaker prøvde til og med å ' +
+        'komme seg inn fordi han mistok det for en fest.\n\n' +
+        'Det var her Angela først ble forgiftet — utmattelsen utover kvelden var en ' +
+        'konsekvens av stoffet.\n\n' +
+        '**Din briljante deduksjonsevne gir grunnlag for flere samtaler med de ' +
+        'mistenkte. Politiet har også gjort gjennombrudd på Angela sin WhatsApp! 🕵️**\n\n' +
+        'Det siste beviset ligger i denne mappen. Nå må du bestemme deg.',
       docs: [
         // -------------------------------------------------------------------
         // MAUD, AVHØR 2 — innrømmer at «møtet» var et vors, og avgrenser hvem
