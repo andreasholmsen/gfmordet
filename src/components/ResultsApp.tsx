@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react'
 import { CASE, type DayContent, type Question } from '../case/manifest'
-import { getCheatFlags, getLiveResults, hasSupabase, type LarryRow, type ResultRow } from '../lib/supabase'
+import {
+  getCheatFlags,
+  getLiveFreeText,
+  getLiveResults,
+  hasSupabase,
+  type LarryRow,
+  type ResultRow,
+} from '../lib/supabase'
 import { useUnlock } from '../lib/UnlockContext'
 import AppWindow from './AppWindow'
 
@@ -35,6 +42,7 @@ export default function ResultsApp() {
   const day = days.find((d) => d.day === tab) ?? days[0]
   const [rows, setRows] = useState<ResultRow[] | null>(null)
   const [larry, setLarry] = useState<LarryRow[] | null>(null)
+  const [theories, setTheories] = useState<string[] | null>(null)
   const [animate, setAnimate] = useState(false)
 
   // En dags stemmer holdes tilbake til dagen ETTER har åpnet — samme regel som
@@ -58,6 +66,24 @@ export default function ResultsApp() {
       alive = false
     }
   }, [day, released, isLarry])
+
+  // KUN I DEV (`npm run dev`): hent fritekst-teoriene LIVE (uten tidslås) så
+  // eieren kan følge med underveis. `import.meta.env.DEV` er false i prod-bygget
+  // og hele blokken fjernes av bundleren — spillerne kan aldri se dette.
+  const isFreeText = day.question?.type === 'free_text'
+  useEffect(() => {
+    if (!import.meta.env.DEV || isLarry || !isFreeText) return
+    let alive = true
+    setTheories(null)
+    if (!hasSupabase) {
+      setTheories(['(demo) Sommelieren gjorde det med isbiten', '(demo) Hun ble skremt til døde'])
+    } else {
+      getLiveFreeText(day.day).then((t) => alive && setTheories(t))
+    }
+    return () => {
+      alive = false
+    }
+  }, [day, isLarry, isFreeText])
 
   // Larry-arket: hentes hver gang fanen åpnes (liten liste, alltid fersk).
   useEffect(() => {
@@ -238,6 +264,38 @@ export default function ResultsApp() {
                 </div>
               </div>
             </>
+          )}
+
+          {/* KUN I DEV: live fritekst-teorier, én per rad. Renderes aldri i
+              prod-bygget (import.meta.env.DEV er false og koden fjernes). */}
+          {import.meta.env.DEV && !isLarry && isFreeText && (
+            <div style={{ marginTop: 16 }}>
+              <p className="notice">
+                🛠️ Dev-visning: {theories === null ? 'laster teorier …' : `${theories.length} teorier (live, uten tidslås)`}
+              </p>
+              {theories !== null && theories.length > 0 && (
+                <table className="excel-grid">
+                  <thead>
+                    <tr>
+                      <th className="excel-grid__corner" />
+                      <th>A</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="excel-grid__headrow">
+                      <td className="excel-grid__rownum">1</td>
+                      <td>Teori</td>
+                    </tr>
+                    {theories.map((t, i) => (
+                      <tr key={i}>
+                        <td className="excel-grid__rownum">{i + 2}</td>
+                        <td>{t}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           )}
         </div>
 

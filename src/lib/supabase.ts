@@ -218,6 +218,19 @@ export async function getLiveResults(day: number): Promise<ResultRow[]> {
   }))
 }
 
+/** LIVE anonymiserte fritekst-svar — UTEN tidslås (get_live_free_text, se
+ *  0010_live_free_text.sql). Brukes KUN av Excel-appen i dev-modus, så eieren
+ *  kan følge dag 2-teoriene underveis. Tomt i demo-modus eller uten migrasjonen. */
+export async function getLiveFreeText(day: number): Promise<string[]> {
+  if (!supabase) return []
+  const { data, error } = await supabase.rpc('get_live_free_text', { p_day: day })
+  if (error) {
+    console.warn('get_live_free_text (kjør 0010_live_free_text.sql?)', error.message)
+    return []
+  }
+  return (data as { free_text: string }[]).map((r) => r.free_text).filter(Boolean)
+}
+
 /** Anonymiserte fritekst-svar for en dag (uten navn) — tomt før results_at. */
 export async function getFreeText(day: number): Promise<string[]> {
   if (!supabase) return []

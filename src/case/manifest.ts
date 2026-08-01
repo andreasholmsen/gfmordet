@@ -1230,19 +1230,17 @@ export const CASE: CaseManifest = {
       },
       // Fasit for dag 2 — vises i POLITI når dag 3 har åpnet (avstemning stengt).
       reveal:
-        '## Løsningen på Dag 2\n\n' +
-        '**Angela ble forgiftet.**\n\n' +
-        'Glasset i vinduskarmen var en Powerade. Ingen alkohol, ingen gift — Hedvig ' +
-        'snakket sant, og hun kjøpte to fordi hun tok en til seg selv også.\n\n' +
-        'Men obduksjonen sier noe mer ubehagelig: stoffet ble tilført **fire til sju ' +
-        'timer** før hun døde. Altså et sted mellom kl. 16:00 og 19:30.\n\n' +
-        'Da hadde ikke banketten begynt engang.\n\n' +
-        '> «Vi hadde også et ekstra møte blant ansatte og hovedstyret.»\n\n' +
-        'Alle som har snakket om den ettermiddagen har kalt den noe forskjellig. Ingen ' +
-        'har sagt hva som egentlig skjedde der.\n\n' +
-        '**Og ett spørsmål står helt åpent:** hvis giften drepte henne — hvorfor er det ' +
-        'et hodesår?\n\n' +
-        '**Politiet jobber videre i natt. I morgen har vi svaret. 🕵️**',
+        '## Hva er den offisielle dødsårsaken til Angela?\n\n' +
+        '**Hun ble forgiftet!**\n\n' +
+        'Ifølge obduksjonsrapporten får man vite at Angela har et uidentifisert stoff i ' +
+        'kroppen, som var tatt **4–7 timer før dødstidspunktet**.\n\n' +
+        'Gjennom flere dokumenter får man også vite mer om dette møtet — blant annet at ' +
+        'det var servering fra kjøkkenet og knuste glass fra vaskingen. En deltaker ' +
+        'prøvde også å komme seg inn på møtet fordi han mistok det til å være en fest.\n\n' +
+        'Det var her Angela først ble forgiftet, og hennes utmattelsessymptomer senere ' +
+        'på kvelden var en konsekvens av giften.\n\n' +
+        '**Din briljante deduksjonsevne gir grunnlag for flere samtaler med de ' +
+        'mistenkte. Politiet har også gjort gjennombrudd på Angela sin WhatsApp! 🕵️**',
       // Nytt avhør politiet hentet inn etter dag 1. MÅ åpnes før dagens
       // spørsmål vises — spilleren skal lese det før de svarer.
       briefing: {
@@ -2541,7 +2539,7 @@ export const CASE: CaseManifest = {
           },
           {
             from: 'me',
-            text: 'Du får lese hva som står om utestening av ikke-franskmenn i vedtektene:))',
+            text: 'Uff nei ikke gjør det da:))',
             time: '14. juni 2026 22:11',
           },
           {

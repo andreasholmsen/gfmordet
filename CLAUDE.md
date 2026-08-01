@@ -196,10 +196,10 @@ skjer når neste dag slippes.
 
 | Dag | Spørsmål | Åpner | Resultater vises |
 | --- | --- | --- | --- |
-| 1 | "Hvem lyver …" (flervalg) | **alltid åpen** (release i fortiden) | fre 31. juli 18:00 |
-| 2 | "Hvordan døde …" (fritekst) | fre 31. juli 18:00 | lør 1. aug 09:00 |
-| 3 | "Hvem drepte Angela" (flervalg + "Annet") | lør 1. aug 09:00 | søn 2. aug 09:00 |
-| 4 | (ingen stemming) fasit + statistikk | søn 2. aug 09:00 | — |
+| 1 | "Hvem lyver …" (flervalg) | **alltid åpen** (release i fortiden) | fre 31. juli 09:00 |
+| 2 | "Hvordan døde …" (fritekst) | fre 31. juli 09:00 | lør 1. aug 19:00 |
+| 3 | "Hvem drepte Angela" (flervalg + "Annet") | lør 1. aug 19:00 | søn 2. aug 12:00 |
+| 4 | (ingen stemming) fasit + statistikk | søn 2. aug 12:00 | — |
 
 > Beslutning: Dag 1 skal alltid være tilgjengelig (folk kan lese/voteres når som helst),
 > men dag 1-resultatene holdes tilbake til dag 2 slippes. Implementert ved at dag 1 har

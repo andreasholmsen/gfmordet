@@ -13,7 +13,7 @@
 #   ./scripts/jump-day.sh 2      # dag 2 (dag 1 resultater avslørt)
 #   ./scripts/jump-day.sh 3      # dag 3
 #   ./scripts/jump-day.sh 4      # dag 4 (fasit)
-#   ./scripts/jump-day.sh reset  # tilbake til ekte datoer (31.7–2.8 2026)
+#   ./scripts/jump-day.sh reset  # tilbake til ekte datoer (31.7–2.8 2026, dag 3 kl. 19, dag 4 kl. 12)
 #   ./scripts/jump-day.sh 3 --print   # bare skriv ut SQL-en (ikke kjør)
 #
 # Tilkobling: sett SUPABASE_DB_URL til connection string-en fra Supabase
@@ -44,11 +44,11 @@ if [[ "$MODE" == "reset" ]]; then
 update public.case_config set release_at = timestamptz '2020-01-01 00:00 Europe/Oslo',
        closes_at = timestamptz '2026-07-31 09:00 Europe/Oslo', results_at = timestamptz '2026-07-31 09:00 Europe/Oslo' where day = 1;
 update public.case_config set release_at = timestamptz '2026-07-31 09:00 Europe/Oslo',
-       closes_at = timestamptz '2026-08-01 09:00 Europe/Oslo', results_at = timestamptz '2026-08-01 09:00 Europe/Oslo' where day = 2;
-update public.case_config set release_at = timestamptz '2026-08-01 09:00 Europe/Oslo',
-       closes_at = timestamptz '2026-08-02 09:00 Europe/Oslo', results_at = timestamptz '2026-08-02 09:00 Europe/Oslo' where day = 3;
-update public.case_config set release_at = timestamptz '2026-08-02 09:00 Europe/Oslo',
-       closes_at = null,                                      results_at = timestamptz '2026-08-02 09:00 Europe/Oslo' where day = 4;
+       closes_at = timestamptz '2026-08-01 19:00 Europe/Oslo', results_at = timestamptz '2026-08-01 19:00 Europe/Oslo' where day = 2;
+update public.case_config set release_at = timestamptz '2026-08-01 19:00 Europe/Oslo',
+       closes_at = timestamptz '2026-08-02 12:00 Europe/Oslo', results_at = timestamptz '2026-08-02 12:00 Europe/Oslo' where day = 3;
+update public.case_config set release_at = timestamptz '2026-08-02 12:00 Europe/Oslo',
+       closes_at = null,                                      results_at = timestamptz '2026-08-02 12:00 Europe/Oslo' where day = 4;
 SQL
 )
 else
