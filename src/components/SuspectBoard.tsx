@@ -1,6 +1,7 @@
 import { CASE } from '../case/manifest'
 import type { Suspect } from '../case/manifest'
 import { assetUrl } from '../lib/assets'
+import { useUnlock } from '../lib/UnlockContext'
 import AppWindow from './AppWindow'
 import PixelPortrait from './PixelPortrait'
 
@@ -19,7 +20,11 @@ function initials(name: string): string {
 }
 
 function SuspectCard({ s }: { s: Suspect }) {
-  const status = s.status ?? 'ukjent'
+  const { isUnlocked } = useUnlock()
+  // `renvasketDay` overstyrer status når dagen er åpen (server-tidslås) —
+  // brukt til å renvaske alle som ikke var på vorset når dag 3 slippes.
+  const status: NonNullable<Suspect['status']> =
+    s.renvasketDay != null && isUnlocked(s.renvasketDay) ? 'renvasket' : (s.status ?? 'ukjent')
   return (
     <article className={`suspect suspect--${status}`}>
       <span className="suspect__pin" aria-hidden />

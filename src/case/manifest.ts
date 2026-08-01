@@ -122,6 +122,10 @@ export interface Suspect {
   /** 8-bit-portrett (valgfritt) — vinner over `img` hvis begge er satt. */
   pixel?: PixelPortraitData
   status?: 'mistenkt' | 'renvasket' | 'ukjent'
+  /** Vises som «RENVASKET» (grønt stempel) fra og med at dag N er åpen —
+   *  samme server-tidslås som dag-mappene. Overstyrer `status` når dagen
+   *  er nådd; før det vises `status` som vanlig. */
+  renvasketDay?: number
 }
 
 export interface DayContent {
@@ -514,9 +518,10 @@ export const CASE: CaseManifest = {
             'var klar for talen min i dag.»\n\n' +
             '**Møtte du på noen underveis? Noen som kan bekrefte hvor du var?**\n\n' +
             '«Eg møtte på Maud, og vi diskuterte nokre vedtektsgreier saman. Vi er kanskje ' +
-            'ikkje alltid samde, men vi jobbar svært godt saman. Sverre burde òg kunne ' +
-            'stadfeste at eg var i gangen! Ho gjekk mykje fram og tilbake heile kvelden for å ' +
-            'passe på dei som bada. Anna enn det såg eg også Hedvig gå inn i den salen eit par ' +
+            'ikkje alltid samde, men vi jobbar svært godt saman. ' +
+            'Ho gjekk mykje fram og tilbake heile kvelden for å passe på dei som bada.' +
+            ' Sverre burde òg kunne stadfeste at eg var i gangen! ' +
+            'Anna enn det såg eg også Hedvig gå inn i den salen eit par ' +
             'gonger i løpet av kvelden. Ho hadde til og med nokre fancy cocktailar idet ho ' +
             'gjekk inn i salen for andre gong. Eg såg Pia gå både fram og tilbake, for å hente ' +
             'kameraet sitt. Ho hadde nettopp vore i Moldova, sa ho, var veldig gøy! Så ho viste ' +
@@ -807,8 +812,7 @@ export const CASE: CaseManifest = {
           title: 'Pias bilder',
           icon: '📷',
           tint: '#ffe4cc',
-          intro:
-            'Bildene Pia sendte inn til politiet. Overført fra mobilen hennes — hun har flere\n\nbilder på kameraet som ikke er ferdig overført.',
+          intro: 'Bildene Pia sendte inn til politiet. Overført fra mobilen hennes.',
         },
         {
           id: 'pia-mobil',
@@ -1146,12 +1150,10 @@ export const CASE: CaseManifest = {
 
         // ------------------------------------------------------------------
         // PIAS BILDER. Filnavnet er tittelen, så klokkeslettet er synlig.
-        // Mobilen stilte seg om til norsk tid ved landing; kameraet står
-        // fortsatt på Moldova-tid (én time foran, jf. Anna sitt utsagn). De tre
-        // bildene som finnes på BEGGE enhetene har derfor filnavn som ligger
-        // nøyaktig én time fra hverandre — samme sekund, samme motiv:
-        //   10:46:12 / 11:46:12  ·  19:30:45 / 20:30:45  ·  20:55:12 / 21:55:12
-        // Legg filene i public/case/dag2/pia/ — se README-en der.
+        // MERK: tidssone-sporet (kamerabildene på Moldova-tid, dag 3) ble
+        // KUTTET — kamerabildene finnes ikke lenger, kun mobilbildene her.
+        // Anna sitt «én time foran»-utsagn og kamera-omtalene i dag 1 er nå
+        // bare fluff. Filene ligger i public/case/dag2/pia/ — se README-en der.
         // ------------------------------------------------------------------
 
         // --- Mobil (norsk tid — telefonen stilte seg om ved landing) ---
@@ -1238,7 +1240,7 @@ export const CASE: CaseManifest = {
         'det var servering fra kjøkkenet og knuste glass fra vaskingen. En deltaker ' +
         'prøvde også å komme seg inn på møtet fordi han mistok det til å være en fest.\n\n' +
         'Det var her Angela først ble forgiftet, og hennes utmattelsessymptomer senere ' +
-        'på kvelden var en konsekvens av giften.\n\n' +
+        'på kvelden var en konsekvens av stoffet.\n\n' +
         '**Din briljante deduksjonsevne gir grunnlag for flere samtaler med de ' +
         'mistenkte. Politiet har også gjort gjennombrudd på Angela sin WhatsApp! 🕵️**',
       // Nytt avhør politiet hentet inn etter dag 1. MÅ åpnes før dagens
@@ -1300,92 +1302,227 @@ export const CASE: CaseManifest = {
       day: 3,
       title: 'Dag 3',
       intro: 'Det siste beviset. Nå må du bestemme deg.',
-      folders: [
-        {
-          id: 'pia-kamera',
-          title: 'Pias kamerabilder',
-          icon: '📷',
-          tint: '#ffe4cc',
-          intro:
-            'Minnekortet fra Pias kamera er ferdig overført. Kameraet er et annet apparat enn ' +
-            'mobilen hennes.',
-        },
-      ],
       docs: [
-        // --- Pias KAMERABILDER (Moldova-tid). Moldova-bildene er tatt i Moldova, så
-        //     der er klokka riktig; Norge-bildene ligger én time for sent. De tre
-        //     ★-motivene finnes også i mobilmappen på DAG 2 — én times forskjell,
-        //     samme sekund. Det er tidssone-sporet.
+        // -------------------------------------------------------------------
+        // MAUD, AVHØR 2 — innrømmer at «møtet» var et vors, og avgrenser hvem
+        // på mistenktlisten som var der (Maud, Runill, Ane, Erik, Sverre).
+        // Peker på Runill (falskt spor — pilla er alt bekreftet som ibux i
+        // obduksjonen) og avfeier Sverre med «bare opptatt av quizzen sin» —
+        // som stille mater Checkin-sporet uten å vite det selv.
+        // -------------------------------------------------------------------
         {
-          id: 'd3-pia-k1',
-          title: 'IMG_20260728_201235.jpg', // folkedrakt i solnedgang
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/Moldova4.jpg',
-        },
-        {
-          id: 'd3-pia-k2',
-          title: 'IMG_20260729_132408.jpg', // EU-flagg, midt på dagen
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/Moldova3.jpg',
-        },
-        {
-          id: 'd3-pia-k3',
-          title: 'IMG_20260729_200317.jpg', // Chișinău ovenfra, gyllen time
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/Moldova1.jpg',
-        },
-        {
-          id: 'd3-pia-k4',
-          title: 'IMG_20260729_211842.jpg', // jernbanestasjonen, blå time
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/Moldova2.jpg',
-        },
-        {
-          // ★ samme fil som mobilens (dag 2) IMG_20260731_104612.jpg
-          id: 'd3-pia-k5',
-          title: 'IMG_20260731_114612.jpg', // Sørmarka over vannet
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/sørmarka.jpg',
-        },
-        {
-          id: 'd3-pia-k6',
-          title: 'IMG_20260731_150318.jpg', // hotellkorridoren
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/hotelcorridor.jpg',
-        },
-        {
-          // ★ samme fil som mobilens (dag 2) IMG_20260801_193045.jpg
-          id: 'd3-pia-k7',
-          title: 'IMG_20260801_203045.jpg', // bankettsalen
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/sørmarlka3.jpg',
-        },
-        {
-          // ★ samme fil som mobilens (dag 2) IMG_20260801_205512.jpg
-          id: 'd3-pia-k8',
-          title: 'IMG_20260801_215512.jpg', // gjengen
-          kind: 'image',
-          folder: 'pia-kamera',
-          src: 'case/dag2/pia/people1.jpg',
-        },
-        {
-          id: 'd3-brev',
-          title: 'Funnet brev',
+          id: 'd3-vitne-maud-2',
+          title: 'Vitneavhør 2: Maud',
           kind: 'markdown',
-          inline: '## Brev funnet i en skuff\n\n«Jeg vet hva du gjorde. Møt meg i kveld, ellers …»',
+          tint: '#d7e9fb',
+          inline:
+            '## Vitneavhør 2 — Maud\n\n' +
+            '**Kan du forklare litt mer hva det møtet deres handlet om tidligere den ' +
+            'dagen?**\n\n' +
+            '«Ja, det var et “møte” i sekretariatet, mellom de fleste ansatte, ' +
+            'hovedstyret, studentprester og TRIA. Jeg sier “møte” fordi det egentlig ' +
+            'var et vors — men det var privat, så vi ønsket å holde det lowkey. De av ' +
+            'interesse på mistenktlisten som var på møtet var: meg selv, Runill, Ane, Erik ' +
+            'og Sverre.»\n\n' +
+            '**Okei, hva skjedde på dette vorset da?**\n\n' +
+            '«Nei vi hadde bestilt en del drikke da. Det ble litt kaos og jeg mistet litt ' +
+            'tellingen på hva som ble kjøpt fra hotellet og hva folk hadde med selv.»\n\n' +
+            '**Mistanken er jo at noen her har forgiftet Angela på dette møtet. Hvem tror ' +
+            'du det ville vært?**\n\n' +
+            '«At noen ville forgiftet Angela høres jo helt forferdelig ut, men hvis jeg ' +
+            'måtte gjettet noen så ville jeg kanskje trodd Runill? De stod og snakket en ' +
+            'del den kvelden men jeg fikk ikke vite om hva. Var det faktisk ibux det hun ' +
+            'ga?»\n\n' +
+            '**Ja, det er bekreftet at det var ibux. Men det er jo fortsatt mulig at noe ' +
+            'annet ble gitt. Hva tror du om de andre da?**\n\n' +
+            '«Nei altså Erik virket jo ganske så rolig. Vi snakket en del utenfor salen ' +
+            'men det var om helt irrelevante ting. Vi ble bare litt høylytte fordi vi er ' +
+            'lidenskapelige ANSA-representanter. Sverre er den jeg kjenner minst, men han ' +
+            'også er vel bare opptatt av quizzen sin og å ha med så mange som mulig på ' +
+            'arrangementer. Siste er jo Ane, men hun gjorde jo bare jobben sin hele ' +
+            'kvelden!»',
+        },
+        // -------------------------------------------------------------------
+        // SVERRE, AVHØR 2. Alt sjekkbart han sier er SANT — løgnene ligger der
+        // ingen system kan sjekke: dørloggen logger ikke utgang (327 @ 23:32,
+        // liket funnet 23:38), og fireminutterssamtalen 29. juli var det ANGELA
+        // som ringte (anropslogg «ut» + Ingeborg-tråden «snakker først med
+        // vedkommende» samme dag) — hans forklaring på samtalen snur retningen.
+        // «Andre driftskostnader»-fleipen mater økonomisporet uten å vite det.
+        // -------------------------------------------------------------------
+        {
+          id: 'd3-vitne-sverre-2',
+          title: 'Vitneavhør 2: Sverre',
+          kind: 'markdown',
+          tint: '#d7e9fb',
+          inline:
+            '## Vitneavhør 2 — Sverre\n\n' +
+            '**Vi har temmelig god peiling på hvor alle var rundt mordtidspunktet — ' +
+            'utenom deg. Hva gjorde du?**\n\n' +
+            '«Som sagt la jeg meg rundt 23:30. Det var en lang dag. Selv med kort dag ble ' +
+            'det mange voteringer rundt dette med “skal vi avslutte for dagen?”, “skal vi ' +
+            'ha en 10 eller 20 minutters pause?” — og alt ble bare surr. Hvis det er noen ' +
+            'tvil kan man vel sikkert sjekke sånne dørlogger?»\n\n' +
+            '**Vi har sett igjennom telefonloggene til Angela, og ser at dere snakket et ' +
+            'par dager før GF i fire minutter. Hvorfor snakket dere?**\n\n' +
+            '«Bare noe smått rundt GF. Jeg var nysgjerrig på når jeg skulle dukke opp, ' +
+            'for eksempel. Det var derfor samtalen var relativt kort.»\n\n' +
+            '**Og vet du om Angela fikk i seg noe unormalt i løpet av vorset deres?**\n\n' +
+            '«Ja definitivt, jeg så hun fylte på samme glasset temmelig ofte. Forsåvidt ' +
+            'ekstra gøy når ANSA sponset drikke på oss alle! Fordel med “andre ' +
+            'driftskostnader” hehe! Men såklart, jeg fulgte jo med fordi jeg er ' +
+            'studentprest og passer på alle sammen — hun drev ikke med overdrikking på ' +
+            'jobb hvertfall.»\n\n' +
+            '**Og hvem drepte isåfall Angela?**\n\n' +
+            '«Godt spørsmål… Anna kanskje? Hun løp jo rundt med det trofeet hun skulle ' +
+            'returnere, etterfulgt av å bade i følge de andre. Høres ut som en god måte å få vasket ' +
+            'objektet på, spør du meg.»\n\n' +
+            '**Ja, men hun var jo ikke på møtet …**\n\n' +
+            '«Nei, sant det …»',
+        },
+        // -------------------------------------------------------------------
+        // KRIMINALTEKNISK TILLEGG — dokumentet som gjør ALLE fem varme:
+        // slaget ble påført 23:15–23:38 (blodet ukoagulert, Hedvig så ikke
+        // blod ~20 min før funn). Maud+Erik kranglet rett utenfor salen da,
+        // Ane kom til, Runill var alene inne — og Sverre er uten alibi.
+        // -------------------------------------------------------------------
+        {
+          id: 'd3-krimteknisk-tillegg',
+          title: 'Kriminalteknisk tillegg: åstedet',
+          kind: 'markdown',
+          tint: '#efe2e2',
+          inline:
+            '```\n' +
+            '════════════════════════════════════\n' +
+            '  KRIMINALTEKNISK UNDERSØKELSE\n' +
+            '  TILLEGG — ÅSTED, PLENUMSSAL\n' +
+            '  Sak ......... 2026-1738\n' +
+            '  Utarbeidet .. søn 02.08.2026 16:40\n' +
+            '════════════════════════════════════\n' +
+            '```\n\n' +
+            '**Blodet**\n\n' +
+            '- Blodpølen ved hodet var **ikke koagulert** da åstedet ble sikret kl. 00:05. ' +
+            'Mengde og koagulering tilsier at blødningen oppsto **kort tid før funn ' +
+            'kl. 23:38** — ikke tidligere på kvelden.\n' +
+            '- Sprutmønsteret på gulv og stolben viser at slaget ble påført **mens avdøde ' +
+            'lå nede**. Ingen avvergingsskader (jf. obduksjonen pkt. 2).\n\n' +
+            '**Sammenholdt med vitneopplysninger**\n\n' +
+            'Et vitne fant avdøde kollapset ca. 20 minutter før funntidspunktet og ' +
+            'observerte da **ikke blod**. Dette er forenlig med de tekniske funnene.\n\n' +
+            '**Foreløpig rekkefølge**\n\n' +
+            '1. Forgiftning (inntak 4–7 timer før død) → gradvis utmattelse.\n' +
+            '2. Kollaps i plenumssalen, uten synlige skader.\n' +
+            '3. Slag mot bakhodet påført i tidsrommet **ca. 23:15–23:38**.\n\n' +
+            '**Merknad:** Gjenstanden er ikke funnet.'
+        },
+        // -------------------------------------------------------------------
+        // KJØKKENETS BILAG — innfrir løftet fra dag 2 (delfaktura/renholdslogg).
+        // Gjør MAUD varm (presidenten bestilte alkohol til et uprotokollert
+        // møte kvelden før valget — derav «lowkey»), og «andre driftskostnader»
+        // knytter an til Sverres fleip i avhøret. Siste linje holder liv i at
+        // giften kan ha kommet fra medbrakt drikke (jf. Mauds «mistet tellingen»).
+        // -------------------------------------------------------------------
+        {
+          id: 'd3-bestillingsbilag',
+          title: 'Kjøkkenets bilag: Møterom Bjørk',
+          kind: 'markdown',
+          tint: '#f6f1e4',
+          inline:
+            '```\n' +
+            '   SØRMARKA KONFERANSEHOTELL\n' +
+            '   KJØKKEN — INTERN BESTILLING\n' +
+            '- - - - - - - - - - - - - - - - - -\n' +
+            '   Bilag ....... K-2214\n' +
+            '   Levert ...... lør 01.08 kl. 13:50\n' +
+            '   Sted ........ Møterom Bjørk\n' +
+            '   Antall ...... 14 pers.\n' +
+            '- - - - - - - - - - - - - - - - - -\n' +
+            '   12 fl. musserende      4 140,00\n' +
+            '    6 fl. hvitvin         1 860,00\n' +
+            '   snacks/frukt             560,00\n' +
+            '   glass (leie, 30 stk)     300,00\n' +
+            '- - - - - - - - - - - - - - - - - -\n' +
+            '   SUM                    6 860,00\n' +
+            '   Belastes: GF70 —\n' +
+            '   «andre driftskostnader»\n' +
+            '   Bestilt av: hovedstyret\n' +
+            '   v/ M. Alfstad Bjørum\n' +
+            '```\n\n' +
+            '**MERKNAD (politiet):** Beløpet samsvarer med posten «servering iht. ' +
+            'bestilling» på hotellets delfaktura. Bilaget omfatter kun det hotellet ' +
+            'leverte — drikke medbrakt av deltakerne fremgår ikke av noe bilag.',
+        },
+        // -------------------------------------------------------------------
+        // EDRUVAKT-LISTA — gjør ANE varm: hvem er «A.» som fritok to vakter
+        // (og dermed halverte vaktholdet)? Uskyldig forklaring finnes: de to
+        // hadde vært på vorset og burde ikke stå vakt — og «A.» kan like
+        // gjerne være Angela (prosjektleder) som Ane. Bekrefter Henriettes
+        // e-post fra dag 2 («to av dem som skulle stå kom ikke»).
+        // -------------------------------------------------------------------
+        {
+          id: 'd3-edruvaktliste',
+          title: 'Edruvakt-liste (revidert)',
+          kind: 'markdown',
+          tint: '#e2e8f0',
+          inline:
+            '```\n' +
+            '════════════════════════════════════\n' +
+            '  ANSA — BEREDSKAP\n' +
+            '  EDRUVAKTER, BANKETT lør 01.08\n' +
+            '  Gjennomgang: Runill\n' +
+            '════════════════════════════════════\n' +
+            '```\n\n' +
+            '| VAKT | TID | MERKNAD |\n' +
+            '| --- | --- | --- |\n' +
+            '| H. Moe Schjelderup | ~~21:00–01:00~~ 19:30–21:00 | byttet i siste liten|\n' +
+            '| Ane | 21:00–01:00 | overtok fra H. |\n' +
+            '**Fritak (påført for hånd):** _«burde ikke stå vakt i kveld — deltok på ' +
+            'internt arrangement i ettermiddag. — A.»_\n\n' +
+            '',
+        },
+        // -------------------------------------------------------------------
+        // VEDTEKTER-VERSJONSLOGGEN — gjør ERIK varm: §55-endringen ble gjort
+        // dagen etter at «én tillitsvalgt» fikk systemtilgang (spillerne vet
+        // fra Slack-DM-en at det var Erik, 18. juni). Men felleskontoen har
+        // flere brukere — deriblant studentprestkontoret (Sverre), som er
+        // day 4-blunket. Endringen forblir bevisst uoppklart (rødt spor).
+        // -------------------------------------------------------------------
+        {
+          id: 'd3-vedtekter-versjonslogg',
+          title: 'Filhistorikk: vedtektene',
+          kind: 'markdown',
+          tint: '#e6e0f0',
+          inline:
+            '```\n' +
+            '════════════════════════════════════\n' +
+            '  SHAREPOINT — VERSJONSHISTORIKK\n' +
+            '  Fil: ANSA-Vedtekter-2025-2026.docx\n' +
+            '  Hentet ut: søn 02.08.2026\n' +
+            '════════════════════════════════════\n' +
+            '```\n\n' +
+            '| VER. | DATO | BRUKER | ENDRING |\n' +
+            '| --- | --- | --- | --- |\n' +
+            '| 2.1 | 12. mai 10:20 | ingeborg@ansa.no | årlig revisjon |\n' +
+            '| 2.2 | 2. juni 14:05 | ingeborg@ansa.no | rettet skrivefeil |\n' +
+            '| 2.4 | 19. juni 23:15 | gf-felles@ansa.no | eksportert til PDF |\n\n' +
+            '**Tilganger til felleskontoen gf-felles:** sekretariatet, prosjektleder ' +
+            '(A. Liu)' +
+            '.\n\n' +
+            '',
         },
       ],
       question: {
         type: 'mc_with_other',
         prompt: 'Hvem drepte egentlig Angela?',
-        options: [...SUSPECT_OPTIONS, { id: 'annet', label: 'Annet (skriv selv)' }],
+        // Kun de som var på vorset (jf. Mauds avhør 2) står på stemmeseddelen —
+        // de fem renvaskede (Hedvig, Andreas, Oskar, Anna, Pia) er fjernet.
+        // «Annet» beholdes for dem som vil skrive noe eget.
+        options: [
+          ...SUSPECT_OPTIONS.filter((o) =>
+            ['maud', 'runill', 'ane', 'erik', 'sverre'].includes(o.id),
+          ),
+          { id: 'annet', label: 'Annet (skriv selv)' },
+        ],
         otherOptionId: 'annet',
         otherPlaceholder: 'Hvem tror du gjorde det – og hvorfor?',
       },
@@ -1555,15 +1692,20 @@ export const CASE: CaseManifest = {
       postedLabel: '1 mo',
     },
     {
-      // Vises FØRST når dag 3 er åpen (day: 3). Bytt ut med ekte dag 3-hint.
+      // Dag 3-drypp: Checkin-annonse som lander som et blunk i retrospekt —
+      // «partnerkonto»-utbetalinger er nøyaktig det Sverre-sporet handler om
+      // (jf. Checkin-rapporten og Tuvas gebyr-spørsmål på Angelas e-post).
       id: 'li-d3',
-      author: '(navn)',
-      authorTitle: '(tittel)',
-      text: 'PLACEHOLDER — dag 3-innlegg. Skriv det ekte hintet her.',
-      likes: 0,
-      comments: 0,
-      postedLabel: '1 d',
+      author: 'Checkin',
+      authorTitle: 'Annonse · Billettering for organisasjoner',
       day: 3,
+      text:
+        'NYHET! Utbetaling til partnerkonto er nå enda enklere: pengene fra ' +
+        'billettsalget går rett dit du vil — uten mas fra økonomiansvarlig. 😇 ' +
+        'Perfekt for deg som arrangerer mye. Spør oss om partnerprogrammet!',
+      likes: 4,
+      comments: 2,
+      postedLabel: 'Sponset',
     },
     {
       // Bunn-posten: ser ut som en vanlig post, men klikk åpner ekte LinkedIn-profil.
@@ -1587,6 +1729,8 @@ export const CASE: CaseManifest = {
       name: 'Andreas',
       role: '\"ANSA Brasil\"',
       status: 'ukjent',
+      // Ikke på vorset (jf. Mauds avhør 2, dag 3) — kan ikke ha forgiftet Angela.
+      renvasketDay: 3,
       // 8-bit-portrett (tegnet for hånd — palett + piksel-grid, se PixelPortraitData)
       pixel: {
         palette: {
@@ -1733,6 +1877,7 @@ export const CASE: CaseManifest = {
       name: 'Oskar',
       role: 'ANSA Toulouse',
       status: 'ukjent',
+      renvasketDay: 3,
       pixel: {
         palette: {
           _: '#d9cfc0', // bakgrunn (varm beige vegg)
@@ -1830,6 +1975,7 @@ export const CASE: CaseManifest = {
       name: 'Hedvig',
       role: 'ANSA Madrid',
       status: 'ukjent',
+      renvasketDay: 3,
       pixel: {
         palette: {
           _: '#4f9a94', // bakgrunn (teal, solid)
@@ -1975,6 +2121,7 @@ export const CASE: CaseManifest = {
       name: 'Anna',
       role: 'ANSA Danmark',
       status: 'ukjent',
+      renvasketDay: 3,
       pixel: {
         palette: {
           _: '#7d8490', // bakgrunn (gråblå studiovegg)
@@ -2023,6 +2170,7 @@ export const CASE: CaseManifest = {
       name: 'Pia',
       role: 'ANSA Sør-Korea',
       status: 'ukjent',
+      renvasketDay: 3,
       pixel: {
         palette: {
           _: '#e2b13c', // bakgrunn (gyllen, solid)
@@ -2266,6 +2414,91 @@ export const CASE: CaseManifest = {
     appDays: { slack: 1, email: 2, whatsapp: 3 },
     whatsappHackWord: 'gigachad',
     whatsapp: [
+      // Rekkefølgen = WhatsApp-rekkefølge: samtalen med nyeste melding
+      // øverst. Flytter du en melding i tid, flytt samtalen tilsvarende.
+      // Støy-samtalene (Amelia, Claire, Malaumne, Paul, Coloc, Carole,
+      // Alice) er ubesvarte — innboksen flommer over av uleste.
+      // -----------------------------------------------------------------
+      // DAG 3-GJENNOMBRUDDET (hele appen låses opp i dag via appDays):
+      // Angela prøver å få Sverre i tale etter onsdagssamtalen — han svarer
+      // ÉN gang og SLETTER svaret. Spillerne ser at han svarte og skjulte
+      // det, aldri hva. Parres med anropsloggen (29.07 20:08, retning «ut»
+      // = Angela ringte) og avhøret der Sverre snur retningen på samtalen.
+      // -----------------------------------------------------------------
+      {
+        id: 'wa-sverre',
+        name: 'Sverre',
+        suspectId: 'sverre',
+        subtitle: 'sist sett lør 10:03',
+        messages: [
+          {
+            from: 'me',
+            text: 'Hei! Ringte deg jo på onsdag, men vi ble ikke ferdige',
+            time: 'lør 09:41',
+          },
+          { from: 'them', deleted: true, time: 'lør 10:02' },
+        ],
+      },
+      // Motvekt: bekrefter Runills avhør (19-minutterssamtalen fredag kveld,
+      // timen mandag) — og «du gjør det rette» hinter at Angela hadde bestemt
+      // seg for å si ifra om noe.
+      {
+        id: 'wa-runill',
+        name: 'Runill',
+        suspectId: 'runill',
+        subtitle: 'sist sett lør 10:20',
+        messages: [
+          { from: 'them', text: 'God morgen 💛 Hvordan er formen i dag?', time: 'lør 09:02' },
+          {
+            from: 'me',
+            text: 'Bedre! Takk for samtalen i går',
+            time: 'lør 09:48',
+          },
+          { from: 'them', text: 'Bra, Husk møtet på mandag!', time: 'lør 09:55' },
+          { from: 'me', text: '🙏', time: 'lør 10:14' },
+        ],
+      },
+      // Rekkefølgen = WhatsApp-rekkefølge: samtalen med nyeste melding
+      // øverst. Flytter du en melding i tid, flytt samtalen tilsvarende.
+      // Støy-samtalene (Amelia, Claire, Malaumne, Paul, Coloc, Carole,
+      // Alice) er ubesvarte — innboksen flommer over av uleste.
+      {
+        id: 'wa-maia',
+        name: 'Maia 🏠',
+        avatar: '👱‍♀️',
+        subtitle: 'sist sett i går 23:12',
+        messages: [
+          {
+            from: 'them',
+            text: 'Heeei! Du ville vel ikke hatt lyst til å bli med til Køben i sommer? 🍷',
+            time: '14. mai 18:22',
+          },
+          {
+            from: 'them',
+            text: 'Du la igjen laderen din på kjøkkenet btw',
+            time: '19. mai 10:05',
+          },
+          // Natt til lørdag: Angela betror seg uten navn — «tall som ikke
+          // stemmer» peker mot økonomisporet uten å nevne noen.
+          {
+            from: 'me',
+            text: 'AAAAH JEG ER SÅ LEI AV ØKONOMI',
+            time: 'fre 23:47',
+          },
+          { from: 'them', text: 'Å nei?? Hva da?', time: 'lør 00:04' },
+          {
+            from: 'me',
+            text:
+              'Tall som ikke stemmer. Har dobbeltsjekket i hele kveld.',
+            time: 'lør 00:11',
+          },
+          {
+            from: 'them',
+            text: 'Du tar jo aldri feil på tall',
+            time: 'lør 09:37',
+          },
+        ],
+      },
       {
         id: 'wa-erik',
         name: 'Erik',
@@ -2295,156 +2528,6 @@ export const CASE: CaseManifest = {
             from: 'them',
             text: 'Ja, eg gler meg som ei ku på vårslepp! 🐄',
             time: '29. juli 11:52',
-          },
-        ],
-      },
-      {
-        id: 'wa-maia',
-        name: 'Maia 🏠',
-        avatar: '👱‍♀️',
-        subtitle: 'sist sett i går 23:12',
-        messages: [
-          {
-            from: 'them',
-            text: 'Heeei! Du ville vel ikke hatt lyst til å bli med til Køben i sommer? 🍷',
-            time: '14. mai 18:22',
-          },
-          {
-            from: 'them',
-            text: 'Du la igjen laderen din på kjøkkenet btw',
-            time: '19. mai 10:05',
-            unread: true,
-          },
-        ],
-      },
-
-      // ---- Støy: Angela svarer aldri — innboksen flommer over av uleste -----
-      {
-        id: 'wa-amelia',
-        name: 'Amelia ❤️',
-        avatar: '👩',
-        subtitle: 'sist sett i dag 08:15',
-        messages: [
-          {
-            from: 'them',
-            text: '你好！你能帮我做作业吗？',
-            time: '2. juni 19:04',
-            unread: true,
-          },
-          {
-            from: 'them',
-            text: 'Angela???',
-            time: '5. juni 12:31',
-            unread: true,
-          },
-        ],
-      },
-      {
-        id: 'wa-gruppe-coloc',
-        name: 'Coloc 🏠🔥',
-        avatar: '🏠',
-        subtitle: 'Maia, Sara, deg',
-        messages: [
-          {
-            from: 'them',
-            author: 'Sara',
-            text: 'QUI a fini le lait ??',
-            time: '26. mars 08:31',
-            unread: true,
-          },
-          {
-            from: 'them',
-            author: 'Maia 🏠',
-            text: '??',
-            time: '26. mars 09:12',
-            unread: true,
-          },
-        ],
-      },
-      {
-        id: 'wa-paul',
-        name: 'Paul',
-        avatar: '⚽',
-        subtitle: 'vue le 26 juillet',
-        messages: [
-          {
-            from: 'them',
-            text: "yo, tu viens au reunion de PIR aujourd'hui ? Perso j'ai rien fait",
-            time: '10. april 12:50',
-            unread: true,
-          },
-          { from: 'them', text: '??', time: '10. april 14:19', unread: true },
-        ],
-      },
-      {
-        id: 'wa-paulrohel',
-        name: 'Paul Rohel',
-        avatar: '🤓',
-        subtitle: 'vue hier à 18:33',
-        messages: [
-          {
-            from: 'them',
-            text: "Salut Angela, n'oublie pas d'installer l'appli Hevy",
-            time: '21. november 2025 12:20',
-          },
-          {
-            from: 'me',
-            text: "Oui, comme ca je peux voir le 300kg leg press d'Andreas!",
-            time: '21. november 2025 19:20',
-          },
-        ],
-      },
-      {
-        id: 'wa-carole',
-        name: 'Carole 🏃‍♀️',
-        avatar: '🏃‍♀️',
-        subtitle: 'vue aujourd’hui à 07:02',
-        messages: [
-          {
-            from: 'them',
-            text: "Coucou! T'étais pas en cours aujourd'hui, est-ce que tout va bien ?",
-            time: '19. mars 20:12',
-            unread: true,
-          },
-        ],
-      },
-      {
-        id: 'wa-malaumne',
-        name: 'Malaumne',
-        avatar: '🧑‍🎨',
-        subtitle: 'vue le 20 juillet',
-        messages: [
-          {
-            from: 'them',
-            text: "Si j'emprunte ton passeport, je pourrai recevoir des tutorats gratuitement??",
-            time: '17. april 16:30',
-            unread: true,
-          },
-        ],
-      },
-      {
-        id: 'wa-claire',
-        name: 'Claire',
-        avatar: '👩‍🦰',
-        subtitle: 'vue aujourd’hui à 09:40',
-        messages: [
-          {
-            from: 'them',
-            text: 'Coucou ! On se fait un café cette semaine ? ☕',
-            time: '3. mai 11:15',
-            unread: true,
-          },
-          {
-            from: 'them',
-            text: 'Angela ?? T’es vivante ?',
-            time: '9. mai 14:02',
-            unread: true,
-          },
-          {
-            from: 'them',
-            text: 'Bon. Je prends ça pour un non 😤',
-            time: '16. mai 19:55',
-            unread: true,
           },
         ],
       },
@@ -2578,6 +2661,66 @@ export const CASE: CaseManifest = {
             time: '15. juni 2026 17:18',
           },
           { from: 'me', text: 'Nice!', time: '15. juni 2026 17:38' },
+        ],
+      },
+      {
+        id: 'wa-amelia',
+        name: 'Amelia ❤️',
+        avatar: '👩',
+        subtitle: 'sist sett i dag 08:15',
+        messages: [
+          {
+            from: 'them',
+            text: '你好！你能帮我做作业吗？',
+            time: '2. juni 19:04',
+            unread: true,
+          },
+          {
+            from: 'them',
+            text: 'Angela???',
+            time: '5. juni 12:31',
+            unread: true,
+          },
+        ],
+      },
+      {
+        id: 'wa-claire',
+        name: 'Claire',
+        avatar: '👩‍🦰',
+        subtitle: 'vue aujourd’hui à 09:40',
+        messages: [
+          {
+            from: 'them',
+            text: 'Coucou ! On se fait un café cette semaine ? ☕',
+            time: '3. mai 11:15',
+            unread: true,
+          },
+          {
+            from: 'them',
+            text: 'Angela ?? T’es vivante ?',
+            time: '9. mai 14:02',
+            unread: true,
+          },
+          {
+            from: 'them',
+            text: 'Bon. Je prends ça pour un non 😤',
+            time: '16. mai 19:55',
+            unread: true,
+          },
+        ],
+      },
+      {
+        id: 'wa-malaumne',
+        name: 'Malaumne',
+        avatar: '🧑‍🎨',
+        subtitle: 'vue le 20 juillet',
+        messages: [
+          {
+            from: 'them',
+            text: "Si j'emprunte ton passeport, je pourrai recevoir des tutorats gratuitement??",
+            time: '17. april 16:30',
+            unread: true,
+          },
         ],
       },
       {
@@ -2739,6 +2882,75 @@ export const CASE: CaseManifest = {
             text: 'Er maille pk?',
             time: '15.4.2026 12:36',
             unread: true,
+          },
+        ],
+      },
+      {
+        id: 'wa-paul',
+        name: 'Paul',
+        avatar: '⚽',
+        subtitle: 'vue le 26 juillet',
+        messages: [
+          {
+            from: 'them',
+            text: "yo, tu viens au reunion de PIR aujourd'hui ? Perso j'ai rien fait",
+            time: '10. april 12:50',
+            unread: true,
+          },
+          { from: 'them', text: '??', time: '10. april 14:19', unread: true },
+        ],
+      },
+      {
+        id: 'wa-gruppe-coloc',
+        name: 'Coloc 🏠🔥',
+        avatar: '🏠',
+        subtitle: 'Maia, Sara, deg',
+        messages: [
+          {
+            from: 'them',
+            author: 'Sara',
+            text: 'QUI a fini le lait ??',
+            time: '26. mars 08:31',
+            unread: true,
+          },
+          {
+            from: 'them',
+            author: 'Maia 🏠',
+            text: '??',
+            time: '26. mars 09:12',
+            unread: true,
+          },
+        ],
+      },
+      {
+        id: 'wa-carole',
+        name: 'Carole 🏃‍♀️',
+        avatar: '🏃‍♀️',
+        subtitle: 'vue aujourd’hui à 07:02',
+        messages: [
+          {
+            from: 'them',
+            text: "Coucou! T'étais pas en cours aujourd'hui, est-ce que tout va bien ?",
+            time: '19. mars 20:12',
+            unread: true,
+          },
+        ],
+      },
+      {
+        id: 'wa-paulrohel',
+        name: 'Paul Rohel',
+        avatar: '🤓',
+        subtitle: 'vue hier à 18:33',
+        messages: [
+          {
+            from: 'them',
+            text: "Salut Angela, n'oublie pas d'installer l'appli Hevy",
+            time: '21. november 2025 12:20',
+          },
+          {
+            from: 'me',
+            text: "Oui, comme ca je peux voir le 300kg leg press d'Andreas!",
+            time: '21. november 2025 19:20',
           },
         ],
       },

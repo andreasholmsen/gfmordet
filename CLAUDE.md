@@ -100,16 +100,15 @@ dokumenter utenfor mapper. Brukt av «Runill notater» (gult notatark, `#fff3bf`
 `parent: '<mappe-id>'` gir ÉN nivå nesting (mappe → mappe → dokument): mappen vises
 inne i foreldremappen i stedet for på dagens rot, «tilbake» går til forelderen, og
 flis-telleren på forelderen summerer dokumentene i alle barna. Brukt av «Pias bilder»
-(dag 2) → `Mobilbilder` / `Kamerabilder`.
+(dag 2) → `Mobilbilder`.
 
-**Pias bilder = tidssone-sporet.** **Mobilbildene ligger på dag 2** (Pia sier i dag 1-utsagnet
-sitt at hun skal sende dem) og **kamerabildene på dag 3** (minnekortet «ble ferdig overført»)
-— duplikat-fella løses derfor først på dag 3. Dokumenttitlene ER filnavnene
-(`IMG_20260731_104612.jpg`), så klokkeslettet er synlig på flisene. Mobilen stilte seg om til
-norsk tid ved landing; kameraet står fortsatt på Moldova-tid (én time foran, jf. Anna sitt
-utsagn). Tre motiv finnes på begge enhetene med identiske sekunder og én times forskjell.
-Filene ligger i `public/case/dag2/pia/` — se `README.md` der for hvilket bilde som skal ha
-hvilket navn. Endrer du et tidspunkt må BÅDE `title` og `src` endres.
+**Pias bilder — tidssone-sporet ble KUTTET (2026-08-01).** Kamerabildene (Moldova-tid, dag 3)
+er fjernet fra manifestet — det ble ikke tid til å gi puslespillet en payoff. Kun
+**mobilbildene på dag 2** er igjen (Pia sier i dag 1-utsagnet sitt at hun skal sende dem).
+Dokumenttitlene ER filnavnene (`IMG_20260731_104612.jpg`), så klokkeslettet er synlig på
+flisene. Anna sitt «én time foran»-utsagn og kamera-omtalene i dag 1/Erik er nå bare fluff —
+harmløst. Filene ligger i `public/case/dag2/pia/` — se `README.md` der. Endrer du et
+tidspunkt må BÅDE `title` og `src` endres.
 
 ## Dørlogg + romfordeling = adgangskontroll-sporet
 
@@ -253,8 +252,10 @@ skjer når neste dag slippes.
   `Gate` viser innloggingsskjerm når man ikke er innlogget, ellers ruter + `Taskbar`.
 - `src/components/Desktop.tsx` — skrivebord med ikon-grid + låsestatus + høyreklikk-meny
   (`ContextMenu`) og «Om denne PC-en»-dialog (`Dialog`).
-- `src/components/Taskbar.tsx` — vedvarende oppgavelinje: klokke, nedtelling til neste dag
-  (via `get_schedule`, skjult uten den), lyd av/på-knapp.
+- `src/components/Taskbar.tsx` — vedvarende oppgavelinje: nedtelling til neste dag
+  (via `get_schedule`, skjult uten den), innlogget bruker/logg ut, klokke. Hjem-knappen
+  og lydknappen ble fjernet 2026-08-01 (for smal på mobil; lyd av/på finnes i ⚙️
+  Innstillinger).
 - `src/components/AppWindow.tsx` — retro fullskjerm-vindu (tittellinje + lukk). `variant`-prop
   ('folder' | 'instagram' | 'police') styrer åpne/lukke-animasjon + tema. Spiller lyd ved
   åpne/lukke. POLITI-vinduet har eget mørkt terminal-tema (scoped `.window--police`).
@@ -277,7 +278,7 @@ skjer når neste dag slippes.
 - `src/components/AngelaFiles.tsx` + `src/components/phone/` (`PhoneHeader`, `WhatsAppApp`,
   `MailApp`, `SlackApp`) — telefon-hjemskjerm + appene på Angelas mobil (`CASE.angelaPhone`).
 - `src/components/Minesveiper.tsx` — lite frittstående minesveiper-spill (påskeegg).
-- `src/components/LarryEasterEgg.tsx` + `LarryPage.tsx` — Larry: 0,5 % (1/200) sjanse per klikk på
+- `src/components/LarryEasterEgg.tsx` + `LarryPage.tsx` — Larry: 1 % (1/100) sjanse per klikk på
   skrivebordet for at `larry.gif` glitcher inn. Etter første gang låses et Larry-ikon opp
   (`localStorage: gf-mordet.larry-found.v1`) → ruta `/larry` (svart vindu, `variant="larry"`).
   Larry tilbyr å «fjerne halvparten av vitnene»; sier man ja kalles RPC-en `flag_cheater()`

@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { CASE } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
-import { useSettings } from '../lib/SettingsContext'
 import { useAuth } from '../lib/AuthContext'
 import { getSchedule, type Schedule } from '../lib/supabase'
 import { sfx } from '../lib/sfx'
@@ -23,9 +21,7 @@ function nextUnlock(schedule: Schedule, nowMs: number): { day: number; at: numbe
 }
 
 export default function Taskbar() {
-  const navigate = useNavigate()
   const { unlockedDays, refresh, demo } = useUnlock()
-  const { muted, toggleMuted } = useSettings()
   const { user, signOut } = useAuth()
   const t = useT()
   const [schedule, setSchedule] = useState<Schedule | null>(null)
@@ -80,16 +76,9 @@ export default function Taskbar() {
 
   return (
     <nav className="taskbar" aria-label="Oppgavelinje">
-      <button
-        className="taskbar__start"
-        onClick={() => {
-          sfx.click()
-          navigate('/')
-        }}
-      >
-        <span aria-hidden>🖥️</span> {CASE.title}
-      </button>
-
+      {/* Nedtellingen får hele venstresiden — hjem-knappen og lydknappen er
+          fjernet så den ikke klippes på smale mobilskjermer (lyd av/på finnes
+          fortsatt i ⚙️ Innstillinger). */}
       <div className="taskbar__status">
         {countdown ? (
           <span className="taskbar__countdown">{countdown}</span>
@@ -99,15 +88,6 @@ export default function Taskbar() {
           </span>
         )}
       </div>
-
-      <button
-        className="taskbar__mute"
-        onClick={toggleMuted}
-        aria-pressed={muted}
-        aria-label={muted ? t('soundOn') : t('soundOff')}
-      >
-        {muted ? '🔇' : '🔊'}
-      </button>
 
       {user && (
         <button

@@ -3881,25 +3881,6 @@ textarea.field {
   box-shadow: var(--bevel-out);
   z-index: 50;
 }
-.taskbar__start {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  max-width: 45%;
-  background: var(--surface);
-  box-shadow: var(--bevel-out);
-  border: none;
-  padding: 4px 10px;
-  font-weight: bold;
-  font-size: 0.8rem;
-  cursor: pointer;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.taskbar__start:active {
-  box-shadow: var(--bevel-in);
-}
 .taskbar__status {
   flex: 1;
   min-width: 0;
@@ -3913,17 +3894,6 @@ textarea.field {
 }
 .taskbar__countdown {
   font-weight: bold;
-}
-.taskbar__mute {
-  background: var(--surface);
-  box-shadow: var(--bevel-out);
-  border: none;
-  padding: 4px 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-.taskbar__mute:active {
-  box-shadow: var(--bevel-in);
 }
 .taskbar__clock {
   font-size: 0.75rem;
@@ -4260,7 +4230,10 @@ textarea.field {
   color: #b00000;
 }
 .suspect__stamp--renvasket {
-  color: #1f7a1f;
+  color: #0b6e0b;
+  background: rgba(255, 255, 255, 0.9);
+  opacity: 1;
+  font-size: 0.75rem;
 }
 .suspect__stamp--ukjent {
   color: #555;
