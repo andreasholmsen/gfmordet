@@ -1488,11 +1488,10 @@ export const CASE: CaseManifest = {
             '```\n\n' +
             '| VAKT | TID | MERKNAD |\n' +
             '| --- | --- | --- |\n' +
-            '| H. Moe Schjelderup | ~~21:00–01:00~~ 19:30–21:00 | byttet i siste liten|\n' +
-            '| Ane | 21:00–01:00 | overtok fra H. |\n' +
+            '| H. Moe Schjelderup | ~~21:00–01:00~~ 19:30–21:00 | byttet i siste liten |\n' +
+            '| Ane | 21:00–01:00 | overtok fra H. |\n\n' +
             '**Fritak (påført for hånd):** _«burde ikke stå vakt i kveld — deltok på ' +
-            'internt arrangement i ettermiddag. — A.»_\n\n' +
-            '',
+            'internt arrangement i ettermiddag. — A.»_',
         },
         // -------------------------------------------------------------------
         // VEDTEKTER-VERSJONSLOGGEN — gjør ERIK varm: §55-endringen ble gjort
