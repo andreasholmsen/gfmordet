@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
 import { CASE, type DayContent, type Question } from '../case/manifest'
 import {
-  getCheatFlags,
   getLiveFreeText,
   getLiveResults,
   hasSupabase,
-  type LarryRow,
   type ResultRow,
 } from '../lib/supabase'
 import { useUnlock } from '../lib/UnlockContext'
@@ -36,12 +34,11 @@ function demoRows(day: DayContent): ResultRow[] {
 export default function ResultsApp() {
   const days = CASE.days
   const { isUnlocked } = useUnlock()
-  // Ark-faner: én per dag + «Larry» (hvem takket ja til Larrys «hjelp»).
-  const [tab, setTab] = useState<number | 'larry'>(days[0]?.day ?? 1)
-  const isLarry = tab === 'larry'
+  // Ark-faner: én per dag MED avstemning (dag 4 har ingen og får ikke ark).
+  const voteDays = days.filter((d) => d.question)
+  const [tab, setTab] = useState<number>(voteDays[0]?.day ?? 1)
   const day = days.find((d) => d.day === tab) ?? days[0]
   const [rows, setRows] = useState<ResultRow[] | null>(null)
-  const [larry, setLarry] = useState<LarryRow[] | null>(null)
   const [theories, setTheories] = useState<string[] | null>(null)
   const [animate, setAnimate] = useState(false)
 
@@ -52,7 +49,6 @@ export default function ResultsApp() {
   const released = !nextDay || isUnlocked(nextDay.day)
 
   useEffect(() => {
-    if (isLarry) return
     let alive = true
     setRows(null)
     setAnimate(false)
@@ -65,14 +61,14 @@ export default function ResultsApp() {
     return () => {
       alive = false
     }
-  }, [day, released, isLarry])
+  }, [day, released])
 
   // KUN I DEV (`npm run dev`): hent fritekst-teoriene LIVE (uten tidslås) så
   // eieren kan følge med underveis. `import.meta.env.DEV` er false i prod-bygget
   // og hele blokken fjernes av bundleren — spillerne kan aldri se dette.
   const isFreeText = day.question?.type === 'free_text'
   useEffect(() => {
-    if (!import.meta.env.DEV || isLarry || !isFreeText) return
+    if (!import.meta.env.DEV || !isFreeText) return
     let alive = true
     setTheories(null)
     if (!hasSupabase) {
@@ -83,25 +79,7 @@ export default function ResultsApp() {
     return () => {
       alive = false
     }
-  }, [day, isLarry, isFreeText])
-
-  // Larry-arket: hentes hver gang fanen åpnes (liten liste, alltid fersk).
-  useEffect(() => {
-    if (!isLarry) return
-    let alive = true
-    setLarry(null)
-    if (!hasSupabase) {
-      setLarry([
-        { name: 'Demo-etterforsker', at: new Date().toISOString() },
-        { name: 'Agent Testesen', at: new Date().toISOString() },
-      ])
-    } else {
-      getCheatFlags().then((r) => alive && setLarry(r))
-    }
-    return () => {
-      alive = false
-    }
-  }, [isLarry])
+  }, [day, isFreeText])
 
   // Animer stolpene inn etter første maling.
   useEffect(() => {
@@ -136,54 +114,12 @@ export default function ResultsApp() {
         <div className="excel__ribbon">
           <span className="excel__file">📊 Resultater.xlsx</span>
           <span className="excel__hint">
-            {isLarry || released ? `Live${!hasSupabase ? ' · demo-tall' : ''}` : 'Låst'}
+            {released ? `Live${!hasSupabase ? ' · demo-tall' : ''}` : 'Låst'}
           </span>
         </div>
 
         <div className="excel__content">
-          {isLarry ? (
-            larry === null ? (
-              <p className="notice">Laster …</p>
-            ) : larry.length === 0 ? (
-              <p className="notice">Ingen har takket ja til Larry ennå. 👽</p>
-            ) : (
-              <table className="excel-grid">
-                <thead>
-                  <tr>
-                    <th className="excel-grid__corner" />
-                    <th>A</th>
-                    <th>B</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="excel-grid__headrow">
-                    <td className="excel-grid__rownum">1</td>
-                    <td>Takket ja til Larry 👽</td>
-                    <td>Tidspunkt</td>
-                  </tr>
-                  {larry.map((r, i) => (
-                    <tr key={i}>
-                      <td className="excel-grid__rownum">{i + 2}</td>
-                      <td>{r.name}</td>
-                      <td className="excel-grid__num">
-                        {new Date(r.at).toLocaleString('nb-NO', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </td>
-                    </tr>
-                  ))}
-                  <tr className="excel-grid__totalrow">
-                    <td className="excel-grid__rownum">{larry.length + 2}</td>
-                    <td>Totalt</td>
-                    <td className="excel-grid__num">{larry.length}</td>
-                  </tr>
-                </tbody>
-              </table>
-            )
-          ) : !released ? (
+          {!released ? (
             <p className="notice">
               🔒 Avstemningen for {day.title} vises når {nextDay!.title} åpner. Tallene
               offentliggjøres først når dagen er over — ingen skal kunne se hva de andre har
@@ -268,7 +204,7 @@ export default function ResultsApp() {
 
           {/* KUN I DEV: live fritekst-teorier, én per rad. Renderes aldri i
               prod-bygget (import.meta.env.DEV er false og koden fjernes). */}
-          {import.meta.env.DEV && !isLarry && isFreeText && (
+          {import.meta.env.DEV && isFreeText && (
             <div style={{ marginTop: 16 }}>
               <p className="notice">
                 🛠️ Dev-visning: {theories === null ? 'laster teorier …' : `${theories.length} teorier (live, uten tidslås)`}
@@ -299,9 +235,9 @@ export default function ResultsApp() {
           )}
         </div>
 
-        {/* Ark-faner nederst, som i Excel */}
+        {/* Ark-faner nederst, som i Excel — kun dager med avstemning */}
         <div className="excel__sheets">
-          {days.map((d) => (
+          {voteDays.map((d) => (
             <button
               key={d.day}
               className={`excel__sheet ${d.day === tab ? 'excel__sheet--active' : ''}`}
@@ -310,12 +246,6 @@ export default function ResultsApp() {
               {d.title}
             </button>
           ))}
-          <button
-            className={`excel__sheet ${isLarry ? 'excel__sheet--active' : ''}`}
-            onClick={() => setTab('larry')}
-          >
-            Larry 👽
-          </button>
         </div>
       </div>
     </AppWindow>

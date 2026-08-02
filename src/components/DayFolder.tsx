@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useParams } from 'react-router-dom'
 import { CASE, type CaseDoc, type SubfolderDef } from '../case/manifest'
+import { hasSeenFasit } from '../lib/fasit'
 import { useUnlock } from '../lib/UnlockContext'
 import { useScrollMemory } from '../lib/useScrollMemory'
 import { useT } from '../lib/i18n'
@@ -93,7 +94,11 @@ export default function DayFolder() {
     )
   }
 
-  const visibleDocs = dayContent.docs
+  // Dokumenter med `afterReveal` holdes skjult til spilleren har sett
+  // konklusjonen i POLITI-appen (per enhet) — sluttrapporten skal ikke kunne
+  // leses i mappen først.
+  const visibleDocs = dayContent.docs.filter((d) => !d.afterReveal || hasSeenFasit())
+  const hiddenByReveal = dayContent.docs.length - visibleDocs.length
 
   // Inne i en undermappe: eventuelle under-undermapper først, så mappens egne
   // dokumenter — alt tintet med mappens farge.
@@ -164,8 +169,11 @@ export default function DayFolder() {
           <Markdown source={dayContent.intro} />
         </div>
       )}
+      {hiddenByReveal > 0 && (
+        <p className="notice">{t('docsAfterReveal')}</p>
+      )}
       {looseDocs.length === 0 && visibleFolders.length === 0 ? (
-        <p className="notice">{t('emptyFolder')}</p>
+        hiddenByReveal === 0 && <p className="notice">{t('emptyFolder')}</p>
       ) : (
         <div className="doc-list">
           {visibleFolders.map((f) => {

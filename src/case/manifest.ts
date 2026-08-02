@@ -27,6 +27,11 @@ export interface CaseDoc {
    *  det åpnes, på samme måte som `tint` på en undermappe. Vinner over mappens
    *  tint. Brukes til å skille ut ett enkelt dokument (eks: Runills notater). */
   tint?: string
+  /** Skjul dokumentet i dag-mappen til spilleren har sett konklusjonen
+   *  (KillerReveal) i POLITI-appen på denne enheten (`gfm:fasit-sett`, se
+   *  src/lib/fasit.ts). Brukes av sluttrapporten på dag 4 så avsløringen
+   *  ikke kan leses i mappen før man har åpnet saken i POLITI. */
+  afterReveal?: boolean
 }
 
 /** Undermappe i en dag-mappe — grupperer dokumenter og gir dem et felles utseende. */
@@ -307,6 +312,124 @@ const SUSPECT_OPTIONS: { id: string; label: string }[] = [
   { id: 'pia', label: 'Pia' },
   { id: 'andreas', label: 'Andreas' },
 ]
+
+// ----------------------------------------------------------------------------
+//  FASITEN (dag 4) — hele avsløringsartikkelen, med utdrag fra bevisene.
+//  Brukes TRE steder som alle åpner samtidig (søn 2. aug 12:00, når dag 4
+//  slippes): dag 3 sin `reveal` i POLITI-appen (løsningen på «Hvem drepte
+//  egentlig Angela?»), `solution.body` (KillerReveal med line-up + SKYLDIG-
+//  stempel under Dag 4-fanen), og dokumentet «Politiets sluttrapport» i
+//  Dag 4-mappen. Endrer du fasiten: endre KUN denne konstanten.
+// ----------------------------------------------------------------------------
+const FASIT_DAG4: string =
+  '**Morderen? Sverre.**\n\n' +
+  'Han forgiftet nemlig Angela på «møtet» (villt ansattvors) i Møterom Bjørk. Da ' +
+  'han senere på kvelden fikk høre at drinken hennes var blitt fratatt henne, ' +
+  'ville han dekke over dødsårsaken for å slippe at det ble tatt en ' +
+  'toksologirapport. Derfor gikk han inn i den tomme salen og slo den alt døde ' +
+  'Angela i bakhodet, sånn at politiet skulle få en «åpenbar» dødsårsak.\n\n' +
+  'Litt bevisgjennomgang 🤓\n\n' +
+  '### Motivet: pubquizene 💸\n\n' +
+  'I årevis har Sverre arrangert pubquizer og andre arrangementer rundt om i hele ' +
+  'ANSA. Alltid med billetter gjennom Checkin, og alltid satt opp fra én og samme ' +
+  '«partnerkonto» som stille og rolig skummet et skjult gebyr av hver eneste ' +
+  'billett. Små beløp per billett, men tusenvis av billetter... (mad cash for fattige studenter)\n\n' +
+  'Tuva i ANSA Dublin var den første som merket at noe skurret. Hun skrev til ' +
+  'Angela dagen før GF:\n\n' +
+  '> «Vi satte prisen til 80 kr. Men når jeg fører regnskapet nå får jeg det ikke ' +
+  'til å stemme — det kom inn mindre enn 80 per billett. Ikke mye mindre, men nok ' +
+  'til at det blir feil i årsregnskapet.»\n\n' +
+  'Og i Checkin sin egen månedsrapport, som lå ulest i innboksen til Angela, ser ' +
+  'vi omfanget: **41 av 68 arrangementer i år var opprettet av én og samme ' +
+  'partnerkonto.** Antall aktive partnerkontoer? **1.**\n\n' +
+  'Angela, den eneste i hele ANSA som faktisk kan systemene, hadde begynt å ' +
+  'telle. I e-posten hennes ligger et utkast skrevet lørdag morgen, bare timer ' +
+  'før hun døde:\n\n' +
+  '> Bordeaux 84 · Toulouse 112 · Dublin 61 · München 90 · Wien 55 · Amsterdam 78 · ' +
+  'Praha 66\n' +
+  '>\n' +
+  '> alle Checkin. alle samme partnerkonto.\n' +
+  '>\n' +
+  '>\n' +
+  '> **Så Angela vil ta det opp på søndag**\n\n' +
+  'Og på PC-en hennes lå en melding hun aldri fikk gjort ferdig:\n\n' +
+  '> «kjære Sverre, jeg har sett en del i økonomisystemene og sett at dine ' +
+  'pubquizzer er veldig»\n\n' +
+  'Hun rakk aldri søndagen.\n\n' +
+  '### Konfrontasjonen 📞\n\n' +
+  'Angela gjorde det Angela alltid gjorde: hun gikk rett til kilden. Onsdag ' +
+  '29. juli, klokka 20:08, ringte hun Sverre. Samtalen varte i fire minutter. ' +
+  'Sjekk anropsloggen: retningen er **«ut»**. Det var altså Angela som ringte ' +
+  'HAM.\n\n' +
+  'Men i avhøret sier Sverre:\n\n' +
+  '> «Bare noe smått rundt GF. Jeg var nysgjerrig på når jeg skulle dukke opp, for ' +
+  'eksempel. Det var derfor samtalen var relativt kort.»\n\n' +
+  'Nysgjerrig?? Det var jo ikke han som ringte engang. Og på WhatsApp ser vi at ' +
+  'samtalen hvertfall ikke handlet om «noe smått». Lørdag morgen skriver Angela ' +
+  'til ham:\n\n' +
+  '> «Hei! Ringte deg jo på onsdag, men vi ble ikke ferdige»\n\n' +
+  'Sverre svarte én gang, lørdag 10:02, også **slettet han svaret sitt**. Hva ' +
+  'stod det i den meldingen som ikke tålte dagslys???\n\n' +
+  '### Forgiftningen ☠️\n\n' +
+  'Obduksjonen fant som kjent et ukjent stoff som ble inntatt **4 til 7 timer før ' +
+  'dødstidspunktet**. Det vil si på «møtet» i Møterom Bjørk, hvor kun Maud, ' +
+  'Runill, Ane, Erik og Sverre av de mistenkte var til stede. Og hør bare hvor ' +
+  'godt Sverre selv fulgte med på Angela den ettermiddagen:\n\n' +
+  '> «Ja definitivt, jeg så hun fylte på samme glasset temmelig ofte. … Men såklart, ' +
+  'jeg fulgte jo med fordi jeg er studentprest og passer på alle sammen.»\n\n' +
+  'Han fulgte med på glasset fordi giften hans lå i det!! Utover kvelden ble ' +
+  'Angela gradvis mer utmattet («kjempesliten» ifølge Ane, «litt småsyk» ifølge ' +
+  'Hedvig) helt til hun kollapset alene i plenumssalen. Det var giften som drepte ' +
+  'henne.\n\n' +
+  '### Slaget: dekkoperasjonen 🚪\n\n' +
+  'Så hvorfor slaget mot bakhodet? Jo, fordi Sverre fikk panikk.\n\n' +
+  'Utover kvelden stod han nemlig ute i gangen med Maud og Runill. Og der fikk ' +
+  'han høre noe som skremte ham skikkelig: Ane hadde **fratatt Angela drinken ' +
+  'hennes**. Ane sa det jo selv i vitneutsagnet sitt:\n\n' +
+  '> «… så jeg Angela sittende alene med en Blue Lagoon-cocktail. Hun så ' +
+  'kjempesliten ut, så jeg fratok henne drinken og gikk ut til Runill for å se.»\n\n' +
+  'Og at Sverre stod tett nok på til å få det med seg? Det innrømmet han selv, ' +
+  'uten å skjønne det:\n\n' +
+  '> «Jeg trodde kanskje Ane nevnte Angela i samtalen hennes med Runill den ' +
+  'kvelden, men kan ikke være sikker. De virket hemmelighetsfulle.»\n\n' +
+  'En konfiskert drink kan nemlig havne på et laboratorium. Og en ung, edru ' +
+  'kvinne som bare «kollapser og dør» utløser full obduksjon med toksologirapport. ' +
+  'Den rapporten ville funnet giften, sporet den til vorset, og pekt rett på de ' +
+  'fem som var der. Sverre trengte en dødsårsak politiet ikke ville stille ' +
+  'spørsmål ved.\n\n' +
+  'Så da Hedvig løp etter hjelp, gikk han inn i den tomme salen og slo den alt ' +
+  'døde Angela i bakhodet med en stump gjenstand. Et «voldelig overfall» med ' +
+  'synlig årsak. Politiet skulle stirre på hodeskaden, ikke på blodprøvene. ' +
+  'Etterpå gikk han rolig opp til rommet sitt. I avhøret var han til og med frekk ' +
+  'nok til å foreslå «beviset» selv:\n\n' +
+  '> «Som sagt la jeg meg rundt 23:30. … Hvis det er noen tvil kan man vel sikkert ' +
+  'sjekke sånne dørlogger?»\n\n' +
+  'Og dørloggen viser ganske riktig rom **327 (Sverre) kl. 23:32**, seks minutter ' +
+  'før Runill fant Angela. ' +
+  'Sverre ' +
+  'visste at loggen ville se ren ut. Det var derfor han selv ba politiet sjekke ' +
+  'den.\n\n' +
+  '### Blodet som veltet planen 🩸\n\n' +
+  'Planen hadde nesten fungert. Men to vitner så åstedet med tjue minutters ' +
+  'mellomrom, og fortalte to helt ulike historier.\n\n' +
+  'Hedvig, som fant Angela kollapset rundt 23:18, sier:\n\n' +
+  '> «Det var ikke noe blod når jeg fant Angela kollapset...»\n\n' +
+  'Mens Runill, som fant henne 23:38, sier:\n\n' +
+  '> «Det var mye. Det lå en pøl ved hodet hennes …»\n\n' +
+  'Det spriket kan ikke forklares med et vanlig overfall. Kriminalteknikerne slo ' +
+  'fast at slaget ble påført **mens hun lå nede**, i tidsrommet **23:15 til ' +
+  '23:38**. Altså ETTER at hun allerede hadde kollapset av noe annet. Og når noe ' +
+  'annet hadde felt henne, da bestilte politiet nettopp det Sverre hadde prøvd å ' +
+  'unngå: full toksologirapport. Der dukket det ukjente stoffet opp, inntatt 4 ' +
+  'til 7 timer tidligere, og sporet ledet rett tilbake til vorset og de fem.\n\n' +
+  'Slaget som skulle stanse toksologirapporten ble altså selve grunnen til at ' +
+  'den ble tatt?!? For en plot twist!!\n\n' +
+  'Drapsvåpenet ble aldri funnet. Det eneste Sverre ikke fikk ryddet ' +
+  'bort, var tallene.\n\n' +
+  '### Dommen ⚖️\n\n' +
+  'Sverre er siktet for drap og grovt underslag. Han risikerer forvaring (mye ' +
+  'mye fengsel).\n\n\n\n' +
+  '**Tusen takk for at du var med og etterforsket!! Jeg har kost meg SÅÅÅ mye med å lage dette. Jeg har allerede startet tanken om hvordan jeg kan gjøre noe nytenkende neste år. Hvis du har forslag, send meg en slack melding eller en e-post da vel!** \n\n`andreas.holmsen@ansa.no`\n\n'
 
 // ----------------------------------------------------------------------------
 //  EKSEMPELINNHOLD — bytt ut med din egen sak.
@@ -1360,8 +1483,10 @@ export const CASE: CaseManifest = {
         // SVERRE, AVHØR 2. Alt sjekkbart han sier er SANT — løgnene ligger der
         // ingen system kan sjekke: dørloggen logger ikke utgang (327 @ 23:32,
         // liket funnet 23:38), og fireminutterssamtalen 29. juli var det ANGELA
-        // som ringte (anropslogg «ut» + Ingeborg-tråden «snakker først med
-        // vedkommende» samme dag) — hans forklaring på samtalen snur retningen.
+        // som ringte (anropslogg «ut») — hans forklaring snur retningen. Samtalen
+        // handlet om pubquiz-økonomien (jf. utkastet «Sverre melding»). NB: MÅ
+        // ikke blandes med Ingeborg-tråden om vedtektene/§55 — det er Erik-
+        // sporet, en HELT annen mistanke (bevisst uoppklart).
         // «Andre driftskostnader»-fleipen mater økonomisporet uten å vite det.
         // -------------------------------------------------------------------
         {
@@ -1539,6 +1664,9 @@ export const CASE: CaseManifest = {
         otherOptionId: 'annet',
         otherPlaceholder: 'Hvem tror du gjorde det – og hvorfor?',
       },
+      // Fasit for dag 3 — vises i POLITI når dag 4 har åpnet (avstemning
+      // stengt). Samme artikkel som dag 4-avsløringen (FASIT_DAG4).
+      reveal: '## Løsningen på Dag 3\n\n' + FASIT_DAG4,
       // Samme grep som dag 2: gårsdagens fasit som intro i POLITI-appen, og
       // en kort statusrapport som MÅ åpnes før dagens endelige spørsmål vises.
       briefing: {
@@ -1572,7 +1700,28 @@ export const CASE: CaseManifest = {
       day: 4,
       title: 'Dag 4',
       intro: 'Saken er løst. Les fasiten i POLITI-appen.',
-      docs: [],
+      docs: [
+        // Hele avsløringen som lesbart dokument i dag-mappen — samme artikkel
+        // som KillerReveal viser under Dag 4-fanen i POLITI-appen. Vises IKKE
+        // før spilleren har sett avsløringen der (afterReveal).
+        {
+          id: 'd4-sluttrapport',
+          title: 'Politiets sluttrapport',
+          kind: 'markdown',
+          tint: '#efe2e2',
+          afterReveal: true,
+          inline:
+            '```\n' +
+            '════════════════════════════════════\n' +
+            '  POLITIETS SLUTTRAPPORT\n' +
+            '  Sak ......... 2026-1738\n' +
+            '  Status ...... OPPKLART\n' +
+            '  Utarbeidet .. søn 02.08.2026\n' +
+            '════════════════════════════════════\n' +
+            '```\n\n' +
+            FASIT_DAG4,
+        },
+      ],
       // Ingen question på dag 4 — kun avsløring + statistikk.
     },
   ],
@@ -4677,13 +4826,9 @@ export const CASE: CaseManifest = {
   ],
 
   solution: {
-    killerId: 'per',
-    headline: 'Morderen var Per Haug',
-    body:
-      '## Løsningen\n\n' +
-      'Per Haug løy om telefonsamtalen. Den fant aldri sted — telefonloggen viser ingenting kl. 22. ' +
-      'Det ukjente stoffet i blodet stammet fra et legemiddel kun Per hadde tilgang til.\n\n' +
-      'Angela ble forgiftet, ikke et naturlig dødsfall. Brevet var Pers forsøk på å skremme henne til taushet.\n\n' +
-      '**Takk for at du etterforsket med oss!**',
+    killerId: 'sverre',
+    headline: 'Morderen er Sverre',
+    body: FASIT_DAG4,
+    wink: 'PS: Neste pubquiz arrangeres fra cella. Billetter via Checkin.',
   },
 }

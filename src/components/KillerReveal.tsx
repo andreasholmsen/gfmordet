@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import { CASE, type DayContent, type Suspect } from '../case/manifest'
 import { assetUrl } from '../lib/assets'
+import { markFasitSeen } from '../lib/fasit'
 import { getMyVote } from '../lib/votes'
 import { sfx } from '../lib/sfx'
 import Markdown from './Markdown'
+import PixelPortrait from './PixelPortrait'
 
 type Phase = 'sealed' | 'decrypt' | 'lineup' | 'verdict' | 'dossier'
 
 const DECRYPT_LINES = [
   'Kryssjekker alibier …',
   'Analyserer telefonlogg …',
-  'Matcher legemiddel-spor …',
+  'Leser dørlogg, natt til 02.08 …',
+  'Sporer partnerkonto hos Checkin …',
   'DEKRYPTERER BEVIS … 100%',
 ]
 
@@ -30,12 +33,23 @@ function prefersReducedMotion(): boolean {
   )
 }
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 // Ett anklagekort (mistenkt) med valgfritt stempel.
 function AccusedCard({ s, stamp }: { s: Suspect; stamp?: 'renvasket' | 'skyldig' | null }) {
   return (
     <article className={`suspect reveal-card ${stamp === 'skyldig' ? 'reveal-card--killer' : ''}`}>
       <div className="suspect__photo">
-        {s.img ? (
+        {s.pixel ? (
+          <PixelPortrait data={s.pixel} className="suspect__pixel" />
+        ) : s.img ? (
           <img src={assetUrl(s.img)} alt={s.name} />
         ) : (
           <span className="suspect__initials" aria-hidden>
@@ -56,8 +70,17 @@ function AccusedCard({ s, stamp }: { s: Suspect; stamp?: 'renvasket' | 'skyldig'
 
 export default function KillerReveal({ day3 }: { day3?: DayContent }) {
   const { solution, suspects } = CASE
-  const killer = (suspects ?? []).find((s) => s.id === solution.killerId)
-  const others = (suspects ?? []).filter((s) => s.id !== solution.killerId)
+  // Tilfeldig rekkefølge i line-upen (trekkes på nytt per åpning) — SKYLDIG-
+  // kortet skal ikke alltid stå på samme plass i rutenettet.
+  const [shuffled] = useState<Suspect[]>(() => shuffle(suspects ?? []))
+  const killer = shuffled.find((s) => s.id === solution.killerId)
+  const others = shuffled.filter((s) => s.id !== solution.killerId)
+  // EGEN tilfeldig rekkefølge for RENVASKET-stemplingen, uavhengig av
+  // visningsrekkefølgen — ellers ville stemplene gått pent fra øverst til
+  // venstre mot nederst til høyre.
+  const [stampOrder] = useState<string[]>(() =>
+    shuffle((suspects ?? []).filter((s) => s.id !== solution.killerId).map((s) => s.id)),
+  )
 
   // Uten mistenkte / uten treff på killerId: fall tilbake til enkel visning.
   const canStage = Boolean(killer)
@@ -177,14 +200,22 @@ export default function KillerReveal({ day3 }: { day3?: DayContent }) {
           {isVerdict ? 'Morderen er …' : 'Politiet renvasker de uskyldige …'}
         </p>
         <div className="reveal__lineup">
-          {others.map((s, i) => (
-            <AccusedCard key={s.id} s={s} stamp={i < clearedCount ? 'renvasket' : null} />
-          ))}
-          {killer && (
-            <div className={`reveal__killer-slot ${isVerdict ? 'reveal__killer-slot--lit' : ''}`}>
-              <AccusedCard s={killer} stamp={isVerdict ? 'skyldig' : null} />
-            </div>
-          )}
+          {shuffled.map((s) => {
+            if (s.id === solution.killerId) {
+              return (
+                <div
+                  key={s.id}
+                  className={`reveal__killer-slot ${isVerdict ? 'reveal__killer-slot--lit' : ''}`}
+                >
+                  <AccusedCard s={s} stamp={isVerdict ? 'skyldig' : null} />
+                </div>
+              )
+            }
+            // De uskyldige stemples i stampOrder-rekkefølge (tilfeldig person
+            // hver gang), IKKE i visningsrekkefølge.
+            const idx = stampOrder.indexOf(s.id)
+            return <AccusedCard key={s.id} s={s} stamp={idx < clearedCount ? 'renvasket' : null} />
+          })}
         </div>
         <button className="reveal__skip" onClick={skip}>
           hopp over ›
@@ -202,6 +233,10 @@ function Dossier({ day3 }: { day3?: DayContent }) {
   const { solution, suspects } = CASE
   const killer = (suspects ?? []).find((s) => s.id === solution.killerId)
 
+  // Nå har spilleren sett konklusjonen — lås opp sluttrapporten i Dag 4-mappen
+  // (per enhet, se src/lib/fasit.ts).
+  useEffect(() => markFasitSeen(), [])
+
   // Personlig dom fra spillerens dag 3-stemme.
   const myVote = day3 ? getMyVote(day3.day) : null
   let personal: { right: boolean; label: string } | null = null
@@ -216,7 +251,9 @@ function Dossier({ day3 }: { day3?: DayContent }) {
       <div className="reveal__verdict-head">
         {killer && (
           <div className="reveal__mugshot">
-            {killer.img ? (
+            {killer.pixel ? (
+              <PixelPortrait data={killer.pixel} className="suspect__pixel" />
+            ) : killer.img ? (
               <img src={assetUrl(killer.img)} alt={killer.name} />
             ) : (
               <span className="suspect__initials" aria-hidden>

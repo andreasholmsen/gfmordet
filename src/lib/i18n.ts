@@ -55,6 +55,7 @@ const nb = {
   notOpenYet: 'er ikke åpnet ennå.',
   comeBack: 'Kom tilbake når dagens dokumenter slippes.',
   emptyFolder: 'Ingen dokumenter i denne mappen.',
+  docsAfterReveal: '🔒 Politiets sluttrapport låses opp her når du har åpnet saken i POLITI-appen.',
   docCount1: '{n} dokument',
   docCountN: '{n} dokumenter',
 
@@ -122,6 +123,7 @@ const nn: typeof nb = {
   notOpenYet: 'er ikkje opna enno.',
   comeBack: 'Kom tilbake når dokumenta for dagen blir sleppte.',
   emptyFolder: 'Ingen dokument i denne mappa.',
+  docsAfterReveal: '🔒 Sluttrapporten til politiet blir låst opp her når du har opna saka i POLITI-appen.',
   docCount1: '{n} dokument',
   docCountN: '{n} dokument',
 
