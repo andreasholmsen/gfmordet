@@ -416,8 +416,8 @@ const FASIT_DAG4: string =
   '> «Det var ikke noe blod når jeg fant Angela kollapset...»\n\n' +
   'Mens Runill, som fant henne 23:38, sier:\n\n' +
   '> «Det var mye. Det lå en pøl ved hodet hennes …»\n\n' +
-  'Det spriket kan ikke forklares med et vanlig overfall. Kriminalteknikerne slo ' +
-  'fast at slaget ble påført **mens hun lå nede**, i tidsrommet **23:15 til ' +
+  'Det spriket kan ikke forklares med et vanlig overfall. Saken skulle ha hundre forskellige mulige teorier, men ble redusert til et par stykker. Sverre fikk med andre ord ikke like lang tid til å rømme fra Norge. Kriminalteknikerne slo ' +
+  'fast at slaget ble påført **mens hun lå nede**, i tidsrommet **23:15 til ' + 
   '23:38**. Altså ETTER at hun allerede hadde kollapset av noe annet. Og når noe ' +
   'annet hadde felt henne, da bestilte politiet nettopp det Sverre hadde prøvd å ' +
   'unngå: full toksologirapport. Der dukket det ukjente stoffet opp, inntatt 4 ' +
