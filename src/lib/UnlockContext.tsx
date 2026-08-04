@@ -1,46 +1,40 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { getUnlockedDays, hasSupabase } from './supabase'
+import { createContext, useContext, useState, type ReactNode } from 'react'
 import { CASE } from '../case/manifest'
+import { getMyVote } from './votes'
 
-// I dev (`npm run dev`) låses ALLE dager opp, så det er lett å redigere innhold
-// og se hvordan alt ser ut. Produksjonsbygget beholder ekte tidslås fra serveren.
-const DEV_UNLOCK_ALL = import.meta.env.DEV
-const ALL_DAYS = CASE.days.map((d) => d.day)
+// Lokal progresjon (spillet er over — ingen server-tidslås lenger):
+// dag 1 er alltid åpen, og dag N+1 låses opp når man har svart på dag N sitt
+// spørsmål (lagret i localStorage via lib/votes). Dager uten spørsmål sperrer
+// ikke videre progresjon. Spillere som var med live har svarene liggende
+// lokalt fra før og får dermed alt åpent automatisk.
 
 interface UnlockState {
   unlockedDays: number[]
-  loading: boolean
-  demo: boolean
   isUnlocked: (day: number) => boolean
+  /** Regn ut progresjonen på nytt (kalles etter innsendt svar). */
   refresh: () => void
+}
+
+function computeUnlocked(): number[] {
+  const days = [...CASE.days].sort((a, b) => a.day - b.day)
+  const open: number[] = []
+  for (const d of days) {
+    open.push(d.day)
+    const answered = !d.question || getMyVote(d.day) !== null
+    if (!answered) break
+  }
+  return open
 }
 
 const Ctx = createContext<UnlockState | null>(null)
 
 export function UnlockProvider({ children }: { children: ReactNode }) {
-  const [unlockedDays, setUnlockedDays] = useState<number[]>([])
-  const [loading, setLoading] = useState(true)
-
-  function refresh() {
-    if (DEV_UNLOCK_ALL) {
-      setUnlockedDays(ALL_DAYS)
-      setLoading(false)
-      return
-    }
-    setLoading(true)
-    getUnlockedDays()
-      .then(setUnlockedDays)
-      .finally(() => setLoading(false))
-  }
-
-  useEffect(refresh, [])
+  const [unlockedDays, setUnlockedDays] = useState<number[]>(computeUnlocked)
 
   const value: UnlockState = {
     unlockedDays,
-    loading,
-    demo: !hasSupabase,
     isUnlocked: (day) => unlockedDays.includes(day),
-    refresh,
+    refresh: () => setUnlockedDays(computeUnlocked()),
   }
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }

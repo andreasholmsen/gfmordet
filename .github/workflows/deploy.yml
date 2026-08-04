@@ -29,11 +29,7 @@ jobs:
       - run: npm ci
 
       - name: Build
-        env:
-          # Legg disse inn under Settings -> Secrets and variables -> Actions.
-          # Anon/publishable-nøkkelen er trygg å eksponere når RLS er på.
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        # Siden er helt statisk (spillet er over) — ingen secrets/env trengs.
         run: npm run build
 
       - uses: actions/upload-pages-artifact@v3

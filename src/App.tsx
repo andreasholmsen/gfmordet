@@ -2,16 +2,14 @@ import { useCallback, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { UnlockProvider } from './lib/UnlockContext'
 import { SettingsProvider } from './lib/SettingsContext'
-import { AuthProvider, useAuth } from './lib/AuthContext'
 import BootScreen from './components/BootScreen'
+import Countdown2027 from './components/Countdown2027'
 import LanguagePrompt, { needsLangPrompt } from './components/LanguagePrompt'
 import SoundPrompt, { needsSoundPrompt } from './components/SoundPrompt'
-import AuthScreen from './components/AuthScreen'
 import StartHere from './components/StartHere'
 import Desktop from './components/Desktop'
 import DayFolder from './components/DayFolder'
 import InstagramApp from './components/InstagramApp'
-import StoryAlbum from './components/StoryAlbum'
 import LinkedinApp from './components/LinkedinApp'
 import WeChatApp from './components/WeChatApp'
 import SpotifyApp from './components/SpotifyApp'
@@ -37,46 +35,33 @@ export default function App() {
   const [askLang, setAskLang] = useState(needsLangPrompt)
   const [askSound, setAskSound] = useState(needsSoundPrompt)
 
+  // Forsiden er nå nedtellingen til GF-mordet 2027 (sort skjerm, hvit timer).
+  // 2026-utgaven (dette spillet) nås via den lille knappen nederst — valget
+  // huskes bevisst IKKE, alle skal møtes av nedtellingen ved neste besøk.
+  const [enter2026, setEnter2026] = useState(false)
+
   return (
     <SettingsProvider>
-      <AuthProvider>
-        <UnlockProvider>
-          {askLang ? (
-            <LanguagePrompt onDone={() => setAskLang(false)} />
-          ) : askSound ? (
-            <SoundPrompt onDone={() => setAskSound(false)} />
-          ) : booting ? (
-            <BootScreen onDone={finishBoot} />
-          ) : (
-            <Gate />
-          )}
-        </UnlockProvider>
-      </AuthProvider>
+      <UnlockProvider>
+        {!enter2026 ? (
+          <Countdown2027 onEnter2026={() => setEnter2026(true)} />
+        ) : askLang ? (
+          <LanguagePrompt onDone={() => setAskLang(false)} />
+        ) : askSound ? (
+          <SoundPrompt onDone={() => setAskSound(false)} />
+        ) : booting ? (
+          <BootScreen onDone={finishBoot} />
+        ) : (
+          <Shell />
+        )}
+      </UnlockProvider>
     </SettingsProvider>
   )
 }
 
-// Innloggingsvegg: etter boot vises skrivebordet kun for innloggede spillere.
-// Ikke innlogget → logg inn/registrer-skjerm (ingen taskbar/ruter).
-function Gate() {
-  const { user, loading } = useAuth()
-
-  if (loading) {
-    return (
-      <div className="app-shell">
-        <p className="notice" style={{ margin: 24 }}>
-          Kobler til …
-        </p>
-      </div>
-    )
-  }
-
-  if (!user) return <AuthScreen />
-
-  return <GatedShell />
-}
-
-function GatedShell() {
+// Ingen innlogging lenger — spillet er over og alt kjører lokalt på enheten
+// (svar/fremdrift i localStorage). Rett inn på skrivebordet etter boot.
+function Shell() {
   return (
     <>
       <div className="app-shell">
@@ -85,7 +70,6 @@ function GatedShell() {
           <Route path="/start" element={<StartHere />} />
           <Route path="/dag/:day" element={<DayFolder />} />
           <Route path="/instagram" element={<InstagramApp />} />
-          <Route path="/album" element={<StoryAlbum />} />
           <Route path="/linkedin" element={<LinkedinApp />} />
           <Route path="/wechat" element={<WeChatApp />} />
           <Route path="/spotify" element={<SpotifyApp />} />

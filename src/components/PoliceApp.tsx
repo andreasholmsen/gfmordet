@@ -2,24 +2,22 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CASE, type DayContent } from '../case/manifest'
 import { useUnlock } from '../lib/UnlockContext'
-import { useAuth } from '../lib/AuthContext'
 import { getMyVote } from '../lib/votes'
 import AppWindow from './AppWindow'
 import Markdown from './Markdown'
 import VoteForm from './VoteForm'
 import KillerReveal from './KillerReveal'
 
-// Tydelig sperre når dagens avstemning er stengt (en nyere dag har åpnet) —
-// så ingen prøver å stemme på feil dag. Viser hva man svarte, og peker til
-// dagen som faktisk gjelder. (Server-siden håndhever det samme uansett.)
-function VoteClosed({
+// Vises når dagens spørsmål er besvart (svaret er låst — det var det som
+// låste opp neste dag). Viser hva man svarte og peker videre.
+function VoteDone({
   day,
-  currentDay,
-  onGoToCurrent,
+  nextTitle,
+  onGoNext,
 }: {
   day: DayContent
-  currentDay: number
-  onGoToCurrent: () => void
+  nextTitle: string | null
+  onGoNext: () => void
 }) {
   const q = day.question
   const saved = getMyVote(day.day)
@@ -37,27 +35,24 @@ function VoteClosed({
   return (
     <div className="vote-closed">
       <span className="vote-closed__lock" aria-hidden>
-        🔒
+        ✅
       </span>
-      <p className="vote-closed__title">Avstemningen for {day.title} er STENGT</p>
-      {answerLabel ? (
+      <p className="vote-closed__title">Du har svart på {day.title}</p>
+      {answerLabel && (
         <p className="vote-closed__answer">
           Du svarte: <strong>{answerLabel}</strong>
         </p>
-      ) : (
-        // Gjelder også for dem som kom sent til spillet: de skal skjønne at de
-        // fortsatt kan være med videre, ikke at de har mistet toget.
-        <p className="vote-closed__answer">
-          Du svarte ikke på dette spørsmålet. Det er helt greit — les fasiten over, så er du
-          klar for dagens spørsmål.
-        </p>
       )}
-      <p className="vote-closed__now">
-        Det er <strong>Dag {currentDay}</strong> som gjelder nå.
-      </p>
-      <button className="btn btn--primary" onClick={onGoToCurrent}>
-        Gå til Dag {currentDay} →
-      </button>
+      {nextTitle && (
+        <>
+          <p className="vote-closed__now">
+            <strong>{nextTitle}</strong> er nå låst opp.
+          </p>
+          <button className="btn btn--primary" onClick={onGoNext}>
+            Gå til {nextTitle} →
+          </button>
+        </>
+      )}
     </div>
   )
 }
@@ -73,47 +68,29 @@ function briefingRead(day: number): boolean {
 }
 
 export default function PoliceApp() {
-  const { unlockedDays, isUnlocked, loading, demo } = useUnlock()
-  const { user } = useAuth()
+  const { unlockedDays, isUnlocked } = useUnlock()
   const navigate = useNavigate()
   // Åpnet briefing (per dag). State så spørsmålet dukker opp umiddelbart.
   const [readDays, setReadDays] = useState<Record<number, boolean>>({})
   // Åpen briefing-visning (dagen den gjelder), eller null.
   const [openBriefing, setOpenBriefing] = useState<number | null>(null)
 
-  // Synlige faner = åpne dager. Standardfane = siste åpne dag.
+  // Synlige faner = åpne dager. Standardfane = siste åpne dag VED ÅPNING av
+  // appen — den hopper ikke automatisk videre når et svar låser opp neste dag
+  // (dagens fasit skal få bli stående til man selv bytter fane).
   const visibleDays = useMemo(
     () => CASE.days.filter((d) => unlockedDays.includes(d.day)),
     [unlockedDays],
   )
-  const [tab, setTab] = useState<number | null>(null)
-  const activeDay = tab ?? visibleDays[visibleDays.length - 1]?.day ?? 1
+  const [tab, setTab] = useState<number>(() =>
+    unlockedDays.length > 0 ? Math.max(...unlockedDays) : 1,
+  )
+  const activeDay = tab
   const dayContent = CASE.days.find((d) => d.day === activeDay)
-
-  if (loading) {
-    return (
-      <AppWindow title="POLITI" icon="🚓" variant="police">
-        <p className="notice">Kobler til … </p>
-      </AppWindow>
-    )
-  }
-
-  if (!user) {
-    // Skal ikke skje bak innloggingsveggen, men vær defensiv.
-    return (
-      <AppWindow title="POLITI" icon="🚓" variant="police">
-        <p className="notice">Du må være innlogget for å bruke POLITI-appen.</p>
-      </AppWindow>
-    )
-  }
 
   return (
     <AppWindow title="POLITI" icon="🚓" variant="police">
       <div className="police">
-        <p style={{ marginTop: 0, fontSize: '0.85rem' }}>
-          Innlogget som <strong>{user.displayName}</strong>
-        </p>
-
         {CASE.suspects && CASE.suspects.length > 0 && (
           <button
             className="btn"
@@ -199,20 +176,21 @@ export default function PoliceApp() {
               (!dayContent.briefing ||
                 readDays[dayContent.day] ||
                 briefingRead(dayContent.day)) &&
-              // Stemming stenger når neste dag åpner. (Hoppes over i demo/dev,
-              // der alle dager er kunstig åpne samtidig.) Da vises dagens FASIT
-              // (`reveal`) — samtidig som stemmetallene frigis i Excel.
-              (!demo && !import.meta.env.DEV && isUnlocked(dayContent.day + 1) ? (
+              // Når dagen er besvart (neste dag er låst opp) vises dagens FASIT
+              // (`reveal`) — samtidig frigis dagens stemmetall i Excel.
+              (isUnlocked(dayContent.day + 1) ? (
                 <>
                   {dayContent.reveal && (
                     <div className="day-reveal">
                       <Markdown source={dayContent.reveal} />
                     </div>
                   )}
-                  <VoteClosed
+                  <VoteDone
                     day={dayContent}
-                    currentDay={Math.max(...unlockedDays)}
-                    onGoToCurrent={() => setTab(Math.max(...unlockedDays))}
+                    nextTitle={
+                      CASE.days.find((d) => d.day === dayContent.day + 1)?.title ?? null
+                    }
+                    onGoNext={() => setTab(dayContent.day + 1)}
                   />
                 </>
               ) : (
@@ -225,4 +203,3 @@ export default function PoliceApp() {
     </AppWindow>
   )
 }
-

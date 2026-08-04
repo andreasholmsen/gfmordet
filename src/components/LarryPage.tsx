@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { assetUrl } from '../lib/assets'
-import { flagCheater } from '../lib/supabase'
 import { sfx } from '../lib/sfx'
 import { useT } from '../lib/i18n'
 import AppWindow from './AppWindow'
@@ -55,8 +54,7 @@ export default function LarryPage() {
     setPhase('thinking')
     // Kort pause før poenget lander.
     window.setTimeout(() => setPhase('revealed'), 1400)
-    // Flagget er hele poenget, men det skal aldri kunne velte siden.
-    void flagCheater().catch(() => {})
+    // (Server-flagget fra spillet er pensjonert — nå huskes svaret bare lokalt.)
   }
 
   function decline() {

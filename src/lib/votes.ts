@@ -1,12 +1,10 @@
-// «Min stemme» per dag for den innloggede spilleren.
+// «Min stemme» per dag — nå helt lokal (localStorage). Spillet er over og
+// backenden pensjonert; svarene brukes kun til progresjonen (svar på dag N
+// låser opp dag N+1, se UnlockContext) og til «du stemte som X %»-visningen
+// mot de bakte slutt-tallene i src/case/results.ts.
 //
-// Autoritativ kilde er Supabase (knyttet til auth.uid()), men komponentene
-// (ResultsView/KillerReveal/VoteForm) leser den SYNKRONT ved render. Vi holder
-// derfor en in-memory cache som hydreres én gang ved innlogging via
-// `hydrateMyVotes()` (kalt fra AuthContext), med et localStorage-speil som
-// rask fallback ved refresh før hydreringen er ferdig.
-
-import { getMyVotes } from './supabase'
+// Komponentene (KillerReveal/VoteForm/PoliceApp) leser synkront ved render,
+// så vi holder en in-memory kopi som speiles til localStorage.
 
 const KEY = 'gf-mordet.votes.v1'
 
@@ -38,26 +36,6 @@ function persist(): void {
   }
 }
 
-/** Hent brukerens egne stemmer fra serveren og fyll cachen. Kalles ved
- *  innlogging. Overskriver localStorage-speilet med serverens fasit. */
-export async function hydrateMyVotes(): Promise<void> {
-  const rows = await getMyVotes()
-  const next: Store = {}
-  for (const r of rows) next[String(r.day)] = { choice: r.choice, freeText: r.freeText }
-  memory = next
-  persist()
-}
-
-/** Tøm cachen (ved utlogging) så neste bruker ikke arver forrige stemmer. */
-export function clearMyVotes(): void {
-  memory = {}
-  try {
-    localStorage.removeItem(KEY)
-  } catch {
-    /* ignorer */
-  }
-}
-
 export function getMyVote(day: number): MyVote | null {
   return memory[String(day)] ?? null
 }
@@ -65,4 +43,14 @@ export function getMyVote(day: number): MyVote | null {
 export function saveMyVote(day: number, vote: MyVote): void {
   memory[String(day)] = vote
   persist()
+}
+
+/** Tøm alle lokale svar (brukes av «Nullstill fremdrift» i Innstillinger). */
+export function clearMyVotes(): void {
+  memory = {}
+  try {
+    localStorage.removeItem(KEY)
+  } catch {
+    /* ignorer */
+  }
 }

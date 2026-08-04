@@ -14,20 +14,21 @@ const nb = {
   backToFolder: '← Tilbake til mappen',
   backTo: '← Tilbake til {name}',
 
+  // nedtellingsforsiden (GF-mordet 2027)
+  cd27Days: 'dager',
+  cd27Hours: 'timer',
+  cd27Min: 'min',
+  cd27Sec: 'sek',
+  cd27Enter: 'Gå til 2026-utgaven →',
+  cd27Syncing: 'synkroniserer klokke …',
+
   // oppgavelinjen
-  countdownLong: 'Dag {d} åpner om {h}t {m}m {s}s',
-  countdownShort: 'Dag {d} åpner om {m}:{s}',
   dayStatus: 'Dag {n} av {total} åpen',
-  soundOn: 'Slå på lyd',
-  soundOff: 'Slå av lyd',
-  logout: 'Logg ut',
-  logoutConfirm: 'Er du sikker på at du vil logge ut, {name}?',
-  logoutNote: 'Stemmene dine er trygt lagret — du kan logge inn igjen når som helst.',
 
   // lyd-prompt (førstegang)
   soundTitle: 'Lyd',
   soundQuestion: 'Spillet er best med lyd — vil du skru den på?',
-  soundHint: 'Du kan når som helst endre dette i ⚙️ Innstillinger eller med 🔊-knappen på oppgavelinjen.',
+  soundHint: 'Du kan når som helst endre dette i ⚙️ Innstillinger.',
   soundYes: '🔊 Ja takk (anbefalt)',
   soundNo: '🔇 Uten lyd',
 
@@ -35,7 +36,6 @@ const nb = {
   socialFolder: 'Sosiale medier',
   victimFiles: 'Offerets filer',
   minesweeper: 'Minesveiper',
-  memAlbum: 'Minnealbum',
   menuRefresh: 'Oppdater',
   menuTrash: 'Tøm papirkurv',
   menuAbout: 'Om denne PC-en',
@@ -51,9 +51,8 @@ const nb = {
   // dag-mapper
   unknownFolder: 'Ukjent mappe',
   folderNotExist: 'Denne mappen finnes ikke.',
-  checkingAccess: 'Sjekker tilgang …',
   notOpenYet: 'er ikke åpnet ennå.',
-  comeBack: 'Kom tilbake når dagens dokumenter slippes.',
+  comeBack: 'Svar på spørsmålet for dagen før i 🚓 POLITI-appen, så låses denne dagen opp.',
   emptyFolder: 'Ingen dokumenter i denne mappen.',
   docsAfterReveal: '🔒 Politiets sluttrapport låses opp her når du har åpnet saken i POLITI-appen.',
   docCount1: '{n} dokument',
@@ -66,6 +65,12 @@ const nb = {
   settingsSound: 'Lyd',
   on: 'På',
   off: 'Av',
+  settingsReset: 'Nullstill fremdrift',
+  settingsResetNote:
+    'Sletter svarene og fremdriften din på denne enheten, så mysteriet kan utforskes fra start.',
+  resetConfirmBody:
+    'Er du sikker? Svarene dine, opplåste dager og hack-fremdriften slettes fra denne enheten. Språk- og lydvalget beholdes.',
+  resetConfirmYes: 'Ja, nullstill',
 
   // Larry-siden (easter egget). Han tilbyr «hjelp», gjør ingenting, og sier
   // rett ut at han noterte at du spurte.
@@ -77,34 +82,31 @@ const nb = {
   larryDeclined: 'Klokt. Jeg hadde ikke gjort det for deg likevel.',
   larryReveal1: 'Ha. Je vais te toucher la nuit.',
   larryReveal2: 'Je te jette une malédiction.',
-  larryReveal3: 'Patetisk... Jeg ville aldri hjulpet deg',
-  larryClose: 'Lukk',
-}
+  larryReveal3: 'Patetisk... Jeg ville aldri hjulpet deg',}
 
 const nn: typeof nb = {
   cancel: 'Avbryt',
   backToFolder: '← Tilbake til mappa',
   backTo: '← Tilbake til {name}',
 
-  countdownLong: 'Dag {d} opnar om {h}t {m}m {s}s',
-  countdownShort: 'Dag {d} opnar om {m}:{s}',
+  cd27Days: 'dagar',
+  cd27Hours: 'timar',
+  cd27Min: 'min',
+  cd27Sec: 'sek',
+  cd27Enter: 'Gå til 2026-utgåva →',
+  cd27Syncing: 'synkroniserer klokke …',
+
   dayStatus: 'Dag {n} av {total} open',
-  soundOn: 'Slå på lyd',
-  soundOff: 'Slå av lyd',
-  logout: 'Logg ut',
-  logoutConfirm: 'Er du sikker på at du vil logge ut, {name}?',
-  logoutNote: 'Stemmene dine er trygt lagra — du kan logge inn att når som helst.',
 
   soundTitle: 'Lyd',
   soundQuestion: 'Spelet er best med lyd — vil du skru han på?',
-  soundHint: 'Du kan når som helst endre dette i ⚙️ Innstillingar eller med 🔊-knappen på oppgåvelinja.',
+  soundHint: 'Du kan når som helst endre dette i ⚙️ Innstillingar.',
   soundYes: '🔊 Ja takk (tilrådd)',
   soundNo: '🔇 Utan lyd',
 
   socialFolder: 'Sosiale medium',
   victimFiles: 'Offeret sine filer',
   minesweeper: 'Minesveipar',
-  memAlbum: 'Minnealbum',
   menuRefresh: 'Oppdater',
   menuTrash: 'Tøm papirkorga',
   menuAbout: 'Om denne PC-en',
@@ -119,9 +121,8 @@ const nn: typeof nb = {
 
   unknownFolder: 'Ukjend mappe',
   folderNotExist: 'Denne mappa finst ikkje.',
-  checkingAccess: 'Sjekkar tilgang …',
   notOpenYet: 'er ikkje opna enno.',
-  comeBack: 'Kom tilbake når dokumenta for dagen blir sleppte.',
+  comeBack: 'Svar på spørsmålet for dagen før i 🚓 POLITI-appen, så blir denne dagen låst opp.',
   emptyFolder: 'Ingen dokument i denne mappa.',
   docsAfterReveal: '🔒 Sluttrapporten til politiet blir låst opp her når du har opna saka i POLITI-appen.',
   docCount1: '{n} dokument',
@@ -133,6 +134,12 @@ const nn: typeof nb = {
   settingsSound: 'Lyd',
   on: 'På',
   off: 'Av',
+  settingsReset: 'Nullstill framdrift',
+  settingsResetNote:
+    'Slettar svara og framdrifta di på denne eininga, så mysteriet kan utforskast frå start.',
+  resetConfirmBody:
+    'Er du sikker? Svara dine, opplåste dagar og hack-framdrifta blir sletta frå denne eininga. Språk- og lydvalet blir teke vare på.',
+  resetConfirmYes: 'Ja, nullstill',
 
   larryTitle: 'ukjend prosess',
   larryOffer: 'Vil du ha hjelp? Eg kan fjerne halvparten av vitna for deg … Vil du det?',
@@ -141,9 +148,7 @@ const nn: typeof nb = {
   larryDeclined: 'Klokt. Eg hadde ikkje gjort det for deg likevel.',
   larryReveal1: 'Ha. Je vais te toucher la nuit.',
   larryReveal2: 'Je jette sur toi une malediction.',
-  larryReveal3: 'Patetisk... Eg ville aldri hjelpt deg',
-  larryClose: 'Lukk',
-}
+  larryReveal3: 'Patetisk... Eg ville aldri hjelpt deg',}
 
 export type StringKey = keyof typeof nb
 const STRINGS: Record<Lang, typeof nb> = { nb, nn }

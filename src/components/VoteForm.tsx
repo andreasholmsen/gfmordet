@@ -1,26 +1,20 @@
 import { useState } from 'react'
 import type { DayContent } from '../case/manifest'
-import { submitVote } from '../lib/supabase'
-import { getMyVote, saveMyVote } from '../lib/votes'
+import { useUnlock } from '../lib/UnlockContext'
+import { saveMyVote } from '../lib/votes'
 import { sfx } from '../lib/sfx'
 import { assetUrl } from '../lib/assets'
 
 export default function VoteForm({ day }: { day: DayContent }) {
   const q = day.question!
-  // Gjenopprett en tidligere stemme fra denne enheten, så valget vises igjen
-  // når appen åpnes på nytt (ingen tvil om man har stemt). Kjøres kun ved mount
-  // — PoliceApp gir VoteForm en key per dag, så den remountes ved fanebytte.
-  const saved = getMyVote(day.day)
-  const [choice, setChoice] = useState<string | null>(saved?.choice ?? null)
-  const [text, setText] = useState(saved?.freeText ?? '')
-  const [status, setStatus] = useState<'idle' | 'sending' | 'done'>(saved ? 'done' : 'idle')
-  const [error, setError] = useState<string | null>(null)
+  const { refresh } = useUnlock()
+  const [choice, setChoice] = useState<string | null>(null)
+  const [text, setText] = useState('')
 
   const showFreeText =
     q.type === 'free_text' || (q.type === 'mc_with_other' && choice === q.otherOptionId)
 
   const canSubmit = (() => {
-    if (status === 'sending') return false
     if (q.type === 'free_text') return text.trim().length > 0
     if (q.type === 'mc_with_other') {
       if (!choice) return false
@@ -29,53 +23,15 @@ export default function VoteForm({ day }: { day: DayContent }) {
     return Boolean(choice) // multiple_choice
   })()
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError(null)
-    setStatus('sending')
     const myChoice = q.type === 'free_text' ? null : choice
     const myFreeText = showFreeText ? text.trim() : null
-    try {
-      await submitVote({
-        day: day.day,
-        choice: myChoice,
-        freeText: myFreeText,
-      })
-      saveMyVote(day.day, { choice: myChoice, freeText: myFreeText })
-      sfx.success()
-      setStatus('done')
-    } catch (err) {
-      sfx.error()
-      setStatus('idle')
-      setError(err instanceof Error ? err.message : 'Noe gikk galt. Prøv igjen.')
-    }
-  }
-
-  if (status === 'done') {
-    // Vis hva som ble stemt, så det er tydelig at man har svart.
-    const answerLabel = (() => {
-      if (q.type === 'free_text') return text
-      const opt = 'options' in q ? q.options.find((o) => o.id === choice) : undefined
-      const base = opt?.label ?? choice ?? ''
-      if (q.type === 'mc_with_other' && choice === q.otherOptionId && text) {
-        return `${base}: ${text}`
-      }
-      return base
-    })()
-    return (
-      <div className="panel">
-        <p className="notice notice--ok">Stemmen din er registrert! ✓</p>
-        {answerLabel && (
-          <p>
-            Du svarte: <strong>{answerLabel}</strong>
-          </p>
-        )}
-        <p>Du kan endre svaret ditt så lenge avstemningen er åpen.</p>
-        <button className="btn" onClick={() => setStatus('idle')}>
-          Endre svar
-        </button>
-      </div>
-    )
+    // Helt lokalt (localStorage) — spillet er over, ingen server. Lagringen
+    // låser opp neste dag; refresh() får PoliceApp til å vise dagens fasit.
+    saveMyVote(day.day, { choice: myChoice, freeText: myFreeText })
+    sfx.success()
+    refresh()
   }
 
   return (
@@ -123,11 +79,13 @@ export default function VoteForm({ day }: { day: DayContent }) {
         />
       )}
 
-      {error && <p className="notice notice--error">{error}</p>}
+      <p className="notice" style={{ marginTop: 14 }}>
+        Når du sender inn låses svaret ditt, dagens fasit vises — og neste dag åpnes.
+      </p>
 
       <div style={{ marginTop: 14 }}>
         <button className="btn btn--primary" type="submit" disabled={!canSubmit}>
-          {status === 'sending' ? 'Sender …' : 'Send inn svar'}
+          Send inn svar
         </button>
       </div>
     </form>

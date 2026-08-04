@@ -9,11 +9,9 @@
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "check:content": "tsx scripts/check-content.ts",
-    "check:dorlogg": "tsx scripts/check-dorlogg.ts",
-    "preflight": "tsx scripts/preflight.ts"
+    "check:dorlogg": "tsx scripts/check-dorlogg.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.4",
     "marked": "^14.1.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

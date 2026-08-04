@@ -5108,3 +5108,109 @@ textarea.field {
   padding: 3px;
   background: var(--surface);
 }
+
+/* ============================================================
+   Nedtellingsforsiden (GF-mordet 2027) — helt sort skjerm med
+   hvit timer; liten inngang til 2026-utgaven helt nederst.
+   ============================================================ */
+
+.cd27 {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #000;
+  color: #fff;
+  font-family: 'Courier New', Courier, monospace;
+  /* Egen skjerm — ikke arv fra retro-temaet. */
+  user-select: none;
+}
+
+.cd27__center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 0 12px;
+  width: 100%;
+}
+
+.cd27__timer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+.cd27__group {
+  display: flex;
+  align-items: flex-start;
+}
+
+.cd27__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cd27__digits {
+  font-size: clamp(2.2rem, 11vw, 6.5rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cd27__colon {
+  font-size: clamp(2.2rem, 11vw, 6.5rem);
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.45;
+  padding: 0 clamp(4px, 1.5vw, 14px);
+}
+
+.cd27__label {
+  margin-top: 8px;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #666;
+}
+
+.cd27__syncing {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #333;
+  animation: cd27-blink 1.2s steps(2, start) infinite;
+}
+
+@keyframes cd27-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+.cd27__enter {
+  margin: 0 0 max(18px, env(safe-area-inset-bottom)) 0;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  color: #555;
+  font-family: inherit;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+.cd27__enter:hover,
+.cd27__enter:focus-visible {
+  color: #bbb;
+  border-color: #555;
+  outline: none;
+}

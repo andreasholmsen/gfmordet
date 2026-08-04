@@ -6,6 +6,7 @@ import { useSettings } from '../lib/SettingsContext'
 import { sfx } from '../lib/sfx'
 import { assetUrl } from '../lib/assets'
 import { markStartSeen, startSeen } from '../lib/intro'
+import { clearMyVotes } from '../lib/votes'
 import { useT } from '../lib/i18n'
 import ContextMenu, { type MenuItem } from './ContextMenu'
 import Dialog from './Dialog'
@@ -121,10 +122,37 @@ function DesktopIcon({ icon, onLockedClick }: { icon: IconDef; onLockedClick?: (
   )
 }
 
-type DialogKind = 'about' | 'recycle' | 'locked' | 'settings' | null
+type DialogKind = 'about' | 'recycle' | 'locked' | 'settings' | 'reset' | null
+
+// «Nullstill fremdrift»: slett all sakfremdrift på enheten (svar, opplåste
+// dager, avhør/fasit-lås, telefon-hackene, Larry, Bragevalgomaten) så mysteriet
+// kan utforskes fra start igjen. Språk-/lydvalget beholdes. Nøklene her må
+// holdes i takt med komponentene som eier dem.
+function resetProgress(): void {
+  clearMyVotes()
+  const keys = [
+    'gfm:fasit-sett',
+    'gf-mordet.start.seen.v1',
+    'gfm:angela-unlocked',
+    'gfm:hack-email',
+    'gfm:hack-whatsapp',
+    'gfm:larry-answer',
+    'gf-mordet.larry-found.v1',
+    'gfm:bragevalgomat',
+    ...CASE.days.map((d) => `gfm:politi-briefing:${d.day}`),
+  ]
+  try {
+    keys.forEach((k) => localStorage.removeItem(k))
+  } catch {
+    /* privat modus e.l. */
+  }
+  // Full omstart (boot-skjermen) med tom fremdrift.
+  window.location.hash = '#/'
+  window.location.reload()
+}
 
 export default function Desktop() {
-  const { isUnlocked, demo, refresh } = useUnlock()
+  const { isUnlocked, refresh } = useUnlock()
   const { muted, setMuted, lang, setLang } = useSettings()
   const navigate = useNavigate()
   const t = useT()
@@ -166,7 +194,6 @@ export default function Desktop() {
     { label: 'Instagram', glyph: '📷', node: <IgGlyph />, to: '/instagram' },
     { label: 'LinkedIn', glyph: '💼', node: <LinkedInGlyph />, to: '/linkedin' },
     { label: 'WeChat', glyph: '💬', node: <WeChatGlyph />, to: '/wechat' },
-    { label: t('memAlbum'), glyph: '📸', to: '/album' },
   ]
 
   const appIcons: IconDef[] = [
@@ -229,15 +256,6 @@ export default function Desktop() {
       <header className="desktop__title">
         <h1>{CASE.title}</h1>
       </header>
-
-      {demo && (
-        <div style={{ maxWidth: 720, margin: '0 auto', width: '100%', padding: '0 12px' }}>
-          <div className="demo-banner">
-            ⚠️ Demo-modus: Supabase er ikke konfigurert, så alle dager er åpne og stemmer lagres
-            ikke. Se README for oppsett.
-          </div>
-        </div>
-      )}
 
       <div className="icon-grid">
         {[
@@ -346,6 +364,40 @@ export default function Desktop() {
               🔇 {t('off')}
             </button>
           </div>
+
+          <p>
+            <strong>{t('settingsReset')}</strong>
+          </p>
+          <p style={{ fontSize: '0.8rem', marginTop: 0 }}>{t('settingsResetNote')}</p>
+          <button className="btn" onClick={() => setDialog('reset')}>
+            🧹 {t('settingsReset')}
+          </button>
+        </Dialog>
+      )}
+
+      {dialog === 'reset' && (
+        <Dialog
+          title={t('settingsReset')}
+          icon="🧹"
+          onClose={() => setDialog('settings')}
+          actions={
+            <>
+              <button className="btn" onClick={() => setDialog('settings')}>
+                {t('cancel')}
+              </button>
+              <button
+                className="btn btn--primary"
+                onClick={() => {
+                  sfx.click()
+                  resetProgress()
+                }}
+              >
+                {t('resetConfirmYes')}
+              </button>
+            </>
+          }
+        >
+          <p style={{ marginTop: 0 }}>{t('resetConfirmBody')}</p>
         </Dialog>
       )}
 

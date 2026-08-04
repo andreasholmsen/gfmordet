@@ -1,87 +1,62 @@
 # GF-mordet 🕵️
 
-En retro "gammel PC"-nettside for å distribuere et murder mystery-case til ~100 spillere
-over 4 dager. Mobil-først, hostet gratis på **GitHub Pages**, med stemming/gjetning lagret i
-**Supabase**. All tekst er på norsk.
+En retro "gammel PC"-nettside med et murder mystery-case som ble spilt live over 4 dager
+(28. juli – 2. aug 2026, ~100 spillere). **Spillet er over, og siden er nå et helt statisk
+«museum»**: ingen innlogging, ingen backend — alt (svar, fremdrift) lagres lokalt i
+nettleseren, og hvem som helst kan utforske mysteriet kronologisk fra start. Mobil-først,
+hostet gratis på **GitHub Pages**. All tekst er på norsk.
 
+- **Forsiden er en nedtelling til GF-mordet 2027** (torsdag 29. juli 2027 kl. 18:00):
+  sort skjerm, hvit timer — klokka hentes fra serverens `Date`-header, så systemklokka
+  kan ikke jukses med. Liten knapp nederst går til 2026-utgaven (spillet under).
 - **Skrivebord** med app-/mappeikoner du trykker på.
-- **Mapper Dag 1–4** med dokumenter (bilder, PDF, tekst) som låses opp etter dato.
-- **Instagram-app** med falske bevisbilder.
-- **POLITI-app** med dagens spørsmål, stemming og resultater (forrige dags resultater vises i dag).
-- **Tidslås håndhevet server-side** — kan ikke jukses ved å endre klokka på telefonen.
+- **Mapper Dag 1–4** med dokumenter (bilder, PDF, tekst). Dag 1 er åpen fra start;
+  svar på dagens spørsmål i POLITI-appen for å låse opp neste dag.
+- **Instagram/LinkedIn/WeChat** med falske bevisposter, **Offerets mobil** med
+  hack-minigames, og en **POLITI-app** med dagens spørsmål og fasit.
+- **Excel-appen** viser de ekte stemmetallene fra det live spillet (bakt inn i
+  `src/case/results.ts`) — inkludert «du stemte som X %» mot ditt lokale svar.
+- **Nullstill fremdrift** finnes i ⚙️ Innstillinger, så mysteriet kan spilles på nytt.
 
 ---
 
-## 1. Kjør lokalt
+## Kjør lokalt
 
 ```bash
 npm install
 npm run dev
 ```
 
-Åpne adressen Vite skriver ut. Uten Supabase-oppsett kjører appen i **demo-modus**:
-alle dager er åpne og stemmer lagres ikke — fint for å teste utseende og innhold.
+Ingen `.env` eller backend trengs — alt kjører i nettleseren.
 
-## 2. Fyll inn innholdet (saken din)
+## Innholdet
 
 Alt redigeres i **`src/case/manifest.ts`** — tittel, intro, dokumenter per dag,
-Instagram-poster, spørsmål/alternativer og fasiten (dag 4).
+spørsmål/alternativer og fasiten (dag 4). Filer (bilder/PDF) ligger i `public/case/...`
+(se `public/case/README.md`). De ekte slutt-tallene fra spillet ligger i
+`src/case/results.ts`.
 
-Filer (bilder/PDF) legges i `public/case/...` og pekes på med `src` (se `public/case/README.md`).
+## Publisering
 
-> Datoer settes **ikke** her — de bor i Supabase (`case_config`), se neste steg.
+Push til `main` → workflowen `.github/workflows/deploy.yml` bygger og publiserer til
+GitHub Pages (https://www.gfmordet.no/). Ingen secrets trengs.
 
-## 3. Sett opp Supabase
+## Historikk
 
-1. Lag et gratis prosjekt på [supabase.com](https://supabase.com).
-2. Åpne **SQL Editor**, lim inn `supabase/migrations/0001_init.sql` og kjør.
-3. **Juster datoene** nederst i SQL-en (`case_config`) til dine fire dager. Bruk
-   `Europe/Oslo` så de treffer norsk lokaltid.
-4. Hent **Project URL** og **anon/publishable key** under _Settings → API_.
-5. Lokalt: kopier `.env.example` til `.env` og fyll inn `VITE_SUPABASE_URL` og
-   `VITE_SUPABASE_ANON_KEY`.
-
-Slik fungerer tidslåsen:
-
-- `release_at` — når dagens mappe/avstemning åpnes.
-- `closes_at` — når avstemningen stenger (typisk = neste dags `release_at`).
-- `results_at` — når dagens resultater blir synlige (typisk = neste dags `release_at`),
-  slik at dag 1-resultater dukker opp på dag 2 osv.
-
-Anon-nøkkelen er trygg i frontend fordi RLS er på og spillere **kun** kan kalle de fire
-funksjonene `get_unlocked_days`, `submit_vote`, `get_results`, `get_free_text` — de kan
-ikke lese rådata/navn. Kjør gjerne Supabase **Security Advisor** for å bekrefte.
-
-## 4. Publiser på GitHub Pages
-
-1. Repoet må hete `gfmordet` (ellers: endre `base` i `vite.config.ts`).
-2. _Settings → Pages → Source:_ **GitHub Actions**.
-3. _Settings → Secrets and variables → Actions →_ legg til repository secrets:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-4. Push til `main`. Workflowen `.github/workflows/deploy.yml` bygger og publiserer.
-5. Siden blir tilgjengelig på `https://<brukernavn>.github.io/gfmordet/`.
-
-## Verifisering før lansering
-
-- Sett en testdato (f.eks. dag 2 om 2 minutter) og bekreft at mappen/POLITI låses opp.
-- Prøv å stemme før `release_at` / etter `closes_at` → serveren skal avvise (test gjerne
-  ved å stille telefonklokka frem; det skal **ikke** låse opp noe, fordi serveren bestemmer).
-- Bekreft at resultater er tomme før `results_at` og vises etterpå.
+Under det live spillet brukte siden Supabase (auth med brukernavn/passord, server-håndhevet
+tidslås, stemmer, spiller-stories). Alt dette ble fjernet i aug. 2026 da siden ble gjort
+statisk. SQL-migrasjonene ligger igjen i `supabase/migrations/` som historikk, og
+git-historikken har hele den gamle klienten.
 
 ## Kjente begrensninger
 
-- **Statiske dokumenter** ligger i deployet og kan i teorien nås via URL før de er
-  «åpnet». For et vennespill er dette lav risiko — bruk kryptiske filnavn. Vil du ha det
-  vanntett (særlig dag 4-fasiten): legg de filene i en privat Supabase Storage-bucket og
-  server signerte URL-er via en RPC som sjekker `release_at`.
-- **Identitet** er per enhet (localStorage). To enheter = to stemmer. Greit for vennespill.
-- **Supabase gratis-tier** pauser etter 7 dagers inaktivitet — sett opp prosjektet nær
-  lansering, eller legg en liten keep-alive hvis statistikken skal leve videre.
-- **PDF på mobil** (særlig iOS Safari) er ujevnt; foretrekk bilder/tekst der du kan. Det
-  finnes en «Åpne i ny fane»-lenke som fallback.
+- **Alle dokumenter ligger statisk i deployet** og kan i teorien nås via URL før de er
+  «låst opp» lokalt. Uproblematisk nå som spillet er over.
+- **Fremdrift er per enhet/nettleser** (localStorage) — bytter du enhet, starter du på nytt.
+- **PDF på mobil** (særlig iOS Safari) er ujevnt; det finnes en «Åpne i ny fane»-lenke
+  som fallback.
 
 ## Teknisk
 
-Vite + React + TypeScript · HashRouter (unngår 404 på GitHub Pages) · `@supabase/supabase-js`
-· `marked` for markdown · egen retro-CSS (`src/styles/retro.css`).
+Vite + React + TypeScript · HashRouter (unngår 404 på GitHub Pages) · `marked` for
+markdown · egen retro-CSS (`src/styles/retro.css`).

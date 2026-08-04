@@ -4,9 +4,9 @@
 //  URL-er bygges automatisk med riktig base (se assetUrl under), så skriv dem
 //  relativt fra /public, f.eks. 'case/dag1/vitne-kart.jpg'.
 //
-//  MERK: Utløsningsdatoer (når hver dag åpnes) ligger IKKE her — de settes i
-//  Supabase-tabellen `case_config`, slik at tidslåsen ikke kan jukses fra
-//  nettleseren. Se supabase/migrations/0001_init.sql og README.
+//  MERK: Spillet er over og siden er helt statisk. Dagene låses nå opp ved
+//  lokal progresjon (svar på dag N åpner dag N+1 — se lib/UnlockContext), og
+//  de ekte stemmetallene fra spillet ligger bakt inn i src/case/results.ts.
 // ============================================================================
 
 export type DocKind = 'image' | 'pdf' | 'markdown' | 'html'

@@ -26,7 +26,7 @@ export default function DayFolder() {
   const { day } = useParams()
   const dayNum = Number(day)
   const dayContent = CASE.days.find((d) => d.day === dayNum)
-  const { isUnlocked, loading } = useUnlock()
+  const { isUnlocked } = useUnlock()
   const t = useT()
   const [openDoc, setOpenDoc] = useState<CaseDoc | null>(null)
   const [openFolder, setOpenFolder] = useState<SubfolderDef | null>(null)
@@ -44,14 +44,6 @@ export default function DayFolder() {
   }
 
   const title = dayContent.title
-
-  if (loading) {
-    return (
-      <AppWindow title={title} icon="📁">
-        <p className="notice">{t('checkingAccess')}</p>
-      </AppWindow>
-    )
-  }
 
   if (!isUnlocked(dayNum)) {
     return (

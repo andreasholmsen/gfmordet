@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { CASE, type InstagramPost } from '../case/manifest'
 import { assetUrl } from '../lib/assets'
 import AppWindow from './AppWindow'
-import StoriesBar from './StoriesBar'
 
 // Enkle, krappe SVG-ikoner i samme stil som dagens Instagram-app.
 const HeartIcon = () => (
@@ -55,9 +54,6 @@ export default function InstagramApp() {
             <ShareIcon />
           </span>
         </header>
-
-        {/* Ekte, live stories fra spillerne (opplasting + visning). */}
-        <StoriesBar />
 
         <div className="ig__feed">
           {CASE.instagram.map((post) => (
