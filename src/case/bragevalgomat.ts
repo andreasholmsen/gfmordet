@@ -132,7 +132,7 @@ export const BRAGER: BrageProfile[] = [
     id: 'okland',
     name: 'Brage Økland',
     emoji: '🎣',
-    img: 'case/brage/brageokland.jpg',
+    img: 'case/brage/brage1.jpg',
     description:
       'Memes, fjellturer og salto på morgenbadet. Bader presis 17:42 og går i tog på kvinnedagen — men behandler henne like godt alle andre dager.',
     answers: {
@@ -152,7 +152,7 @@ export const BRAGER: BrageProfile[] = [
     id: 'johnsen',
     name: 'Brage Johnsen',
     emoji: '✈️',
-    img: 'case/brage/bragejohnsen.jpg',
+    img: 'case/brage/brage2.jpg',
     description:
       'Flyr KLM (aldri forsinket), kjører i 140km/t og legger flysetet heeeeeeele veien tilbake. Baker kanelboller til sine spesielle',
     answers: {
@@ -172,7 +172,7 @@ export const BRAGER: BrageProfile[] = [
     id: 'wikmark',
     name: 'Brage Wikmark',
     emoji: '🏃',
-    img: 'case/brage/bragewikmark.jpg',
+    img: 'case/brage/brage3.jpg',
     description:
       'Epok i leppa, løper til krampa tar ham og skinny dipper kl. 02:30. Tar av t-skjorta ved behov. Blir trigga av 6-7 hver eneste gang.',
     answers: {

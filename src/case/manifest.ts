@@ -1745,7 +1745,7 @@ export const CASE: CaseManifest = {
     },
     {
       id: 'ig2',
-      img: 'case/instagram/jofridkontakt.png',
+      img: 'case/instagram/prestpost.png',
       author: 'studentprestjofrid',
       caption:
         '🌸Bli kjent med studentpresten Jofrid🌸\n\nJofrid er studentprest for Danmark, Tyskland, Nederland, Luxembourg, Østerrriket, Sverige, Sveits, Italia, Frankrike og Belgia🌎\n\nHun er her for studentene, enten du ønsker støtte eller en samtale om stort og smått i studenthverdagen🤩\n\nFølg henne gjerne på Instagram og ta kontakt dersom du trenger noen å prate med🥰',
