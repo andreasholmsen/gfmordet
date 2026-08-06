@@ -4,6 +4,8 @@ import { UnlockProvider } from './lib/UnlockContext'
 import { SettingsProvider } from './lib/SettingsContext'
 import BootScreen from './components/BootScreen'
 import Countdown2027 from './components/Countdown2027'
+import LoginGate from './components/LoginGate'
+import { getPlayer } from './lib/player'
 import LanguagePrompt, { needsLangPrompt } from './components/LanguagePrompt'
 import SoundPrompt, { needsSoundPrompt } from './components/SoundPrompt'
 import StartHere from './components/StartHere'
@@ -40,11 +42,18 @@ export default function App() {
   // huskes bevisst IKKE, alle skal møtes av nedtellingen ved neste besøk.
   const [enter2026, setEnter2026] = useState(false)
 
+  // Gardin foran 2026-utgaven: bare de som spilte slipper inn (navn mot en
+  // hashet deltakerliste, ingen passord — se src/lib/player.ts). Huskes per
+  // enhet, i motsetning til 2026-valget over.
+  const [player, setPlayer] = useState(getPlayer)
+
   return (
     <SettingsProvider>
       <UnlockProvider>
         {!enter2026 ? (
           <Countdown2027 onEnter2026={() => setEnter2026(true)} />
+        ) : !player ? (
+          <LoginGate onDone={setPlayer} />
         ) : askLang ? (
           <LanguagePrompt onDone={() => setAskLang(false)} />
         ) : askSound ? (

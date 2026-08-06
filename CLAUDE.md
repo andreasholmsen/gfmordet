@@ -2,9 +2,9 @@
 
 Retro "gammel PC"-nettside for et 4-dagers murder mystery-case som ble spilt live
 28. juli – 2. aug 2026 (~100 norske spillere). **Spillet er over — siden er nå et helt
-statisk «museum»** (omgjort aug. 2026): ingen innlogging, ingen backend. Hvem som helst
-kan utforske mysteriet kronologisk; svar og fremdrift lagres kun i localStorage.
-Mobil-først. All UI-tekst er på norsk.
+statisk «museum»** (omgjort aug. 2026): ingen backend. De som spilte kan utforske
+mysteriet kronologisk på nytt bak en navne-gardin (se «Innlogging» under); svar og
+fremdrift lagres kun i localStorage. Mobil-først. All UI-tekst er på norsk.
 
 **Stack:** Vite + React + TypeScript · HashRouter · `marked` · egen retro-CSS.
 Hostet på GitHub Pages fra det private repoet `andreasholmsen/gfmordet`.
@@ -30,14 +30,44 @@ merket `trusted: false`. NB: når 2027-spillet bygges må selve INNHOLDS-låsen 
 server-side igjen hvis den skal være vanntett — nedtellingen er bare teater.
 CSS: `.cd27`-seksjonen nederst i `retro.css`.
 
+## Innlogging = en gardin, ikke en lås (aug. 2026)
+
+Saken skal ikke være offentlig, men siden er statisk på GitHub Pages: alt under
+`/case/` og hele manifestet i JS-bundelen er hentbart direkte av den som kjenner
+URL-en. **En klient-side innlogging kan derfor aldri gjøre saken hemmelig** — den
+holder tilfeldige besøkende ute, ikke en som vil inn. Skal det bli en ekte lås må
+siden bak en server-side gate (Cloudflare Access, Netlify e.l.) — ikke gjort.
+
+Derfor: **ingen passord, ingen registrering.** Spørsmålet er bare «var du med?».
+`LoginGate` (etter nedtellingen, før språk-/lydprompt) tar imot et navn, normaliserer
+det og sjekker mot `src/case/players.ts`. Innlogget navn huskes i `gfm:player` og vises
+i oppgavelinja; «Logg ut» ligger i ⚙️ Innstillinger (egen knapp — «Nullstill fremdrift»
+rører den IKKE, det er to forskjellige ting).
+
+- **Navnene er hashet, ikke i klartekst.** ~100 ekte navn lesbart i en offentlig
+  bundel ville vært akkurat personvern-lekkasjen innloggingen skal hindre.
+  `players.ts` inneholder avkortede SHA-256-digester (12 hex-tegn).
+- **Normaliseringen** (`normalizeName` i `src/lib/player.ts`) gjør navnet ufølsomt for
+  store/små bokstaver, mellomrom, bindestreker og æ/ø/å. Generator og runtime MÅ være
+  enige — derfor importerer `scripts/hash-players.ts` funksjonen fra samme fil og
+  kjører en selvtest før den skriver noe. Endrer du den: generer `players.ts` på nytt,
+  ellers mister alle innloggingen samtidig.
+- **Regenerere lista:** legg navnene i `players.txt` (git-ignorert — ekte navn, aldri
+  commit) og kjør `npm run hash:players`. Både brukernavn og fullt navn bør med, så
+  folk kommer inn med det de husker. Kilden var Supabase:
+  `select raw_user_meta_data->>'username', raw_user_meta_data->>'full_name' from auth.users;`
+- **`noindex`** i `index.html` + `public/robots.txt` — den eneste «låsen» som faktisk
+  virker på en statisk side, og den viktigste: den holder saken ute av Google.
+
 ## Statisk modell (siden aug. 2026)
 
 - **Ingen Supabase.** `@supabase/supabase-js` er fjernet fra package.json, og
   `src/lib/supabase.ts`, `AuthContext.tsx`, `AuthScreen.tsx` m.fl. er slettet.
   SQL-filene i `supabase/migrations/` ligger igjen KUN som historikk; Supabase-prosjektet
   kan slettes/pauses fritt uten at siden påvirkes.
-- **Ingen innlogging.** Boot-animasjon → rett på skrivebordet (ingen Gate/AuthScreen).
-  Brukeren er anonym — ingen navn vises noe sted.
+- **Ingen kontoer/backend.** Den gamle Supabase Auth-innloggingen (brukernavn + passord)
+  er borte; `LoginGate` over er ren klient-side navnesjekk. Ingenting knyttes til en
+  bruker — svarene ligger i localStorage, ikke på en konto.
 - **Progresjonsbasert opplåsing** (`src/lib/UnlockContext.tsx`): dag 1 er alltid åpen;
   dag N+1 låses opp når man har SVART på dag N sitt spørsmål i POLITI-appen. Dager uten
   spørsmål (dag 4) sperrer ikke. Svar lagres i localStorage (`src/lib/votes.ts`,
@@ -74,7 +104,8 @@ CSS: `.cd27`-seksjonen nederst i `retro.css`.
 `gf-mordet.start.seen.v1` (START HER-blink) · `gfm:angela-unlocked` + `gfm:hack-email` +
 `gfm:hack-whatsapp` (Angelas mobil) · `gf-mordet.larry-found.v1` + `gfm:larry-answer` ·
 `gfm:bragevalgomat`. Innstillinger (beholdes ved nullstilling): `gf-mordet.settings.v1`,
-`gfm:lang-prompted`, `gfm:sound-prompted`.
+`gfm:lang-prompted`, `gfm:sound-prompted`, `gfm:player` (innlogget navn — tømmes kun av
+«Logg ut»).
 
 ## Undermapper i dag-mappene (med farge-tema)
 
@@ -153,6 +184,9 @@ CSS-seksjon «Offerets mobil» i `retro.css` (`.phone`, `.ph-*`, `.wa-*`, `.pmai
 - `src/case/manifest.ts` — alt innhold. Inkl. `suspects` (Mistenkte-tavla) og
   spørsmålstypen `image_choice` (bildevalg).
 - `src/case/results.ts` — bakte slutt-tall fra spillet (brukes av Excel-appen).
+- `src/case/players.ts` — GENERERT hashet deltakerliste (`npm run hash:players`).
+- `src/lib/player.ts` — normalisering, hashing, `isPlayer()` + `gfm:player`-sesjonen.
+- `src/components/LoginGate.tsx` — navne-gardinen (se egen seksjon over).
 - `src/components/Countdown2027.tsx` — nedtellingsforsiden (se egen seksjon over).
 - `src/App.tsx` — ruter (HashRouter): `/`, `/start`, `/dag/:day`, `/instagram`,
   `/linkedin`, `/wechat`, `/spotify`, `/politi`, `/mistenkte`, `/angela`, `/resultater`,
@@ -195,12 +229,15 @@ CSS-seksjon «Offerets mobil» i `retro.css` (`.phone`, `.ph-*`, `.wa-*`, `.pmai
 - `src/styles/retro.css` — hele retro-temaet.
 - `supabase/migrations/` — KUN historikk fra det live spillet (brukes ikke lenger).
 - `.github/workflows/deploy.yml` — Pages-deploy (ingen secrets).
-- **Verktøy:** `npm run check:content`, `npm run check:dorlogg`. (`preflight` og
-  `jump-day.sh` er slettet — de var Supabase-verktøy.)
+- **Verktøy:** `npm run check:content`, `npm run check:dorlogg`, `npm run hash:players`.
+  (`preflight` og `jump-day.sh` er slettet — de var Supabase-verktøy.)
 
 ## Mulige videre oppgaver (ikke gjort ennå)
 
 - Bump GitHub Actions-versjoner (Pages-actions targeter Node 20 som GitHub deprecaterer).
-- Slette/pause Supabase-prosjektet — ingenting i siden bruker det lenger. NB: bucketen
+- **`src/case/players.ts` inneholder fortsatt PLASSHOLDERE** (`andreas`, `test`, `demo`) —
+  hent de ekte navnene fra Supabase og kjør `npm run hash:players` FØR neste deploy.
+- Slette/pause Supabase-prosjektet — men eksporter deltakernavnene FØRST (se
+  «Innlogging» over), ellers finnes ikke lista noe sted. NB: bucketen
   `stories` med spillernes opplastede bilder forsvinner da; last dem ned først hvis de
   skal tas vare på (krever service_role eller innlogget bruker, se 0005_stories.sql).

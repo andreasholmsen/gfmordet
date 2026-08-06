@@ -7,6 +7,7 @@ import { sfx } from '../lib/sfx'
 import { assetUrl } from '../lib/assets'
 import { markStartSeen, startSeen } from '../lib/intro'
 import { clearMyVotes } from '../lib/votes'
+import { clearPlayer } from '../lib/player'
 import { useT } from '../lib/i18n'
 import ContextMenu, { type MenuItem } from './ContextMenu'
 import Dialog from './Dialog'
@@ -371,6 +372,21 @@ export default function Desktop() {
           <p style={{ fontSize: '0.8rem', marginTop: 0 }}>{t('settingsResetNote')}</p>
           <button className="btn" onClick={() => setDialog('reset')}>
             🧹 {t('settingsReset')}
+          </button>
+
+          <p>
+            <strong>{t('settingsLogout')}</strong>
+          </p>
+          <p style={{ fontSize: '0.8rem', marginTop: 0 }}>{t('settingsLogoutNote')}</p>
+          <button
+            className="btn"
+            onClick={() => {
+              sfx.click()
+              clearPlayer()
+              window.location.reload()
+            }}
+          >
+            🚪 {t('settingsLogout')}
           </button>
         </Dialog>
       )}

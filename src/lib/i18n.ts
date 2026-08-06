@@ -71,6 +71,15 @@ const nb = {
   resetConfirmBody:
     'Er du sikker? Svarene dine, opplåste dager og hack-fremdriften slettes fra denne enheten. Språk- og lydvalget beholdes.',
   resetConfirmYes: 'Ja, nullstill',
+  settingsLogout: 'Logg ut',
+  settingsLogoutNote: 'Glemmer navnet på denne enheten. Fremdriften din beholdes.',
+
+  // innloggingen (gardinen foran 2026-utgaven)
+  loginLead: 'Denne saken er kun for dere som var med i 2026. Skriv navnet du spilte under.',
+  loginName: 'Navn',
+  loginSubmit: 'Logg inn',
+  loginFailed: 'Fant deg ikke på deltakerlisten. Prøv fornavnet, eller fullt navn.',
+  loginHint: 'Ingen registrering — kommer du ikke inn, spør i gruppa.',
 
   // Larry-siden (easter egget). Han tilbyr «hjelp», gjør ingenting, og sier
   // rett ut at han noterte at du spurte.
@@ -140,6 +149,14 @@ const nn: typeof nb = {
   resetConfirmBody:
     'Er du sikker? Svara dine, opplåste dagar og hack-framdrifta blir sletta frå denne eininga. Språk- og lydvalet blir teke vare på.',
   resetConfirmYes: 'Ja, nullstill',
+  settingsLogout: 'Logg ut',
+  settingsLogoutNote: 'Gløymer namnet på denne eininga. Framdrifta di blir teken vare på.',
+
+  loginLead: 'Denne saka er berre for dykk som var med i 2026. Skriv namnet du spelte under.',
+  loginName: 'Namn',
+  loginSubmit: 'Logg inn',
+  loginFailed: 'Fann deg ikkje på deltakarlista. Prøv fornamnet, eller fullt namn.',
+  loginHint: 'Inga registrering — kjem du ikkje inn, spør i gruppa.',
 
   larryTitle: 'ukjend prosess',
   larryOffer: 'Vil du ha hjelp? Eg kan fjerne halvparten av vitna for deg … Vil du det?',

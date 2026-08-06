@@ -3892,6 +3892,16 @@ textarea.field {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* Navnet er «nice to have» — det ryker først når linja blir trang (mobil). */
+.taskbar__player {
+  margin-left: 8px;
+  opacity: 0.75;
+}
+@media (max-width: 420px) {
+  .taskbar__player {
+    display: none;
+  }
+}
 .taskbar__countdown {
   font-weight: bold;
 }
@@ -3978,6 +3988,12 @@ textarea.field {
   font-size: 0.72rem;
   color: var(--shadow-dark);
   opacity: 0.75;
+}
+.auth__error {
+  margin: 0 0 12px;
+  font-size: 0.78rem;
+  color: #a40000;
+  font-weight: bold;
 }
 
 /* ===========================================================================

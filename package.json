@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "check:content": "tsx scripts/check-content.ts",
-    "check:dorlogg": "tsx scripts/check-dorlogg.ts"
+    "check:dorlogg": "tsx scripts/check-dorlogg.ts",
+    "hash:players": "tsx scripts/hash-players.ts"
   },
   "dependencies": {
     "marked": "^14.1.2",

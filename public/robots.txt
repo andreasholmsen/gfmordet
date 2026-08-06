@@ -1,0 +1,4 @@
+# GF-mordet er kun for dem som spilte — ingen indeksering, heller ikke av
+# dokumentene under /case/ (de ligger utenfor index.html sin noindex-meta).
+User-agent: *
+Disallow: /
