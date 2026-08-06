@@ -27,12 +27,16 @@ for (const [input, want] of CASES) {
   if (got !== want) throw new Error(`normalizeName(${JSON.stringify(input)}) = ${got}, forventet ${want}`)
 }
 
+// Kolonnenavnene fra en CSV-eksport ville ellers blitt gyldige innlogginger —
+// «username» hadde sluppet deg rett inn. Droppes eksplisitt.
+const HEADERS = new Set(['username', 'fullname', 'name', 'displayname', 'email', 'id'])
+
 const file = process.argv[2] ?? 'players.txt'
 const names = readFileSync(file, 'utf8')
   .split('\n')
   .flatMap((line) => line.split(/[\t,;|]/))
   .map((s) => s.trim().replace(/^["']|["']$/g, ''))
-  .filter((s) => normalizeName(s).length > 0)
+  .filter((s) => normalizeName(s).length > 0 && !HEADERS.has(normalizeName(s)))
 
 // Både brukernavn og fullt navn havner i lista, så folk kommer inn med det de
 // husker. Duplikater faller bort av seg selv i Set-et.
@@ -49,4 +53,8 @@ ${hashes.map((h) => `  '${h}',`).join('\n')}
 `,
 )
 
-console.log(`${names.length} navn fra ${file} → ${hashes.length} unike hasher i src/case/players.ts`)
+// Skriv ut hva som faktisk ble godtatt: eneste måten å oppdage at en rar linje
+// (kolonnenavn, en overskrift, «null») har blitt en gyldig innlogging.
+console.log(names.map((n) => `  ${n}  →  ${normalizeName(n)}`).join('\n'))
+console.log(`\n${names.length} navn fra ${file} → ${hashes.length} unike hasher i src/case/players.ts`)
+console.log('Se over lista over: alt som står der kan logge inn.')
