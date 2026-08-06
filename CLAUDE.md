@@ -235,8 +235,11 @@ CSS-seksjon «Offerets mobil» i `retro.css` (`.phone`, `.ph-*`, `.wa-*`, `.pmai
 ## Mulige videre oppgaver (ikke gjort ennå)
 
 - Bump GitHub Actions-versjoner (Pages-actions targeter Node 20 som GitHub deprecaterer).
-- **`src/case/players.ts` inneholder fortsatt PLASSHOLDERE** (`andreas`, `test`, `demo`) —
-  hent de ekte navnene fra Supabase og kjør `npm run hash:players` FØR neste deploy.
+- **`src/case/players.ts` inneholder fortsatt PLASSHOLDERE** (`test`, `demo`) — hent de
+  ekte navnene fra Supabase og kjør `npm run hash:players` FØR neste deploy.
+  NB: navn som også er FIGURER i saken (Andreas, Sverre, Pia …) står i klartekst i
+  bundelen som sakinnhold. De spillerne er dermed lette å gjette seg inn som — iboende
+  i gardinen, men verdt å vite.
 - Slette/pause Supabase-prosjektet — men eksporter deltakernavnene FØRST (se
   «Innlogging» over), ellers finnes ikke lista noe sted. NB: bucketen
   `stories` med spillernes opplastede bilder forsvinner da; last dem ned først hvis de

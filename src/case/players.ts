@@ -4,6 +4,4 @@
 export const PLAYER_HASHES = new Set([
   '2a97516c354b',
   '9f86d081884c',
-  'cdde51de2478',
-  'e87f468fb912',
 ])
